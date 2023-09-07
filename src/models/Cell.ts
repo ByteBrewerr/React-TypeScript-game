@@ -1,18 +1,19 @@
 import bg from '../assets/floor.jpg'
+import Rock from './Rock'
 import Character from './characters/Character'
 
 class Cell {
   row: number
   col: number
   bg: typeof bg
-  isSelected : boolean
+  obstacle: Rock | null
   character: Character | null
 
   constructor(row: number, col: number) {
     this.row = row
     this.col = col
     this.bg = bg
-    this.isSelected = false
+    this.obstacle = null
     this.character = null
   }
 
@@ -23,6 +24,10 @@ class Cell {
   public removeCharacter(): void {
     this.character = null
   }
+  public setRock(obstacle: Rock): void {
+    this.obstacle = obstacle
+  }
+
 }
 
 export default Cell
