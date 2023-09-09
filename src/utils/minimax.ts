@@ -19,22 +19,14 @@ function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha
             const possibleMoves: Cell[] = playerPosition.character.possibleMoves(board, playerPosition);
 
             for (let move of possibleMoves) {
-              const newBoard = new Board(10)
-              newBoard.copy(board, move, playerPosition, 'move')
-              let count = 0
-              for (let row = 0; row < 10; row++) {
-                for (let col = 0; col < 10; col++) {
-                    if (board.cells[row][col].character){
-                      count= count + 1
-                    }
-                    
-                }
-              }
-              //console.log(count)
+              const newBoard = new Board()
+              newBoard.copyMovedBoard(board, move, playerPosition)
+              
               for (let computerPosition of computerPositions) {
                 if (playerPosition.character?.canShoot(computerPosition, move, newBoard)) {
-                  const shootBoard = new Board(10)
-                  shootBoard.copy(newBoard, undefined, undefined, 'shoot', computerPosition)
+                  const shootBoard = new Board()
+
+                  shootBoard.copyShootedBoard(newBoard, computerPosition, newBoard.cells[move.row][move.col])
                   let result = minimax(shootBoard, depth - 1, false, alpha, beta); 
                   let score = result.score;
                   if (score > bestScore) {
@@ -44,10 +36,11 @@ function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha
                   }
                   alpha = Math.max(alpha, bestScore);
                   if (beta <= alpha) {
-                      break; // Отсечение
+                      break; 
                   }
                    
                 } else {
+
                   let result = minimax(newBoard, depth - 1, false, alpha, beta); 
                   let score = result.score;
                   if (score > bestScore) {
@@ -57,7 +50,7 @@ function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha
                   }   
                   alpha = Math.max(alpha, bestScore);
                   if (beta <= alpha) {
-                      break; // Отсечение
+                      break; 
                   }
                 }
                 
@@ -79,13 +72,13 @@ function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha
           if (computerPosition.character) {
             const possibleMoves: Cell[] = computerPosition.character.possibleMoves(board, computerPosition);
             for (let move of possibleMoves) {
-              const newBoard = new Board(10)
-              newBoard.copy(board, move, computerPosition, 'move')
-          
+              const newBoard = new Board()
+              newBoard.copyMovedBoard(board, move, computerPosition)
+             
               for (let playerPosition of playerPositions) {
                 if (computerPosition.character?.canShoot(playerPosition, move, newBoard)) {
-                  const shootBoard = new Board(10)
-                  shootBoard.copy(newBoard, undefined, undefined, 'shoot', playerPosition)
+                  const shootBoard = new Board()
+                  shootBoard.copyShootedBoard(newBoard, playerPosition, newBoard.cells[move.row][move.col])
 
                   let result = minimax(shootBoard, depth - 1, true, alpha, beta); 
                   let score = result.score;
@@ -93,10 +86,10 @@ function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha
                     bestScore = score;
                     bestMoveTo = move
                     bestMoveFrom = computerPosition
-                    action = {type: 'shoot', target: playerPosition};
+                    action = {type: 'shoot', target: playerPosition, shootFrom: newBoard.cells[move.row][move.col]};
                   }  
                   if (beta <= alpha) {
-                    break; // Отсечение
+                    break; 
                 }
                 } else { 
                   let result = minimax(newBoard, depth - 1, true, alpha, beta); 
@@ -105,11 +98,11 @@ function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha
                     bestScore = score
                     bestMoveTo = move
                     bestMoveFrom = computerPosition
-                    action = {type: 'skip'};
+                    action = {type: 'move'};
                   }  
                   beta = Math.min(beta, bestScore);
                   if (beta <= alpha) {
-                      break; // Отсечение
+                      break; 
                   } 
                 }
                 
@@ -126,8 +119,8 @@ const evalBoardPosition = (board: Board) => {
   
   let playerTotalHealth: number = 0;
   let enemyTotalHealth: number = 0;
-  for (let row = 0; row < 10; row++) {
-      for (let col = 0; col < 10; col++) {
+  for (let row = 0; row < board.size; row++) {
+      for (let col = 0; col < board.size; col++) {
           const character = board.cells[row][col].character;
           if (character && character.team === Teams.Computer) {
             enemyTotalHealth = enemyTotalHealth + character.health;

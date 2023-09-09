@@ -40,9 +40,9 @@ export default class Character {
     }
     
   }
-  public undoShoot(): void{
-    this.health = this.health + 10
-  }
+ //public undoShoot(): void{
+    //this.health = this.health + 10
+  //}
 
   public canShoot(target: Cell, from: Cell, board: Board): boolean {
     if (!target.character || target.character.team === this.team) {

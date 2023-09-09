@@ -8,14 +8,14 @@ import minimax from '../utils/minimax';
 import cloneDeep from 'lodash/cloneDeep';
 
 const BoardComponent: FC = () => {
-  const [board, setBoard] = useState<Board>(new Board(10));
+  const [board, setBoard] = useState<Board>(new Board());
   const [currentTurn, setCurrentTurn] = useState<Teams>(Teams.Player);
   const [selectedCell, setSelectedCell] = useState<Cell | null>(null);
   const [hoveredCell, setHoveredCell] = useState<Cell | null>(null);
   const [cursor, setCursor] = useState(''); // запретить ререндер
 
   useEffect(() => {
-    const newBoard = new Board(10);
+    const newBoard = new Board();
     newBoard.init();
     newBoard.addCharacters();
     newBoard.addObstacles();
@@ -27,26 +27,36 @@ const BoardComponent: FC = () => {
   useEffect(() => {
     if (currentTurn === Teams.Computer) {
       const {bestMoveTo, action, bestMoveFrom } = getBestMove();
-      console.log(action)
+      console.log(bestMoveTo, bestMoveFrom)
   
       setBoard((prevBoard) => {
-        const newBoard = new Board(10)
-        newBoard.copy(prevBoard, bestMoveTo, bestMoveFrom, action?.type, action?.target)
-        setCurrentTurn(Teams.Player);
-        return newBoard;
+        if(bestMoveTo && bestMoveFrom && action){
+          const newMovedBoard = new Board()
+          newMovedBoard.copyMovedBoard(prevBoard, bestMoveTo, bestMoveFrom)
+          if(action?.target){
+            const newShootedBoard = new Board()
+            newShootedBoard.copyShootedBoard(newMovedBoard, action?.target, action?.shootFrom)
+            setCurrentTurn(Teams.Player);
+            return newShootedBoard
+          }
+          setCurrentTurn(Teams.Player);
+          return newMovedBoard;
+        } 
+
+        else return new Board
       });
   
     }
   }, [currentTurn]);
 
   const getBestMove = () => {
-    return minimax(board, 4, false, -Infinity, Infinity);
+    return minimax(board, 5, false, -Infinity, Infinity);
   };
 
   const updateBoard = () => {
     setCurrentTurn(Teams.Computer);
     setBoard((prevBoard) => {
-      const newBoard = new Board(10);
+      const newBoard = new Board();
       newBoard.cells = [...prevBoard.cells];
       return newBoard;
     });
@@ -85,7 +95,7 @@ const BoardComponent: FC = () => {
 
   return (
     <div className='w-[100%] h-[100vh] flex justify-center items-center bg-sky-600'>
-      <div className={`h-[600px] w-[600px] flex flex-wrap bg-black ${cursor}`}>
+      <div className={`h-[480px] w-[480px] flex flex-wrap bg-black ${cursor}`}>
         {board.cells.map((row) => {
           return row.map((cell) => {
             return (

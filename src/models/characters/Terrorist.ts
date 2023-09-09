@@ -7,10 +7,10 @@ import Cell from '../Cell'
 
 export default class Terrorist extends Character {
   
-  constructor(team: Teams) {
+  constructor(team: Teams, health: number) {
     super(team)
     this.logo = logo
-    this.health = 110
+    this.health = health
     this.name = Names.Terrorist
     
   }
@@ -36,13 +36,13 @@ export default class Terrorist extends Character {
   }
   public possibleMoves(board: Board, from: Cell): Cell[] {
     let moves: Cell[] = []
-    if (from.row < 9 && this.canMove(board.cells[from.row+1][from.col], from)){
+    if (from.row < 7 && this.canMove(board.cells[from.row+1][from.col], from)){
       moves.push(board.cells[from.row+1][from.col])
     }
     if (from.row > 0 && this.canMove(board.cells[from.row-1][from.col], from)){
       moves.push(board.cells[from.row-1][from.col])
     }
-    if (from.col < 9  && this.canMove(board.cells[from.row][from.col+1], from)){
+    if (from.col < 7  && this.canMove(board.cells[from.row][from.col+1], from)){
       moves.push(board.cells[from.row][from.col+1])
     }
     if (from.col > 0 && this.canMove(board.cells[from.row][from.col-1], from)){
