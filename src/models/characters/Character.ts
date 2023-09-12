@@ -3,6 +3,7 @@ import Names from "../../enums/Name.enum"
 import floor from '../../assets/floor.jpg'
 import Board from "../Board"
 import Cell from "../Cell"
+import Action from "../../interfaces/Action"
 
 export default class Character {
   team: Teams
@@ -82,8 +83,8 @@ export default class Character {
     return true;
   }
  
-  public possibleMoves(board: Board, from: Cell): Cell[]{
-    return [from]
+  public possibleMoves(board: Board, from: Cell): Action[]{
+    return [{actionName: 'nothing', from, to: board.cells[from.row][from.col]}]
   }
   
 }

@@ -31,12 +31,12 @@ class Board {
     this.addTerrorist(0,2, Teams.Computer, 110)
   }
   public addObstacles(){
-    this.addRock(6,0)
-    this.addRock(6,1)
-    this.addRock(6,2)
-    this.addRock(6,3)
-    this.addRock(6,4)
-    this.addRock(6,5)
+    this.addRock(5,5)
+    this.addRock(5,1)
+    this.addRock(4,4)
+    this.addRock(3,6)
+    this.addRock(2,2)
+    this.addRock(2,1)
 
   }
 
@@ -52,7 +52,8 @@ class Board {
           const health = oldCell.character.health;
           this.addTerrorist(row, col, team, health)
         }
-        if(row===moveTo?.row && col === moveTo.col && moveFrom && moveFrom.character){
+       
+        if(row===moveTo.row && col === moveTo.col && moveFrom && moveFrom.character){
           const team = moveFrom.character.team;
           const health = moveFrom.character.health;
           this.addTerrorist(moveTo.row, moveTo.col, team, health); 

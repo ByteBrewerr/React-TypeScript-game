@@ -2,116 +2,105 @@ import React from 'react';
 import Board from '../models/Board';
 import Teams from '../enums/Teams.enum';
 import Cell from '../models/Cell';
+import Action from '../interfaces/Action';
 
 function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha: number, beta: number) {
     if (depth === 0) { 
       return { score: evalBoardPosition(board) };
     }
     if (isMaximizingPlayer) {
-        let bestMoveTo;
-        let action;
-        let bestMoveFrom
+        let bestActions
         const computerPositions = board.getComputerPositions();
         const playerPositions = board.getPlayerPositions();
         let bestScore = -Infinity;
         for (let playerPosition of playerPositions) {
           if (playerPosition.character) {
-            const possibleMoves: Cell[] = playerPosition.character.possibleMoves(board, playerPosition);
+            const possibleMoves: Action[] = playerPosition.character.possibleMoves(board, playerPosition);
 
-            for (let move of possibleMoves) {
-              const newBoard = new Board()
-              newBoard.copyMovedBoard(board, move, playerPosition)
-              
-              for (let computerPosition of computerPositions) {
-                if (playerPosition.character?.canShoot(computerPosition, move, newBoard)) {
-                  const shootBoard = new Board()
-
-                  shootBoard.copyShootedBoard(newBoard, computerPosition, newBoard.cells[move.row][move.col])
-                  let result = minimax(shootBoard, depth - 1, false, alpha, beta); 
-                  let score = result.score;
-                  if (score > bestScore) {
-                    bestScore = score;
-                    bestMoveTo = move
-                    bestMoveFrom = playerPosition
-                  }
-                  alpha = Math.max(alpha, bestScore);
-                  if (beta <= alpha) {
-                      break; 
-                  }
-                   
-                } else {
-
-                  let result = minimax(newBoard, depth - 1, false, alpha, beta); 
-                  let score = result.score;
-                  if (score > bestScore) {
-                    bestScore = score
-                    bestMoveTo = move
-                    bestMoveFrom = playerPosition           
-                  }   
-                  alpha = Math.max(alpha, bestScore);
-                  if (beta <= alpha) {
-                      break; 
-                  }
-                }
-                
+            for (let action of possibleMoves) {
+              const newFirstActionBoard = new Board()
+              let secondPossibleMoves: Action[] = [action]
+              if(action.actionName === 'move'){
+                newFirstActionBoard.copyMovedBoard(board, action.to, action.from)
+                secondPossibleMoves = playerPosition.character.possibleMoves(newFirstActionBoard, action.to);
               }
+              if(action.actionName === 'shoot'){
+                newFirstActionBoard.copyShootedBoard(board, action.to, action.from)   
+                secondPossibleMoves = playerPosition.character.possibleMoves(newFirstActionBoard, action.from);   
+              }
+
+              for(let secondAction of secondPossibleMoves){
+                const newSecondActionBoard = new Board()
+                if(action.actionName === 'move'){
+                  newSecondActionBoard.copyMovedBoard(newFirstActionBoard, secondAction.to, secondAction.from)
+                }
+                if(action.actionName === 'shoot'){
+                  newSecondActionBoard.copyShootedBoard(newFirstActionBoard, secondAction.to, secondAction.from)      
+                }
+                let result = minimax(newSecondActionBoard, depth - 1, false, alpha, beta); 
+                let score = result.score;
+                alpha = Math.max(alpha, score);
+                if (beta <= alpha) {
+                    break; 
+                }
+                if (score > bestScore) {
+                  bestScore = score;
+                  bestActions = {firstAction: action, secondAction: secondAction}
+                }
+              }
+              
+              
             }
           }
          
         }
-        return { score: bestScore, bestMoveTo, bestMoveFrom, action, };
+        return { score: bestScore, bestActions };
       } else {  
         let bestScore = Infinity;
-        let bestMoveTo;
-        let action;
-        let bestMoveFrom;
+        let bestActions;
         const computerPositions = board.getComputerPositions();
-        
-        const playerPositions = board.getPlayerPositions(); 
+        //const playerPositions = board.getPlayerPositions(); 
+
         for (let computerPosition of computerPositions) {
           if (computerPosition.character) {
-            const possibleMoves: Cell[] = computerPosition.character.possibleMoves(board, computerPosition);
-            for (let move of possibleMoves) {
-              const newBoard = new Board()
-              newBoard.copyMovedBoard(board, move, computerPosition)
-             
-              for (let playerPosition of playerPositions) {
-                if (computerPosition.character?.canShoot(playerPosition, move, newBoard)) {
-                  const shootBoard = new Board()
-                  shootBoard.copyShootedBoard(newBoard, playerPosition, newBoard.cells[move.row][move.col])
-
-                  let result = minimax(shootBoard, depth - 1, true, alpha, beta); 
-                  let score = result.score;
-                  if (score < bestScore) {
-                    bestScore = score;
-                    bestMoveTo = move
-                    bestMoveFrom = computerPosition
-                    action = {type: 'shoot', target: playerPosition, shootFrom: newBoard.cells[move.row][move.col]};
-                  }  
-                  if (beta <= alpha) {
+            const possibleMoves: Action[] = computerPosition.character.possibleMoves(board, computerPosition);
+            console.log(possibleMoves)
+            for (let action of possibleMoves) {
+              const newFirstActionBoard = new Board()
+              let secondPossibleMoves: Action[] = [action]
+              if(action.actionName === 'move'){
+                newFirstActionBoard.copyMovedBoard(board, action.to, action.from)
+                secondPossibleMoves= computerPosition.character.possibleMoves(newFirstActionBoard, action.to);
+              }
+              if(action.actionName === 'shoot'){
+                newFirstActionBoard.copyShootedBoard(board, action.to, action.from)      
+                secondPossibleMoves = computerPosition.character.possibleMoves(newFirstActionBoard, action.from);
+              }
+              for(let secondAction of secondPossibleMoves){
+                const newSecondActionBoard = new Board()
+                if(action.actionName === 'move'){
+                  newSecondActionBoard.copyMovedBoard(newFirstActionBoard, secondAction.to, secondAction.from)
+                }
+                if(action.actionName === 'shoot'){
+                  newSecondActionBoard.copyShootedBoard(newFirstActionBoard, secondAction.to, secondAction.from)      
+                }
+                let result = minimax(newSecondActionBoard, depth - 1, false, alpha, beta); 
+                let score = result.score;
+                beta = Math.min(beta, score);
+                if (beta <= alpha) {
                     break; 
                 }
-                } else { 
-                  let result = minimax(newBoard, depth - 1, true, alpha, beta); 
-                  let score = result.score;
-                  if (score < bestScore) {
-                    bestScore = score
-                    bestMoveTo = move
-                    bestMoveFrom = computerPosition
-                    action = {type: 'move'};
-                  }  
-                  beta = Math.min(beta, bestScore);
-                  if (beta <= alpha) {
-                      break; 
-                  } 
+                if (score < bestScore) {
+                  bestScore = score;
+                  bestActions = {firstAction: action, secondAction: secondAction}
                 }
-                
               }
+              
             }
           }
           
         }
-        return { score: bestScore, bestMoveTo, bestMoveFrom, action,};
+        return { score: bestScore, bestActions};
     }
 }
 

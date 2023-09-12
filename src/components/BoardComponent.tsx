@@ -14,6 +14,8 @@ const BoardComponent: FC = () => {
   const [hoveredCell, setHoveredCell] = useState<Cell | null>(null);
   const [cursor, setCursor] = useState(''); // запретить ререндер
 
+  const [actions, setActions] = useState(2);
+
   useEffect(() => {
     const newBoard = new Board();
     newBoard.init();
@@ -25,57 +27,83 @@ const BoardComponent: FC = () => {
  
 
   useEffect(() => {
-    if (currentTurn === Teams.Computer) {
-      const {bestMoveTo, action, bestMoveFrom } = getBestMove();
-      console.log(bestMoveTo, bestMoveFrom)
+    if (currentTurn === Teams.Computer && actions === 0) {
+      const {bestActions} = getBestMove();
+      console.log(bestActions)
   
       setBoard((prevBoard) => {
-        if(bestMoveTo && bestMoveFrom && action){
-          const newMovedBoard = new Board()
-          newMovedBoard.copyMovedBoard(prevBoard, bestMoveTo, bestMoveFrom)
-          if(action?.target){
-            const newShootedBoard = new Board()
-            newShootedBoard.copyShootedBoard(newMovedBoard, action?.target, action?.shootFrom)
-            setCurrentTurn(Teams.Player);
-            return newShootedBoard
+        if(bestActions){
+          const firstAction = bestActions.firstAction
+          const secondAction = bestActions.secondAction
+          const newFirstActionBoard = new Board()
+          const newSecondActionBoard = new Board()
+          
+          if(firstAction.actionName === 'move'){
+            const characterMoveFrom = prevBoard.cells[firstAction.from.row][firstAction.from.col]
+            newFirstActionBoard.copyMovedBoard(prevBoard, firstAction.to, characterMoveFrom)
           }
+          if(firstAction.actionName === 'shoot'){
+            newFirstActionBoard.copyShootedBoard(prevBoard, firstAction.to, firstAction.from)
+          }
+          if(secondAction.actionName === 'move'){
+            const characterMoveFrom = newFirstActionBoard.cells[secondAction.from.row][secondAction.from.col]
+            newSecondActionBoard.copyMovedBoard(newFirstActionBoard, secondAction.to, characterMoveFrom)
+          }
+          if(secondAction.actionName === 'shoot'){
+            newSecondActionBoard.copyShootedBoard(newFirstActionBoard, secondAction.to, secondAction.from)
+          }
+
           setCurrentTurn(Teams.Player);
-          return newMovedBoard;
+          setActions(2)
+
+          return newSecondActionBoard;
         } 
 
-        else return new Board
+        else return new Board()
       });
   
     }
-  }, [currentTurn]);
+  }, [actions]);
 
   const getBestMove = () => {
-    return minimax(board, 5, false, -Infinity, Infinity);
+    return minimax(board, 3, false, -Infinity, Infinity);
   };
 
   const updateBoard = () => {
-    setCurrentTurn(Teams.Computer);
+    if(actions === 1){
+      setCurrentTurn(Teams.Computer)
+      setSelectedCell(null)
+      setActions(actions - 1);
+    }
     setBoard((prevBoard) => {
       const newBoard = new Board();
       newBoard.cells = [...prevBoard.cells];
       return newBoard;
     });
+    setActions(actions - 1);
   };
 
   const handleCellClick = (cell: Cell) => {
     if (currentTurn === Teams.Player) {
-      if (selectedCell && hoveredCell?.character?.team === Teams.Computer && selectedCell.character?.canShoot(cell, selectedCell, board)) { //shoot
-        selectedCell.character?.shoot(cell);
-        updateBoard();
+      if (actions > 0) {
+        if (
+          selectedCell &&
+          hoveredCell?.character?.team === Teams.Computer &&
+          selectedCell.character?.canShoot(cell, selectedCell, board)
+        ) {
+          selectedCell.character?.shoot(cell);
+          updateBoard();
+
+        } else if (selectedCell && selectedCell.character?.canMove(cell, selectedCell)) {
+          selectedCell.character.move(cell, selectedCell);
+          setSelectedCell(null);
+          updateBoard();
+
+        } else {
+          setSelectedCell(null);
+        }
       }
-      if (selectedCell && selectedCell.character?.canMove(cell, selectedCell)) { //move
-        selectedCell.character.move(cell, selectedCell);
-        setSelectedCell(null);
-        updateBoard();
-      } else {
-        setSelectedCell(null); //undo selected cell
-      }
-      if (!selectedCell && cell.character?.team === Teams.Player) { //select cell
+      if (!selectedCell && cell.character?.team === Teams.Player) {
         setSelectedCell(cell);
       }
     }
