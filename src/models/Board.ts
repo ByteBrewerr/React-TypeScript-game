@@ -1,34 +1,54 @@
 import Cell from './Cell'
 import Teams from '../enums/Teams.enum'
-import Terrorist from './characters/Terrorist'
+import Archer from './characters/Archer'
 import Rock from './Rock'
 import Character from './characters/Character'
+import Champion from './characters/Champion'
+import Names from '../enums/Name.enum'
+import Spearman from './characters/Spearman'
 
 class Board {
-  size: number
+  sizeX: number
+  sizeY: number
   cells: Cell[][] = []
+  queue: Character[] = []
 
-  constructor() {
-    this.size = 8
+  constructor(sizeX: number, sizeY: number) {
+    this.sizeX = sizeX
+    this.sizeY = sizeY
   }
 
   public init(): void {
-    for (let row = 0; row < this.size; row++) {
+    for (let row = 0; row < this.sizeY; row++) {
       let cellsRow: Cell[] = [];
-      for (let col = 0; col < this.size; col++) {
+      for (let col = 0; col < this.sizeX; col++) {
         const cell = new Cell(row, col);
         cellsRow.push(cell);
       }
       this.cells.push(cellsRow);
     }
   }
+
+  public buildQueue(){
+    const allPieces = this.getAllPositions()
+    const allCharacters = allPieces.map((piece)=>piece.character!)
+    allCharacters.sort((a, b) => {
+      if (a.initiative === b.initiative) {
+        if (a.team === Teams.Player) return -1;
+        if (b.team === Teams.Player) return 1;
+        return 0;
+      } else {
+        return b.initiative - a.initiative;
+      }
+    });
+    this.queue = allCharacters
+  }
+  
   public addCharacters(){
-    this.addTerrorist(7,1, Teams.Player, 110)
-    this.addTerrorist(7,2, Teams.Player, 110)
-    this.addTerrorist(7,6, Teams.Player, 110)
-    this.addTerrorist(0,6, Teams.Computer, 110)
-    this.addTerrorist(0,1, Teams.Computer, 110)
-    this.addTerrorist(0,2, Teams.Computer, 110)
+    this.addKnight(6,9, Teams.Player, 50)
+    this.addArcher(6,11, Teams.Player, 50)
+    this.addSpearman(6,10, Teams.Computer, 900)
+    
   }
   public addObstacles(){
     this.addRock(5,5)
@@ -40,49 +60,32 @@ class Board {
 
   }
 
-  public copyMovedBoard(oldBoard: Board,  moveTo: Cell,   moveFrom: Cell){
-    this.init()
-    this.addObstacles()
 
-    for (let row = 0; row < this.size; row++) {
-      for (let col = 0; col < this.size; col++) {
-        const oldCell = oldBoard.cells[row][col];
-        if (oldCell.character && !(moveFrom.row === row && moveFrom.col === col)) {
-          const team = oldCell.character.team;
-          const health = oldCell.character.health;
-          this.addTerrorist(row, col, team, health)
-        }
-       
-        if(row===moveTo.row && col === moveTo.col && moveFrom && moveFrom.character){
-          const team = moveFrom.character.team;
-          const health = moveFrom.character.health;
-          this.addTerrorist(moveTo.row, moveTo.col, team, health); 
-        }
-        
-      }
-    }
-    
-    
-    
-  }
-  public copyShootedBoard(oldBoard: Board, shootTo: Cell, shootFrom: Cell){
+
+  public copyBoard(oldBoard: Board){
     this.init()
     this.addObstacles()
-    const shootedCharacter = this.cells[shootTo.row][shootTo.col]
-    for (let row = 0; row < this.size; row++) {
-      for (let col = 0; col < this.size; col++) {
+    for (let row = 0; row < this.sizeY; row++) {
+      for (let col = 0; col < this.sizeX; col++) {
         const oldCell = oldBoard.cells[row][col];
         if (oldCell.character) {
           const team = oldCell.character.team;
-          const health = oldCell.character.health;
-          this.addTerrorist(row, col, team, health)
-          if(row === shootTo.row && col === shootTo.col && shootFrom.character){
-            shootFrom.character.shoot(shootedCharacter) 
-          }
+          const count = oldCell.character.count;
+          if (oldCell.character.name == Names.Archer) {    
+            this.addArcher(row, col, team, count);
+          } else if (oldCell.character.name == Names.Knight) {
+            this.addKnight(row, col, team, count);
+          } else if (oldCell.character.name == Names.Spearman) {
+            this.addSpearman(row, col, team, count);
+          } 
         }
       }
     }
+    
+    
+    
   }
+  
  
 
   private addRock(row: number, col: number): void {
@@ -92,14 +95,24 @@ class Board {
   }
   
 
-  private addTerrorist(row: number, col: number, team: Teams, health: number): void {
+  private addArcher(row: number, col: number, team: Teams, count: number): void {
     const cell = this.cells[row][col]
-    cell.setCharacter(new Terrorist(team, health))
+    cell.setCharacter(new Archer(team, count))
   }
+  private addKnight(row: number, col: number, team: Teams, count: number): void {
+    const cell = this.cells[row][col]
+    cell.setCharacter(new Champion(team, count))
+  }
+
+  private addSpearman(row: number, col: number, team: Teams, count: number): void {
+    const cell = this.cells[row][col]
+    cell.setCharacter(new Spearman(team, count))
+  }
+
   public getPlayerPositions(){
     let positions: Cell[] = []
-    for (let row=0; row<this.size; row++) { 
-      for (let col=0; col<this.size; col++) {
+    for (let row=0; row<this.sizeY; row++) { 
+      for (let col=0; col<this.sizeX; col++) {
         const character = this.cells[row][col].character
         if(character?.team === Teams.Player){
           positions.push(this.cells[row][col])
@@ -110,8 +123,8 @@ class Board {
   }
   public getComputerPositions(){
     let positions: Cell[] = []
-    for (let row=0; row<this.size; row++) { 
-      for (let col=0; col<this.size; col++) {
+    for (let row=0; row<this.sizeY; row++) { 
+      for (let col=0; col<this.sizeX; col++) {
         const character = this.cells[row][col].character
         if(character?.team === Teams.Computer){
           positions.push(this.cells[row][col])
@@ -120,6 +133,19 @@ class Board {
     } 
     
     return positions
+  }
+  public getAllPositions(){
+    const computerPieces = this.getComputerPositions()
+    const playerPieces = this.getPlayerPositions()
+
+    const allPieces = []
+    for(const piece of playerPieces){
+      allPieces.push(piece)
+    }
+    for(const piece of computerPieces){
+      allPieces.push(piece)
+    }
+    return allPieces
   }
   
 }

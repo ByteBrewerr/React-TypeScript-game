@@ -4,5 +4,6 @@ export default interface Action{
     actionName: string, 
     from: Cell, 
     to: Cell
+    attacker?: Cell
 
 }
