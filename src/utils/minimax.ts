@@ -2,142 +2,122 @@ import React from 'react';
 import Board from '../models/Board';
 import Teams from '../enums/Teams.enum';
 import Cell from '../models/Cell';
+import Character from '../models/characters/Character';
+import Action from '../interfaces/Action';
+import updateTurnQueueCount from './turnQueueUtils/turnQueueCountUpdater';
+import updateTurnQueue from './turnQueueUtils/turnQueueUpdater';
 
-function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha: number, beta: number) {
-    if (depth === 0) { 
-      return { score: evalBoardPosition(board) };
-    }
-    if (isMaximizingPlayer) {
-        let bestMoveTo;
-        let action;
-        let bestMoveFrom
-        const computerPositions = board.getComputerPositions();
-        const playerPositions = board.getPlayerPositions();
-        let bestScore = -Infinity;
-        for (let playerPosition of playerPositions) {
-          if (playerPosition.character) {
-            const possibleMoves: Cell[] = playerPosition.character.possibleMoves(board, playerPosition);
-
-            for (let move of possibleMoves) {
-              const newBoard = new Board(10)
-              newBoard.copy(board, move, playerPosition, 'move')
-              let count = 0
-              for (let row = 0; row < 10; row++) {
-                for (let col = 0; col < 10; col++) {
-                    if (board.cells[row][col].character){
-                      count= count + 1
-                    }
-                    
-                }
-              }
-              //console.log(count)
-              for (let computerPosition of computerPositions) {
-                if (playerPosition.character?.canShoot(computerPosition, move, newBoard)) {
-                  const shootBoard = new Board(10)
-                  shootBoard.copy(newBoard, undefined, undefined, 'shoot', computerPosition)
-                  let result = minimax(shootBoard, depth - 1, false, alpha, beta); 
-                  let score = result.score;
-                  if (score > bestScore) {
-                    bestScore = score;
-                    bestMoveTo = move
-                    bestMoveFrom = playerPosition
-                  }
-                  alpha = Math.max(alpha, bestScore);
-                  if (beta <= alpha) {
-                      break; // Отсечение
-                  }
-                   
-                } else {
-                  let result = minimax(newBoard, depth - 1, false, alpha, beta); 
-                  let score = result.score;
-                  if (score > bestScore) {
-                    bestScore = score
-                    bestMoveTo = move
-                    bestMoveFrom = playerPosition           
-                  }   
-                  alpha = Math.max(alpha, bestScore);
-                  if (beta <= alpha) {
-                      break; // Отсечение
-                  }
-                }
-                
-              }
-            }
-          }
-         
-        }
-        return { score: bestScore, bestMoveTo, bestMoveFrom, action, };
-      } else {  
-        let bestScore = Infinity;
-        let bestMoveTo;
-        let action;
-        let bestMoveFrom;
-        const computerPositions = board.getComputerPositions();
-        
-        const playerPositions = board.getPlayerPositions(); 
-        for (let computerPosition of computerPositions) {
-          if (computerPosition.character) {
-            const possibleMoves: Cell[] = computerPosition.character.possibleMoves(board, computerPosition);
-            for (let move of possibleMoves) {
-              const newBoard = new Board(10)
-              newBoard.copy(board, move, computerPosition, 'move')
-          
-              for (let playerPosition of playerPositions) {
-                if (computerPosition.character?.canShoot(playerPosition, move, newBoard)) {
-                  const shootBoard = new Board(10)
-                  shootBoard.copy(newBoard, undefined, undefined, 'shoot', playerPosition)
-
-                  let result = minimax(shootBoard, depth - 1, true, alpha, beta); 
-                  let score = result.score;
-                  if (score < bestScore) {
-                    bestScore = score;
-                    bestMoveTo = move
-                    bestMoveFrom = computerPosition
-                    action = {type: 'shoot', target: playerPosition};
-                  }  
-                  if (beta <= alpha) {
-                    break; // Отсечение
-                }
-                } else { 
-                  let result = minimax(newBoard, depth - 1, true, alpha, beta); 
-                  let score = result.score;
-                  if (score < bestScore) {
-                    bestScore = score
-                    bestMoveTo = move
-                    bestMoveFrom = computerPosition
-                    action = {type: 'skip'};
-                  }  
-                  beta = Math.min(beta, bestScore);
-                  if (beta <= alpha) {
-                      break; // Отсечение
-                  } 
-                }
-                
-              }
-            }
-          }
-          
-        }
-        return { score: bestScore, bestMoveTo, bestMoveFrom, action,};
-    }
-}
-
-const evalBoardPosition = (board: Board) => {
-  
-  let playerTotalHealth: number = 0;
-  let enemyTotalHealth: number = 0;
-  for (let row = 0; row < 10; row++) {
-      for (let col = 0; col < 10; col++) {
-          const character = board.cells[row][col].character;
-          if (character && character.team === Teams.Computer) {
-            enemyTotalHealth = enemyTotalHealth + character.health;
-          }
-          if (character && character.team === Teams.Player) {
-            playerTotalHealth = playerTotalHealth + character.health;
-          }
-      }
+function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha: number, beta: number, queue: Character[]) {
+  if (depth === 0) { 
+    return {bestScore: evalBoardPosition(board)}
   }
-  return playerTotalHealth - enemyTotalHealth;
+  if (isMaximizingPlayer) {
+    let bestMove;
+    let bestScore = -Infinity;
+    const queueCharacter = queue[0]
+    const queueCharacterCell = board.getAllPositions().find(
+      (position) =>
+        queueCharacter.team === position.character?.team &&
+        queueCharacter.name === position.character?.name
+    );
+
+    if(queueCharacter && queueCharacterCell){
+      const possibleMoves: Action[] = queueCharacterCell.character!.possibleMoves(board, queueCharacterCell);
+      for (const move of possibleMoves) {
+        const boardCopy = new Board(12,10);
+        boardCopy.copyBoard(board);
+        const copyCharacter = boardCopy.cells[queueCharacterCell.row][queueCharacterCell.col].character!
+        if (move.actionName === 'shoot') {
+          copyCharacter.shoot(move.to, move.from, boardCopy);
+        }
+        if (move.actionName === 'attack') {
+          copyCharacter.attack(move.to, move.from, queueCharacterCell, boardCopy);
+        }
+        if (move.actionName === 'move') {
+          copyCharacter.move(move.to, move.from, boardCopy);
+        }
+        const updatedQueueCount = updateTurnQueueCount(queue, boardCopy)
+        const updatedQueue = updateTurnQueue(updatedQueueCount);
+        const isMaximizingPlayerNext = updatedQueue[0].team === Teams.Player ? true : false
+        let result = minimax(boardCopy, depth - 1, isMaximizingPlayerNext, alpha, beta, updatedQueue ); 
+        let score = result.bestScore;
+        if (score > bestScore) {
+          bestScore = score;
+          bestMove = move;
+        }
+        alpha = Math.max(alpha, score)       
+        if (beta <= alpha) {
+          break; 
+        }
+      
+      }
+    }
+    
+    return { bestScore, bestMove };
+  } else {  
+    let bestScore = Infinity;
+    let bestMove;
+    const queueCharacter = queue[0]
+    const queueCharacterCell = board.getAllPositions().find(
+      (position) =>
+        queueCharacter.team === position.character?.team &&
+        queueCharacter.name === position.character?.name
+    );
+    if (queueCharacterCell) {
+      const possibleMoves: Action[] = queueCharacterCell.character!.possibleMoves(board, queueCharacterCell);
+      console.log(possibleMoves)
+      for (const move of possibleMoves) {
+        const boardCopy = new Board(12,10);
+        boardCopy.copyBoard(board);
+        const copyCharacter = boardCopy.cells[queueCharacterCell.row][queueCharacterCell.col].character!
+        if (move.actionName === 'shoot') {
+          copyCharacter.shoot(move.to, move.from, boardCopy);
+        }
+        if (move.actionName === 'attack' ) {
+          copyCharacter.attack(move.to, move.from, queueCharacterCell, boardCopy);
+        }
+        if (move.actionName === 'move') {  
+          copyCharacter.move(move.to, move.from, boardCopy);
+        }
+        const updatedQueueCount = updateTurnQueueCount(queue, boardCopy)
+        const updatedQueue = updateTurnQueue(updatedQueueCount);
+        const isMaximizingPlayerNext = updatedQueue[0].team === Teams.Player ? true : false
+        let result = minimax(boardCopy, depth - 1, isMaximizingPlayerNext, alpha, beta, updatedQueue); 
+        let score = result.bestScore;
+
+        if (score < bestScore) {
+          bestScore = score;
+          bestMove = move;
+        }
+        
+        beta = Math.min(beta, score);
+        if (beta <= alpha) {
+          break; 
+        }
+        
+      }
+    }
+  
+    return { bestScore, bestMove};
+  }
 }
+
+function evalBoardPosition(board: Board) {
+  let playerTotalCount: number = 0;
+  let enemyTotalCount: number = 0;
+  for (let row = 0; row < board.sizeY; row++) {
+    for (let col = 0; col < board.sizeX; col++) {
+      const character = board.cells[row][col].character;
+      if (character && character.team === Teams.Computer) {
+        enemyTotalCount = enemyTotalCount + character.count;
+      }
+      if (character && character.team === Teams.Player) {
+        playerTotalCount = playerTotalCount + character.count;
+      }
+    }
+  }
+  return playerTotalCount - enemyTotalCount;
+}
+
 
 export default minimax;

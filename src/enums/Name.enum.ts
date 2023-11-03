@@ -1,6 +1,7 @@
 enum Names {
     Character,
-    Terrorist,
-    Mage,
+    Archer,
+    Knight,
+    Spearman,
 }
 export default Names
