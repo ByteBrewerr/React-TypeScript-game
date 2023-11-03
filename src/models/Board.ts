@@ -28,11 +28,14 @@ class Board {
     }
   }
 
+ public getThisBoardCell(cell: Cell): Cell{
+    return this.cells[cell.row][cell.col]
+ } 
   
   public addCharacters(){
-    this.addKnight(4,2, Teams.Computer, 60)
-    this.addArcher(0,1, Teams.Player, 70)
-    this.addSpearman(1,1, Teams.Player, 120)
+    this.addKnight(3,2, Teams.Computer, 60, true)
+    this.addArcher(0,1, Teams.Player, 70, true)
+    this.addSpearman(1,1, Teams.Player, 120, true)
     
   }
   public addObstacles(){
@@ -56,20 +59,21 @@ class Board {
         if (oldCell.character) {
           const team = oldCell.character.team;
           const count = oldCell.character.count;
+          const ip = oldCell.character.isCounterAttackPossible
+          console.log(ip)
           if (oldCell.character.name == Names.Archer) {    
-            this.addArcher(row, col, team, count);
+            this.addArcher(row, col, team, count, ip);
           } else if (oldCell.character.name == Names.Knight) {
-            this.addKnight(row, col, team, count);
+            this.addKnight(row, col, team, count, ip);
           } else if (oldCell.character.name == Names.Spearman) {
-            this.addSpearman(row, col, team, count);
+            this.addSpearman(row, col, team, count, ip);
           } 
         }
       }
     }
     
-    
-    
   }
+
   
  
 
@@ -80,18 +84,18 @@ class Board {
   }
   
 
-  private addArcher(row: number, col: number, team: Teams, count: number): void {
+  private addArcher(row: number, col: number, team: Teams, count: number, ip: boolean): void {
     const cell = this.cells[row][col]
-    cell.setCharacter(new Archer(team, count))
+    cell.setCharacter(new Archer(team, count,ip))
   }
-  private addKnight(row: number, col: number, team: Teams, count: number): void {
+  private addKnight(row: number, col: number, team: Teams, count: number, ip: boolean): void {
     const cell = this.cells[row][col]
-    cell.setCharacter(new Champion(team, count))
+    cell.setCharacter(new Champion(team, count, ip))
   }
 
-  private addSpearman(row: number, col: number, team: Teams, count: number): void {
+  private addSpearman(row: number, col: number, team: Teams, count: number,ip: boolean): void {
     const cell = this.cells[row][col]
-    cell.setCharacter(new Spearman(team, count))
+    cell.setCharacter(new Spearman(team, count,ip))
   }
 
   public getPlayerPositions(){

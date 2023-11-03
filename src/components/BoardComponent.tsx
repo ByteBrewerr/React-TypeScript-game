@@ -32,13 +32,7 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
     }
     return null;
   }, [board, selectedCell]);
-
-  useEffect(() => {
-    if (currentTurn === Teams.Computer) {
-      getBestMove()
-    }
-  }, [board]);
-
+  
   const enemyPossibleMoves = useMemo(() => {
     if (hoveredCell && hoveredCell.character?.team===Teams.Computer) {
       return hoveredCell.character?.possibleMoves(board, hoveredCell);
@@ -48,8 +42,15 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
 
 
 
+
+  useEffect(() => {
+    if (currentTurn === Teams.Computer) {
+      getBestMove()
+    }
+  }, [board]);
+  
 const getBestMove = () => {
-  minimaxWorker.postMessage({board, depth: 4, isMaximizingPlayer: false, alpha: -Infinity, beta: Infinity, queue});
+  minimaxWorker.postMessage({board, depth: 3, isMaximizingPlayer: false, alpha: -Infinity, beta: Infinity, queue});
   minimaxWorker.onmessage = (e) => {
 
     const { bestMove } = e.data;
@@ -73,7 +74,6 @@ const getBestMove = () => {
   }
 
 };
-console.log(enemyPossibleMoves)
 
   const updateBoard = () => {
     setSelectedCell(null)
@@ -122,7 +122,7 @@ console.log(enemyPossibleMoves)
       const canAttackHoveredCell = possibleMoves?.some(move => move.actionName === 'attack' && move.to.row === cell.row && move.to.col === cell.col);
       const canShootHoveredCell = possibleMoves?.some(move => move.actionName === 'shoot' && move.to.row === cell.row && move.to.col === cell.col);
       const canMoveOnHoveredCell = possibleMoves?.some(move => move.actionName === 'move' && move.to.row === cell.row && move.to.col === cell.col);
-      console.log(canAttackFromHoveredCell, canMoveOnHoveredCell, canAttackHoveredCell)
+
       const cursorClass: any = {
         'cursor-move': canMoveOnHoveredCell,
         'cursor-attack': canAttackHoveredCell,
@@ -156,7 +156,8 @@ console.log(enemyPossibleMoves)
                   possibleMoves?.some(move => move.actionName === 'move' && move.to.row === cell.row && move.to.col === cell.col)
                 }
                 canEnemyMove={
-                  enemyPossibleMoves?.some(move => move.actionName === 'move' && move.to.row === cell.row && move.to.col === cell.col)
+                  enemyPossibleMoves?.some(move => move.actionName === 'move' && move.to.row === cell.row && move.to.col === cell.col) ||
+                  enemyPossibleMoves?.some(move => move.actionName === 'attack' && move.to.row === cell.row && move.to.col === cell.col)
                 }
                 canBeAttacked={ 
                   possibleMoves?.some(move => move.actionName === 'attack' && move.to.row === cell.row && move.to.col === cell.col)

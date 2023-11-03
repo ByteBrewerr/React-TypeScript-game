@@ -5,6 +5,7 @@ import Board from "../Board"
 import Cell from "../Cell"
 import Action from "../../interfaces/Action"
 import Terrorist from "./Archer"
+import { at } from "lodash"
 
 export default class Character {
   team: Teams
@@ -18,10 +19,12 @@ export default class Character {
   minDamage: number
   maxDamage: number
   initiative: number
-  shooting: number | null
-
+  shooting: boolean
+  isCounterAttackPossible: boolean
+  isPerformingCounterAttack: boolean
+  isCounterAttackPerformed: boolean
   
-  constructor(team: Teams, count: number,  ) {
+  constructor(team: Teams, count: number, isCounterAttackPossible: boolean ) {
     this.team = team
     this.name = Names.Character
     this.logo = null
@@ -34,7 +37,10 @@ export default class Character {
     this.maxDamage = 0
     this.initiative = 0
     this.speed = 0
-    this.shooting = 0
+    this.shooting = false
+    this.isPerformingCounterAttack = false
+    this.isCounterAttackPossible = isCounterAttackPossible
+    this.isCounterAttackPerformed = false;
   }
 
   public canMove(target: Cell, from: Cell, board: Board): boolean {
@@ -51,6 +57,7 @@ export default class Character {
   
 
   public move(target: Cell, from: Cell, board: Board):void{  
+    
     if(this.canMove(target, from, board)){
       board.cells[from.row][from.col].removeCharacter()
       board.cells[target.row][target.col].setCharacter(this)
@@ -64,7 +71,7 @@ export default class Character {
   }
 
   public canShoot(target: Cell, from: Cell, board: Board): boolean {
-    if(this.shooting === null) return false
+    if(this.shooting === false) return false
     if(this.isEnemyNear(from, board)) return false
   
     return true;
@@ -127,17 +134,15 @@ export default class Character {
         ) {
           const targetCell = board.cells[newRow][newCol];
   
-          if (!visited.has(targetCell) && !targetCell.obstacle) {
-            if (!targetCell.character) {
-              possibleMoves.push({
-                actionName: 'move',
-                from,
-                to: targetCell,
-              });
-              queue.push({ cell: targetCell, distance: distance + 1 });
-            }
+          if (!visited.has(targetCell) && !targetCell.obstacle && !targetCell.character) { 
+            possibleMoves.push({
+              actionName: 'move',
+              from,
+              to: targetCell,
+            });
+            queue.push({ cell: targetCell, distance: distance + 1 }); 
             for (let enemyPosition of enemyPositions) {
-              if(this.shooting !== null && !this.isEnemyNear(from, board)) continue
+              if(this.shooting == true && !this.isEnemyNear(from, board)) continue
 
               if (this.isSpecificEnemyNear(enemyPosition, targetCell, board)) {         
                 possibleMoves.push({
@@ -157,45 +162,66 @@ export default class Character {
     return possibleMoves;
   }
 
-  public attack(target: Cell, attackFrom: Cell, moveFrom: Cell, board: Board): void{
-    const copyCell = board.cells[target.row][target.col]
-    const copyTarget = copyCell.character
-    const isAttackMoreThenDefence: boolean = target.character!.defence > moveFrom.character!.assault ? false : true
+  protected calculateDamage(target: Cell, attacker: Cell){
+    const isAttackMoreThenDefence: boolean = target.character!.defence > attacker.character!.assault ? false : true
     const oneUnitDamage = this.minDamage===this.maxDamage ? this.minDamage : parseFloat((Math.random() * (this.maxDamage - this.minDamage) + this.minDamage).toFixed(1))
 
     let totalDamage
     if(isAttackMoreThenDefence){
-      totalDamage = Math.round(oneUnitDamage * this.count * ((this.assault - copyTarget!.defence) * 0.05 + 1));
+      totalDamage = Math.round(oneUnitDamage * this.count * ((this.assault - target.character!.defence) * 0.05 + 1));
     }else{
-      totalDamage = Math.round(oneUnitDamage * this.count / ((copyTarget!.defence - this.assault) * 0.05 + 1));
+      totalDamage = Math.round(oneUnitDamage * this.count / ((target.character!.defence - this.assault) * 0.05 + 1));
     }
-
-    this.move(attackFrom, moveFrom, board)
-
-    copyTarget!.count = (copyTarget!.count - Math.round(totalDamage/copyTarget!.health))
-
-    if(copyTarget!.count<=0){
-      copyCell.removeCharacter()
-    }
+    return totalDamage
   }
 
+  public attack(target: Cell, attackFrom: Cell, moveFrom: Cell, board: Board): void {   
+    if (attackFrom != moveFrom) {
+      this.move(attackFrom, moveFrom, board);
+    }
+    
+    const copyTargetCell = board.getThisBoardCell(target);
+    const copyTarget = copyTargetCell.character!;
+    const copyAttackFrom = board.getThisBoardCell(attackFrom)
+
+    const totalDamage = this.calculateDamage(copyTargetCell, board.cells[copyAttackFrom.row][copyAttackFrom.col]);
+    copyTarget.count -= Math.round(totalDamage / copyTarget!.health);
+    if (copyTarget!.count <= 0) {
+      copyTargetCell.removeCharacter();
+    } else if (copyTarget.isCounterAttackPossible && !copyAttackFrom.character!.isPerformingCounterAttack) {
+      const attacker = board.cells[copyAttackFrom.row][copyAttackFrom.col]
+      
+      this.performCounterAttack(attacker, copyTargetCell, board);
+      copyTarget.isPerformingCounterAttack = true;
+    }
+
+  }
+
+  private performCounterAttack(target: Cell, attacker: Cell, board: Board): void {
+    const totalDamage = this.calculateDamage(target, attacker);
+    const targetCharacter = target.character!
+    targetCharacter.count -= Math.round(totalDamage / targetCharacter.health);
+  
+    if (targetCharacter.count <= 0) {
+      board.cells[target.row][target.col].removeCharacter();
+    }
+    attacker.character!.isCounterAttackPerformed = true; // Устанавливаем флаг, что контр-атака была выполнена.
+    attacker.character!.isCounterAttackPossible = false
+  }
+
+  
+
   public shoot(target: Cell, from: Cell, board: Board): void{
-    if(!(this.canShoot(target, from, board))) return 
+    if(!(this.canShoot(target, from, board))) return
 
     const copyCell = board.cells[target.row][target.col]
-    const copyTarget = copyCell.character
-    const isAttackMoreThenDefence: boolean = copyTarget!.defence > from.character!.shooting! ? false : true
-    const oneUnitDamage = this.minDamage===this.maxDamage ? this.minDamage : parseFloat((Math.random() * (this.maxDamage - this.minDamage) + this.minDamage).toFixed(1))
+    const copyTarget = copyCell.character!
 
-    let totalDamage
-    if(isAttackMoreThenDefence){
-      totalDamage = Math.round(oneUnitDamage * this.count * ((this.shooting! - copyTarget!.defence) * 0.05 + 1));
-    }else{
-      totalDamage = Math.round(oneUnitDamage * this.count / ((copyTarget!.defence - this.shooting!) * 0.05 + 1));
-    }
-    copyTarget!.count = (copyTarget!.count - Math.round(totalDamage/copyTarget!.health))
+    const totalDamage = this.calculateDamage(target, from)
 
-    if(copyTarget!.count<=0){
+    copyTarget.count = (copyTarget.count - Math.round(totalDamage/copyTarget.health))
+
+    if(copyTarget.count<=0){
       copyCell.removeCharacter()
     }
     

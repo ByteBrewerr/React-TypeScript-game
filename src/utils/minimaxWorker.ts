@@ -3,7 +3,6 @@ import Board from '../models/Board';
 
 onmessage = (e: MessageEvent) => {
   const board: Board = e.data.board;
-  console.log(e.data)
   const newBoard = new Board(12,10)
   newBoard.copyBoard(board)
 

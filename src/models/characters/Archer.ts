@@ -8,19 +8,22 @@ import Action from '../../interfaces/Action'
 
 export default class Archer extends Character {
   
-  constructor(team: Teams, count: number) {
-    super(team, count)
+  constructor(team: Teams, count: number, isCounterAttackPossible: boolean) {
+    super(team, count, isCounterAttackPossible)
     this.logo = logo
     this.name = Names.Archer
 
-    this.assault = 4
-    this.defence = 4
-    this.minDamage = 2
-    this.maxDamage = 8
-    this.initiative = 8
-    this.health = 11
-    this.speed = 4
-    this.shooting = 12 
+    this.assault = 6
+    this.defence = 3
+    this.minDamage = 4
+    this.maxDamage = 6
+    this.initiative = 6
+    this.health = 10
+    this.speed = 6
+    this.shooting = true
+    this.isPerformingCounterAttack = false
+    this.isCounterAttackPossible = isCounterAttackPossible
+    this.isCounterAttackPerformed = false;
   }
   public possibleMoves(board: Board, from: Cell): Action[] {
     const possibleMoves = super.possibleMoves(board, from)

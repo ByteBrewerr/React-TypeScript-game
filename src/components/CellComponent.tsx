@@ -50,7 +50,7 @@ const CellComponent: FC<Props> = ({
            <img
           src={cell.character.logo}
           alt='character'
-          className='w-[130px] h-[100px]'
+          className='w-[100px] h-[100px]'
         />
         </div>
         

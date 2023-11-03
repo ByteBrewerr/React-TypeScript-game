@@ -8,19 +8,23 @@ import Action from '../../interfaces/Action'
 
 export default class Champion extends Character {
 
-  constructor(team: Teams, count: number) {
-    super(team, count)
+  constructor(team: Teams, count: number, isCounterAttackPossible: boolean) {
+    super(team, count, isCounterAttackPossible)
     this.logo = logo
     this.name = Names.Knight
 
-    this.assault = 16
-    this.defence = 16
-    this.minDamage = 20
-    this.maxDamage = 25
-    this.initiative = 12
+    this.assault = 1
+    this.defence = 1
+    this.minDamage = 1
+    this.maxDamage = 5
+    this.initiative = 9
     this.health = 100
-    this.speed = 8
-    this.shooting = null
+    this.speed = 9
+    this.shooting = false
+    this.isPerformingCounterAttack = false
+    this.isCounterAttackPossible = isCounterAttackPossible
+    this.isCounterAttackPerformed = false;
+
     
   }
  

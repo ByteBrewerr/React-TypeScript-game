@@ -7,7 +7,7 @@ import TurnQueue from './components/TurnQueue';
 import Character from './models/characters/Character';
 import turnQueueUpdater from './utils/turnQueueUtils/turnQueueUpdater';
 import makeBoard from './utils/makeBoard';
-import updateTurnQueueCount from './utils/turnQueueUtils/turnQueueCountUpdater';
+import turnQueueCountUpdater from './utils/turnQueueUtils/turnQueueCountUpdater';
 
 
 function App() {
@@ -46,9 +46,9 @@ function App() {
   
   function handleEndTurn() {
     setQueue((prevQueue) => {
-      const updatedQueue = updateTurnQueueCount(prevQueue, board)
-  
-      return turnQueueUpdater(updatedQueue);
+      const updatedQueue = turnQueueUpdater(prevQueue)
+      const updaetdQueueCount = turnQueueCountUpdater(updatedQueue, board)
+      return updaetdQueueCount
     });
   
     const nextCharacter = queue[1];

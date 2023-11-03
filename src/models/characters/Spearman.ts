@@ -6,8 +6,8 @@ import Names from '../../enums/Name.enum'
 
 export default class Spearman extends Character {
 
-  constructor(team: Teams, count: number) {
-    super(team, count)
+  constructor(team: Teams, count: number, isCounterAttackPossible: boolean) {
+    super(team, count, isCounterAttackPossible)
     this.logo = logo
     this.name = Names.Spearman
 
@@ -15,11 +15,13 @@ export default class Spearman extends Character {
     this.defence = 5
     this.minDamage = 2
     this.maxDamage = 3
-    this.initiative = 80
+    this.initiative = 5
     this.health = 10
     this.speed = 5
-    this.shooting = null
-    
+    this.shooting = false
+    this.isPerformingCounterAttack = false
+    this.isCounterAttackPossible = isCounterAttackPossible
+    this.isCounterAttackPerformed = false;
   }
  
 }

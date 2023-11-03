@@ -38,6 +38,8 @@ function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha
         }
         const updatedQueueCount = updateTurnQueueCount(queue, boardCopy)
         const updatedQueue = updateTurnQueue(updatedQueueCount);
+
+        console.log(updatedQueue)
         const isMaximizingPlayerNext = updatedQueue[0].team === Teams.Player ? true : false
         let result = minimax(boardCopy, depth - 1, isMaximizingPlayerNext, alpha, beta, updatedQueue ); 
         let score = result.bestScore;
@@ -65,7 +67,6 @@ function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha
     );
     if (queueCharacterCell) {
       const possibleMoves: Action[] = queueCharacterCell.character!.possibleMoves(board, queueCharacterCell);
-      console.log(possibleMoves)
       for (const move of possibleMoves) {
         const boardCopy = new Board(12,10);
         boardCopy.copyBoard(board);
