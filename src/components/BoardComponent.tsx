@@ -32,7 +32,8 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
     }
     return null;
   }, [board, selectedCell]);
-  
+
+
   const enemyPossibleMoves = useMemo(() => {
     if (hoveredCell && hoveredCell.character?.team===Teams.Computer) {
       return hoveredCell.character?.possibleMoves(board, hoveredCell);
@@ -42,38 +43,51 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
 
 
 
-
   useEffect(() => {
     if (currentTurn === Teams.Computer) {
       getBestMove()
+    }else{
+      const queueCharacter = queue[0]
+
+      // if(queueCharacter.team === Teams.Computer) throw Error('something went wrong')
+
+      const queueCharacterCell = board.getAllPositions().find(
+        (position) =>
+          queueCharacter.team === position.character?.team &&
+          queueCharacter.name === position.character?.name
+      );
+      setSelectedCell(queueCharacterCell!)
     }
   }, [board]);
   
-const getBestMove = () => {
-  minimaxWorker.postMessage({board, depth: 3, isMaximizingPlayer: false, alpha: -Infinity, beta: Infinity, queue});
-  minimaxWorker.onmessage = (e) => {
+  const getBestMove = () => {
+    minimaxWorker.postMessage({ board, depth: 3, isMaximizingPlayer: false, alpha: -Infinity, beta: Infinity, queue });
+    minimaxWorker.onmessage = (e) => {
+      try {
+        const { bestMove, bestScore } = e.data;
+        console.log(bestMove);
+        console.log(bestScore);
+        const actionName = bestMove.actionName;
+        const character = board.cells[bestMove.from.row][bestMove.from.col].character!;
 
-    const { bestMove } = e.data;
-    console.log(bestMove)
-    const actionName = bestMove.actionName
-    const character = board.cells[bestMove.from.row][bestMove.from.col].character!
-    if(actionName === 'move'){
-      console.log(character)
-      character.move(bestMove.to, bestMove.from, board)
-    }
-    if(actionName === 'shoot'){
-      character.shoot(bestMove.to, bestMove.from, board)
-    }
-    if(actionName === 'attack'){
-      const character = board.cells[bestMove.attacker.row][bestMove.attacker.col].character!
-      character.attack(bestMove.to, bestMove.from, bestMove.attacker, board)
-    }
+        if (actionName === 'move') {
+          console.log(character);
+          character.move(bestMove.to, bestMove.from, board);
+        }
+        if (actionName === 'shoot') {
+          character.shoot(bestMove.to, bestMove.from, board);
+        }
+        if (actionName === 'attack') {
+          const attacker = board.cells[bestMove.attacker.row][bestMove.attacker.col].character!;
+          attacker.attack(bestMove.to, bestMove.from, bestMove.attacker, board);
+        }
 
-    updateBoard()
-
-  }
-
-};
+        updateBoard();
+      } catch (error) {
+        throw new Error('something went wrong, restart the game');
+      }
+    };
+  };
 
   const updateBoard = () => {
     setSelectedCell(null)
@@ -88,11 +102,6 @@ const getBestMove = () => {
   
   const handleCellClick = (cell: Cell) => {
   if (currentTurn === Teams.Player) {
-    if (!selectedCell && cell.character?.team === Teams.Player) {
-      setSelectedCell(cell);
-      setLastHoveredCell(cell)
-      return;
-    }
 
     if (selectedCell) {
       if (cell.character?.team === Teams.Computer && selectedCell.character?.canShoot(cell, selectedCell, board)) {
@@ -103,7 +112,6 @@ const getBestMove = () => {
         selectedCell.character.attack(cell, lastHoveredCell, selectedCell, board);
       }
       else {
-        setSelectedCell(null)
         return
       }
       setLastHoveredCell(null);
@@ -115,7 +123,7 @@ const getBestMove = () => {
   
   const handleCellHover = (cell: Cell) => {
     setHoveredCell(cell);
-  
+    console.log(cell)
     if (selectedCell) {
       console.log(possibleMoves)
       const canAttackFromHoveredCell = possibleMoves?.some(move => move.actionName === 'attack' && move.from.row === cell.row && move.from.col === cell.col);

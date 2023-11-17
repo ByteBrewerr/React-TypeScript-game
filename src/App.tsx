@@ -12,8 +12,8 @@ import turnQueueCountUpdater from './utils/turnQueueUtils/turnQueueCountUpdater'
 
 function App() {
   const [board, setBoard] = useState<Board>(()=>makeBoard());
-  const [currentTurn, setCurrentTurn] = useState<Teams>(Teams.Player);
   const [queue, setQueue] =  useState<Character[]>(()=>buildQueue())
+  const [currentTurn, setCurrentTurn] = useState<Teams>(queue[0].team);
   
 
   function buildQueue(): Character[] {
@@ -45,6 +45,9 @@ function App() {
   }
   
   function handleEndTurn() {
+    if(queue.length===1){
+      console.log('game ended')
+    }
     setQueue((prevQueue) => {
       const updatedQueue = turnQueueUpdater(prevQueue)
       const updaetdQueueCount = turnQueueCountUpdater(updatedQueue, board)

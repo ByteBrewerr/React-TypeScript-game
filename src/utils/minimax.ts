@@ -8,9 +8,12 @@ import updateTurnQueueCount from './turnQueueUtils/turnQueueCountUpdater';
 import updateTurnQueue from './turnQueueUtils/turnQueueUpdater';
 
 function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha: number, beta: number, queue: Character[]) {
-  if (depth === 0) { 
-    return {bestScore: evalBoardPosition(board)}
+
+  const winner = isWinner(board); 
+  if (depth === 0 || winner) { 
+    return { bestScore: evalBoardPosition(board) };
   }
+
   if (isMaximizingPlayer) {
     let bestMove;
     let bestScore = -Infinity;
@@ -33,14 +36,13 @@ function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha
         if (move.actionName === 'attack') {
           copyCharacter.attack(move.to, move.from, queueCharacterCell, boardCopy);
         }
-        if (move.actionName === 'move') {
+        if (move.actionName === 'move' && !(possibleMoves.some((move)=>(move.actionName == 'attack' || move.actionName === 'shoot')))) {
           copyCharacter.move(move.to, move.from, boardCopy);
         }
         const updatedQueueCount = updateTurnQueueCount(queue, boardCopy)
         const updatedQueue = updateTurnQueue(updatedQueueCount);
 
-        console.log(updatedQueue)
-        const isMaximizingPlayerNext = updatedQueue[0].team === Teams.Player ? true : false
+        const isMaximizingPlayerNext = updatedQueue[0].team === Teams.Player
         let result = minimax(boardCopy, depth - 1, isMaximizingPlayerNext, alpha, beta, updatedQueue ); 
         let score = result.bestScore;
         if (score > bestScore) {
@@ -67,6 +69,7 @@ function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha
     );
     if (queueCharacterCell) {
       const possibleMoves: Action[] = queueCharacterCell.character!.possibleMoves(board, queueCharacterCell);
+      console.log(possibleMoves)
       for (const move of possibleMoves) {
         const boardCopy = new Board(12,10);
         boardCopy.copyBoard(board);
@@ -77,13 +80,17 @@ function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha
         if (move.actionName === 'attack' ) {
           copyCharacter.attack(move.to, move.from, queueCharacterCell, boardCopy);
         }
-        if (move.actionName === 'move') {  
+        if (move.actionName === 'move' ) { 
+          if((possibleMoves.some((move)=>(move.actionName == 'attack' || move.actionName === 'shoot')))) continue
+          
           copyCharacter.move(move.to, move.from, boardCopy);
         }
         const updatedQueueCount = updateTurnQueueCount(queue, boardCopy)
         const updatedQueue = updateTurnQueue(updatedQueueCount);
-        const isMaximizingPlayerNext = updatedQueue[0].team === Teams.Player ? true : false
+        const isMaximizingPlayerNext = updatedQueue[0].team === Teams.Player
+        
         let result = minimax(boardCopy, depth - 1, isMaximizingPlayerNext, alpha, beta, updatedQueue); 
+        
         let score = result.bestScore;
 
         if (score < bestScore) {
@@ -117,8 +124,30 @@ function evalBoardPosition(board: Board) {
       }
     }
   }
+  
   return playerTotalCount - enemyTotalCount;
 }
+
+function isWinner(board: Board) {
+  let playerTotalCount: number = 0;
+  let enemyTotalCount: number = 0;
+  for (let row = 0; row < board.sizeY; row++) {
+    for (let col = 0; col < board.sizeX; col++) {
+      const character = board.cells[row][col].character;
+      if (character && character.team === Teams.Computer) {
+        enemyTotalCount = enemyTotalCount + character.count;
+      }
+      if (character && character.team === Teams.Player) {
+        playerTotalCount = playerTotalCount + character.count;
+      }
+    }
+  }
+  if(playerTotalCount === 0) return Teams.Computer
+  if(enemyTotalCount === 0) return Teams.Player
+
+  return undefined
+}
+
 
 
 export default minimax;
