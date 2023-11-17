@@ -58,7 +58,7 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
       );
       setSelectedCell(queueCharacterCell!)
     }
-  }, [board]);
+  }, [board, currentTurn, queue ]);
   
   const getBestMove = () => {
     minimaxWorker.postMessage({ board, depth: 3, isMaximizingPlayer: false, alpha: -Infinity, beta: Infinity, queue });
