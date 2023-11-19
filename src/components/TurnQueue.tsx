@@ -23,8 +23,13 @@ const TurnQueue: FC<TurnQueueProps> = ({queue}) => {
             }
             
             return (
+<<<<<<< HEAD
                 <div key={index} className={`w-[100px] h-[100px] border-2 ${borderColor} ${bgColor} m-[1px] mt-[20px] relative flex justify-center items-center `}>
                     <img src={character.logo} alt='character' className='w-[110px] h-[110px]' />
+=======
+                <div key={index} className={`w-[100px] h-[100px] border-2 ${borderColor} ${bgColor} m-[1px] mt-[20px] relative flex justify-center items-end`}>
+                    <img src={character.logo} alt='character'/>
+>>>>>>> reseted
                     <div className='absolute right-0 bottom-0 text-white font-bold mr-1'>
                         {character.count}
                     </div>                 

@@ -5,6 +5,9 @@ export default function makeBoard() {
     newBoard.init();
     newBoard.addCharacters();
     newBoard.addObstacles();
+<<<<<<< HEAD
     newBoard.buildQueue()
+=======
+>>>>>>> reseted
     return newBoard
   }

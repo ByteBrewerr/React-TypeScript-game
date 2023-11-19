@@ -1,5 +1,6 @@
 import Cell from './Cell'
 import Teams from '../enums/Teams.enum'
+<<<<<<< HEAD
 import Archer from './characters/Archer'
 import Rock from './Rock'
 import Character from './characters/Character'
@@ -10,6 +11,31 @@ import Spearman from './characters/Spearman'
 class Board {
   sizeX: number
   sizeY: number
+=======
+import Archer from './characters/level_2/Archer'
+import Rock from './Rock'
+import Character from './characters/Character'
+import Champion from './characters/level_6/Champion'
+import Names from '../enums/Name.enum'
+import Spearman from './characters/level_1/Spearman'
+import characterClasses from "./characters/CharacterClasses";
+import Fairy from './characters/level_1/Fairy'
+import Zealot from './characters/level_5/Zealot'
+import Archangel from './characters/level_7/Archangel'
+import Griffin from './characters/level_3/Griffin'
+import Crusader from './characters/level_4/Crusader'
+import Skeleton from './characters/level_1/Skeleton'
+import Zombie from './characters/level_2/Zombie'
+import Lich from './characters/level_5/Lich'
+import Wrath from './characters/level_3/Wrath'
+import BoneDragon from './characters/level_7/BoneDragon'
+import BlackKnight from './characters/level_6/BlackKnight'
+import Vampire from './characters/level_4/Vampire'
+
+class Board {
+  readonly sizeX: number
+  readonly sizeY: number
+>>>>>>> reseted
   cells: Cell[][] = []
   queue: Character[] = []
 
@@ -17,6 +43,7 @@ class Board {
     this.sizeX = sizeX
     this.sizeY = sizeY
   }
+
 
   public init(): void {
     for (let row = 0; row < this.sizeY; row++) {
@@ -29,6 +56,7 @@ class Board {
     }
   }
 
+<<<<<<< HEAD
   public buildQueue(){
     const allPieces = this.getAllPositions()
     const allCharacters = allPieces.map((piece)=>piece.character!)
@@ -49,6 +77,26 @@ class Board {
     this.addArcher(6,11, Teams.Player, 50)
     this.addSpearman(6,10, Teams.Computer, 900)
     
+=======
+ public getThisBoardCell(cell: Cell): Cell{
+    return this.cells[cell.row][cell.col]
+ } 
+  public addCharacters(){
+    this.addCharacter(1,0, new Champion(Teams.Player, 47))
+    this.addCharacter(2,0, new Archer(Teams.Player, 543))
+    this.addCharacter(5,0, new Spearman(Teams.Player, 869))
+    this.addCharacter(7,0, new Zealot(Teams.Player, 133))
+    this.addCharacter(8,0, new Archangel(Teams.Player, 11))
+    this.addCharacter(9,0, new Griffin(Teams.Player, 204))
+    this.addCharacter(3,0, new Crusader(Teams.Player, 170))
+    this.addCharacter(1,11, new Skeleton(Teams.Computer, 1176))
+    this.addCharacter(2,11, new Zombie(Teams.Computer, 781))
+    this.addCharacter(3,11, new Lich(Teams.Computer, 95))
+    this.addCharacter(5,11, new Wrath(Teams.Computer, 317))
+    this.addCharacter(6,11, new BoneDragon(Teams.Computer, 21))
+    this.addCharacter(7,11, new BlackKnight(Teams.Computer, 41))
+    this.addCharacter(9,11, new Vampire(Teams.Computer, 127))
+>>>>>>> reseted
   }
   public addObstacles(){
     this.addRock(5,5)
@@ -60,15 +108,40 @@ class Board {
 
   }
 
+<<<<<<< HEAD
 
 
   public copyBoard(oldBoard: Board){
     this.init()
     this.addObstacles()
+=======
+  private addCharacter(row: number, col: number, character: Character) {
+    const cell = this.cells[row][col];
+    cell.setCharacter(character);
+  }
+
+  static copyCharacter(oldCharacter: Character): Character {
+    const CharacterClass = characterClasses[oldCharacter.name];
+    if (CharacterClass) {
+      const newCharacter = new CharacterClass(oldCharacter.team, oldCharacter.count);
+      newCharacter.isCounterAttackPossible = oldCharacter.isCounterAttackPossible;
+      newCharacter.health = oldCharacter.health;
+      return newCharacter;
+    } else {
+      throw new Error("Invalid character name");
+    }
+  }
+
+  public copyBoard(oldBoard: Board) {
+    this.init();
+    this.addObstacles();
+
+>>>>>>> reseted
     for (let row = 0; row < this.sizeY; row++) {
       for (let col = 0; col < this.sizeX; col++) {
         const oldCell = oldBoard.cells[row][col];
         if (oldCell.character) {
+<<<<<<< HEAD
           const team = oldCell.character.team;
           const count = oldCell.character.count;
           if (oldCell.character.name == Names.Archer) {    
@@ -78,6 +151,10 @@ class Board {
           } else if (oldCell.character.name == Names.Spearman) {
             this.addSpearman(row, col, team, count);
           } 
+=======
+          const newCharacter = Board.copyCharacter(oldCell.character);
+          this.addCharacter(row, col, newCharacter);
+>>>>>>> reseted
         }
       }
     }
@@ -85,6 +162,10 @@ class Board {
     
     
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> reseted
   
  
 
@@ -95,6 +176,7 @@ class Board {
   }
   
 
+<<<<<<< HEAD
   private addArcher(row: number, col: number, team: Teams, count: number): void {
     const cell = this.cells[row][col]
     cell.setCharacter(new Archer(team, count))
@@ -109,6 +191,8 @@ class Board {
     cell.setCharacter(new Spearman(team, count))
   }
 
+=======
+>>>>>>> reseted
   public getPlayerPositions(){
     let positions: Cell[] = []
     for (let row=0; row<this.sizeY; row++) { 
