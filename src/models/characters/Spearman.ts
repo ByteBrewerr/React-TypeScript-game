@@ -18,7 +18,7 @@ export default class Spearman extends Character {
     this.initiative = 1
     this.health = 10
     this.speed = 5
-    this.shooting = null
+    this.shooting = false
     
   }
  

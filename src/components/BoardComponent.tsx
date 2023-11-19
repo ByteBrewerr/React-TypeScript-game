@@ -15,11 +15,6 @@ interface BoardProps {
   queue: Character[]
   handleEndTurn: () => void
 }
-<<<<<<< HEAD
-//todo delete copyBoard method
-=======
-
->>>>>>> reseted
 const minimaxWorker = new Worker(new URL("../utils/minimaxWorker.ts" , import.meta.url));
 
 const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurrentTurn, handleEndTurn, queue}) => {
@@ -28,17 +23,6 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
   const [hoveredCell, setHoveredCell] = useState<Cell | null>(null);
   const [lastHoveredCell, setLastHoveredCell] = useState<Cell | null>(null);
 
-<<<<<<< HEAD
-  const [cursor, setCursor] = useState(''); // запретить ререндер
-  console.log(board.queue)
-
-  const possibleMoves = useMemo(() => {
-    if (selectedCell) {
-      return selectedCell.character?.possibleMoves(board, selectedCell);
-    }
-    return null;
-  }, [board, selectedCell]);
-=======
   const [cursor, setCursor] = useState('');
 
   const possibleMoves = useMemo(() => {
@@ -57,42 +41,10 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
   }, [board, hoveredCell]);
 
 
->>>>>>> reseted
 
   useEffect(() => {
     if (currentTurn === Teams.Computer) {
       getBestMove()
-<<<<<<< HEAD
-    }
-  }, [board]);
-
-const getBestMove = () => {
-  minimaxWorker.postMessage({board, depth: 3, isMaximizingPlayer: false, alpha: -Infinity, beta: Infinity, queue});
-  minimaxWorker.onmessage = (e) => {
-
-    const { bestMove } = e.data;
-    console.log(bestMove)
-    const actionName = bestMove.actionName
-    const character = board.cells[bestMove.from.row][bestMove.from.col].character!
-    if(actionName === 'move'){
-      console.log(character)
-      character.move(bestMove.to, bestMove.from, board)
-    }
-    if(actionName === 'shoot'){
-      character.shoot(bestMove.to, bestMove.from, board)
-    }
-    if(actionName === 'attack'){
-      const character = board.cells[bestMove.attacker.row][bestMove.attacker.col].character!
-      character.attack(bestMove.to, bestMove.from, bestMove.attacker, board)
-    }
-
-    updateBoard()
-
-  }
-
-};
-
-=======
     }else{
       const queueCharacter = queue[0]
 
@@ -136,7 +88,6 @@ const getBestMove = () => {
       }
     };
   };
->>>>>>> reseted
 
   const updateBoard = () => {
     setSelectedCell(null)
@@ -151,56 +102,6 @@ const getBestMove = () => {
   
   const handleCellClick = (cell: Cell) => {
   if (currentTurn === Teams.Player) {
-<<<<<<< HEAD
-    if (!selectedCell && cell.character?.team === Teams.Player) {
-      setSelectedCell(cell);
-      setLastHoveredCell(cell)
-      return;
-    }
-
-    if (selectedCell) {
-      if (cell.character?.team === Teams.Computer && selectedCell.character?.canShoot(cell, selectedCell, board)) {
-        selectedCell.character?.shoot(cell, selectedCell,board);
-      } else if (selectedCell.character?.canMove(cell, selectedCell, board)) {
-        selectedCell.character.move(cell, selectedCell, board);
-      } else if (cell.character && lastHoveredCell && selectedCell.character?.canAttack(cell, lastHoveredCell, board)) {
-        selectedCell.character.attack(cell, lastHoveredCell, selectedCell, board);
-      }
-      else {
-        setSelectedCell(null)
-        return
-      }
-      setLastHoveredCell(null);
-      updateBoard();
-    }
-  }
-};
-  
-  
-  const handleCellHover = (cell: Cell) => {
-    setHoveredCell(cell);
-  
-    if (selectedCell) {
-
-      const canAttackFromHoveredCell = possibleMoves?.some(move => move.actionName === 'attack' && move.from.row === cell.row && move.from.col === cell.col);
-      const canAttackHoveredCell = possibleMoves?.some(move => move.actionName === 'attack' && move.to.row === cell.row && move.to.col === cell.col);
-      const canShootHoveredCell = possibleMoves?.some(move => move.actionName === 'shoot' && move.to.row === cell.row && move.to.col === cell.col);
-      const canMoveOnHoveredCell = possibleMoves?.some(move => move.actionName === 'move' && move.to.row === cell.row && move.to.col === cell.col);
-      console.log(canAttackFromHoveredCell, canMoveOnHoveredCell, canAttackHoveredCell)
-      const cursorClass: any = {
-        'cursor-move': canMoveOnHoveredCell,
-        'cursor-attack': canAttackHoveredCell,
-        'cursor-shoot': canShootHoveredCell,
-        'cursor-no': !(canAttackHoveredCell || canMoveOnHoveredCell || canShootHoveredCell),
-      };
-      setCursor(Object.keys(cursorClass).find(className => cursorClass[className]) || '');
-  
-      if(canAttackFromHoveredCell){
-        setLastHoveredCell(cell)
-      }else if(cell.character?.team !== Teams.Computer){
-        setLastHoveredCell(null)
-      }
-=======
 
     if (selectedCell) {
       if (cell.character?.team === Teams.Computer && selectedCell.character?.canShoot(cell, selectedCell, board)) {
@@ -241,7 +142,6 @@ const getBestMove = () => {
       }else if(cell.character?.team !== Teams.Computer){
         setLastHoveredCell(null)
       }
->>>>>>> reseted
     } else {
       setCursor(cell.character?.team === Teams.Player ? 'cursor-pointer' : 'cursor-default');
     }
@@ -271,15 +171,7 @@ const getBestMove = () => {
               <CellComponent
                 key={`${cell.row}${cell.col}`}
                 cell={cell}
-                isLastHoveredCell={lastHoveredCell?.row === cell.row && lastHoveredCell.col === cell.col}
                 onClick={handleCellClick}
-<<<<<<< HEAD
-                canMove={
-                  possibleMoves?.some(move => move.actionName === 'move' && move.to.row === cell.row && move.to.col === cell.col)
-                }
-                canBeAttacked={ 
-                  possibleMoves?.some(move => move.actionName === 'attack' && move.to.row === cell.row && move.to.col === cell.col)
-=======
                 onMouseEnter={handleCellHover}
                 canMove={canMove}
                 canEnemyMove={canEnemyMove}
@@ -287,7 +179,6 @@ const getBestMove = () => {
                 isLastHoveredCell={
                   lastHoveredCell?.row === cell.row &&
                   lastHoveredCell.col === cell.col
->>>>>>> reseted
                 }
                 isSelected={
                   selectedCell?.row === cell.row &&

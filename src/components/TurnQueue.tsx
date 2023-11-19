@@ -1,17 +1,19 @@
-import React, {FC} from 'react'
+import React, {FC, useState} from 'react'
 import Teams from '../enums/Teams.enum'
 import Character from '../models/characters/Character';
 import ArmyCountBar from './ArmyCountBar';
 import Cell from '../models/Cell';
+import Modal from './Modal';
 
 interface TurnQueueProps {
-    currentTurn: Teams;
-    setCurrentTurn: React.Dispatch<React.SetStateAction<Teams>>;
     queue: Character[] | []
 }
 
 const TurnQueue: FC<TurnQueueProps> = ({queue}) => {
-    
+    const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
+    const handleModalOpen = () =>{
+        setIsModalVisible(prev=>!prev)
+    }
   return (
     <div className='flex'>
         {queue.map((character, index)=>{
@@ -19,21 +21,33 @@ const TurnQueue: FC<TurnQueueProps> = ({queue}) => {
             const bgColor = `${character.team === Teams.Player ? 'bg-sky-900' : 'bg-slate-500'}`
 
             if(character.count <=0){
-                return
+                return null
             }
             
             return (
-<<<<<<< HEAD
-                <div key={index} className={`w-[100px] h-[100px] border-2 ${borderColor} ${bgColor} m-[1px] mt-[20px] relative flex justify-center items-center `}>
-                    <img src={character.logo} alt='character' className='w-[110px] h-[110px]' />
-=======
-                <div key={index} className={`w-[100px] h-[100px] border-2 ${borderColor} ${bgColor} m-[1px] mt-[20px] relative flex justify-center items-end`}>
+                <>
+                <div key={index}
+                onClick={handleModalOpen} 
+                className={`
+                w-[100px] h-[100px]
+                border-2 ${borderColor}
+                ${bgColor} m-[1px] 
+                mt-[20px] items-end
+                relative flex 
+                justify-center`}>
+
                     <img src={character.logo} alt='character'/>
->>>>>>> reseted
+
                     <div className='absolute right-0 bottom-0 text-white font-bold mr-1'>
                         {character.count}
-                    </div>                 
+                    </div>     
+                                
                 </div>
+                
+                {isModalVisible && (
+                    <Modal handleModalOpen={handleModalOpen}/>
+                )}
+                </>
             )
             
         })}

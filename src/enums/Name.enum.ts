@@ -1,10 +1,6 @@
 enum Names {
     Character,
     Archer,
-<<<<<<< HEAD
-    Knight,
-    Spearman,
-=======
     Champion,
     Spearman,
     Archangel,
@@ -25,6 +21,5 @@ enum Names {
     Zealot,
     Zombie,
     Fairy,
->>>>>>> reseted
 }
 export default Names

@@ -8,18 +8,12 @@ import updateTurnQueueCount from './turnQueueUtils/turnQueueCountUpdater';
 import updateTurnQueue from './turnQueueUtils/turnQueueUpdater';
 
 function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha: number, beta: number, queue: Character[]) {
-<<<<<<< HEAD
-  if (depth === 0) { 
-    return {bestScore: evalBoardPosition(board)}
-  }
-=======
 
   const winner = isWinner(board); 
   if (depth === 0 || winner) { 
     return { bestScore: evalBoardPosition(board) };
   }
 
->>>>>>> reseted
   if (isMaximizingPlayer) {
     let bestMove;
     let bestScore = -Infinity;
@@ -31,32 +25,17 @@ function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha
     );
 
     if(queueCharacter && queueCharacterCell){
-<<<<<<< HEAD
-      const possibleMoves: Action[] = queueCharacter.possibleMoves(board, queueCharacterCell);
-=======
       const possibleMoves: Action[] = queueCharacterCell.character!.possibleMoves(board, queueCharacterCell);
->>>>>>> reseted
       for (const move of possibleMoves) {
         const boardCopy = new Board(12,10);
         boardCopy.copyBoard(board);
         const copyCharacter = boardCopy.cells[queueCharacterCell.row][queueCharacterCell.col].character!
-<<<<<<< HEAD
-        if (move.actionName === 'move') {
-          copyCharacter.move(move.to, move.from, boardCopy);
-        }
-=======
->>>>>>> reseted
         if (move.actionName === 'shoot') {
           copyCharacter.shoot(move.to, move.from, boardCopy);
         }
         if (move.actionName === 'attack') {
           copyCharacter.attack(move.to, move.from, queueCharacterCell, boardCopy);
         }
-<<<<<<< HEAD
-        const updatedQueueCount = updateTurnQueueCount(queue, board)
-        const updatedQueue = updateTurnQueue(updatedQueueCount);
-        const isMaximizingPlayerNext = queueCharacterCell.character!.team === Teams.Player ? true : false
-=======
         if (move.actionName === 'move') {
           if((possibleMoves.some((move)=>(move.actionName == 'attack' || move.actionName === 'shoot')))) continue
           copyCharacter.move(move.to, move.from, boardCopy);
@@ -65,7 +44,6 @@ function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha
         const updatedQueue = updateTurnQueue(updatedQueueCount);
 
         const isMaximizingPlayerNext = updatedQueue[0].team === Teams.Player
->>>>>>> reseted
         let result = minimax(boardCopy, depth - 1, isMaximizingPlayerNext, alpha, beta, updatedQueue ); 
         let score = result.bestScore;
         if (score > bestScore) {
@@ -90,38 +68,18 @@ function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha
         queueCharacter.team === position.character?.team &&
         queueCharacter.name === position.character?.name
     );
-<<<<<<< HEAD
-    if (queueCharacter && queueCharacterCell) {
-      console.log(queueCharacter)
-      const possibleMoves: Action[] = queueCharacter.possibleMoves(board, queueCharacterCell);
-      for (const move of possibleMoves) {
-        
-        const boardCopy = new Board(12,10);
-        boardCopy.copyBoard(board);
-        const copyCharacter = board.cells[queueCharacterCell.row][queueCharacterCell.col].character!
-        if (move.actionName === 'move') {  
-          copyCharacter.move(move.to, move.from, boardCopy);
-        }
-=======
     if (queueCharacterCell) {
       const possibleMoves: Action[] = queueCharacterCell.character!.possibleMoves(board, queueCharacterCell);
       for (const move of possibleMoves) {
         const boardCopy = new Board(12,10);
         boardCopy.copyBoard(board);
         const copyCharacter = boardCopy.cells[queueCharacterCell.row][queueCharacterCell.col].character!
->>>>>>> reseted
         if (move.actionName === 'shoot') {
           copyCharacter.shoot(move.to, move.from, boardCopy);
         }
         if (move.actionName === 'attack' ) {
           copyCharacter.attack(move.to, move.from, queueCharacterCell, boardCopy);
         }
-<<<<<<< HEAD
-        const updatedQueueCount = updateTurnQueueCount(queue, board)
-        const updatedQueue = updateTurnQueue(updatedQueueCount);
-        const isMaximizingPlayerNext = queueCharacterCell.character!.team === Teams.Player ? true : false
-        let result = minimax(boardCopy, depth - 1, isMaximizingPlayerNext, alpha, beta, updatedQueue); 
-=======
         if (move.actionName === 'move' ) { 
           if((possibleMoves.some((move)=>(move.actionName == 'attack' || move.actionName === 'shoot')))) continue
           
@@ -133,7 +91,6 @@ function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha
         
         let result = minimax(boardCopy, depth - 1, isMaximizingPlayerNext, alpha, beta, updatedQueue); 
         
->>>>>>> reseted
         let score = result.bestScore;
 
         if (score < bestScore) {
@@ -154,8 +111,6 @@ function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha
 }
 
 function evalBoardPosition(board: Board) {
-<<<<<<< HEAD
-=======
   let playerTotalStrength: number = 0;
   let enemyTotalStrength: number = 0;
   for (let row = 0; row < board.sizeY; row++) {
@@ -174,27 +129,12 @@ function evalBoardPosition(board: Board) {
 }
 
 function isWinner(board: Board) {
->>>>>>> reseted
   let playerTotalCount: number = 0;
   let enemyTotalCount: number = 0;
   for (let row = 0; row < board.sizeY; row++) {
     for (let col = 0; col < board.sizeX; col++) {
       const character = board.cells[row][col].character;
       if (character && character.team === Teams.Computer) {
-<<<<<<< HEAD
-        enemyTotalCount = enemyTotalCount + character.count;
-      }
-      if (character && character.team === Teams.Player) {
-        playerTotalCount = playerTotalCount + character.count;
-      }
-    }
-  }
- 
-  return playerTotalCount - enemyTotalCount;
-}
-
-
-=======
         enemyTotalCount = enemyTotalCount + (character.count*character.strength);
       }
       if (character && character.team === Teams.Player) {
@@ -210,5 +150,4 @@ function isWinner(board: Board) {
 
 
 
->>>>>>> reseted
 export default minimax;
