@@ -12,7 +12,7 @@ export default class Zealot extends Character {
     super(team, count)
     this.logo = logo
     this.name = Names.Zealot
-
+    this.strength = 750
     this.assault = 12
     this.defence = 10
     this.minDamage = 10
@@ -20,7 +20,7 @@ export default class Zealot extends Character {
     this.initiative = 7 
     this.health = 30
     this.maxHealth = 30
-    this.speed = 6
+    this.speed = 5
     this.shooting = true
     this.isPerformingCounterAttack = false
     this.isCounterAttackPossible = true

@@ -8,6 +8,8 @@ import Character from './models/characters/Character';
 import turnQueueUpdater from './utils/turnQueueUtils/turnQueueUpdater';
 import makeBoard from './utils/makeBoard';
 import turnQueueCountUpdater from './utils/turnQueueUtils/turnQueueCountUpdater';
+import GameManipulator from './components/GameManipulator';
+import { GridProvider } from './contexts/GridProvider';
 
 
 function App() {
@@ -17,36 +19,27 @@ function App() {
   
 
   function buildQueue(): Character[] {
-    if(!board) return []
-    
-    const computerPieces = board.getComputerPositions()
-    const playerPieces = board.getPlayerPositions()
+  if (!board) return [];
 
-    const allPieces = []
-    for(const piece of playerPieces){
-      allPieces.push(piece.character!)
+  const computerPieces = board.getComputerPositions();
+  const playerPieces = board.getPlayerPositions();
+
+  const allPieces = [...playerPieces, ...computerPieces].map((piece) => piece.character!);
+
+  allPieces.sort((a, b) => {
+    if (a.initiative === b.initiative) {
+      return Math.random() - 0.5;
+    } else {
+      return b.initiative - a.initiative;
     }
-    for(const piece of computerPieces){
-      allPieces.push(piece.character!)
-    }
+  });
 
-    allPieces.sort((a, b) => {
-      if (a.initiative === b.initiative) {
-        if (a.team === Teams.Player) return -1;
-        if (b.team === Teams.Player) return 1;
-        return 0;
-      } else {
-        return b.initiative - a.initiative;
-      }
-    });
-
-    return allPieces
-
-  }
+  return allPieces;
+}
   
   function handleEndTurn() {
     if(queue.length===1){
-      console.log('game ended')
+      alert('the game ended')
     }
     setQueue((prevQueue) => {
       const updatedQueue = turnQueueUpdater(prevQueue)
@@ -65,7 +58,12 @@ function App() {
  
   return (
     <div className="App cursor-default w-[100%] h-[100vh] flex flex-col justify-center items-center bg-sky-600">
-      <BoardComponent board={board} setBoard={setBoard} currentTurn={currentTurn} setCurrentTurn={setCurrentTurn} handleEndTurn={handleEndTurn} queue={queue}/>
+      <div className='flex'>
+        <GridProvider>
+          <BoardComponent board={board} setBoard={setBoard} currentTurn={currentTurn} setCurrentTurn={setCurrentTurn} handleEndTurn={handleEndTurn} queue={queue}/>
+          <GameManipulator/>
+        </GridProvider>
+      </div>  
       <TurnQueue currentTurn={currentTurn} setCurrentTurn={setCurrentTurn} queue={queue}/>
     </div>
   );

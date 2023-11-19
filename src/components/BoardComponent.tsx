@@ -15,7 +15,7 @@ interface BoardProps {
   queue: Character[]
   handleEndTurn: () => void
 }
-//todo delete copyBoard method
+
 const minimaxWorker = new Worker(new URL("../utils/minimaxWorker.ts" , import.meta.url));
 
 const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurrentTurn, handleEndTurn, queue}) => {
@@ -24,7 +24,7 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
   const [hoveredCell, setHoveredCell] = useState<Cell | null>(null);
   const [lastHoveredCell, setLastHoveredCell] = useState<Cell | null>(null);
 
-  const [cursor, setCursor] = useState(''); // запретить ререндер
+  const [cursor, setCursor] = useState('');
 
   const possibleMoves = useMemo(() => {
     if (selectedCell) {
@@ -61,29 +61,30 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
   }, [board, currentTurn, queue ]);
   
   const getBestMove = () => {
-    minimaxWorker.postMessage({ board, depth: 3, isMaximizingPlayer: false, alpha: -Infinity, beta: Infinity, queue });
+    minimaxWorker.postMessage({ board, depth: 4, isMaximizingPlayer: false, alpha: -Infinity, beta: Infinity, queue });
     minimaxWorker.onmessage = (e) => {
       try {
         const { bestMove, bestScore } = e.data;
         console.log(bestMove);
         console.log(bestScore);
         const actionName = bestMove.actionName;
-        const character = board.cells[bestMove.from.row][bestMove.from.col].character!;
+        const character = board.getThisBoardCell(bestMove.from).character!
+        setTimeout(() => {
+          if (actionName === 'move') {
+            character.move(bestMove.to, bestMove.from, board);
+          }
+          if (actionName === 'shoot') {
+            character.shoot(bestMove.to, bestMove.from, board);
+          }
+          if (actionName === 'attack') {
+            const attacker = board.cells[bestMove.attacker.row][bestMove.attacker.col].character!;
+            attacker.attack(bestMove.to, bestMove.from, bestMove.attacker, board);
+          }
 
-        if (actionName === 'move') {
-          console.log(character);
-          character.move(bestMove.to, bestMove.from, board);
-        }
-        if (actionName === 'shoot') {
-          character.shoot(bestMove.to, bestMove.from, board);
-        }
-        if (actionName === 'attack') {
-          const attacker = board.cells[bestMove.attacker.row][bestMove.attacker.col].character!;
-          attacker.attack(bestMove.to, bestMove.from, bestMove.attacker, board);
-        }
-
-        updateBoard();
+          updateBoard();
+        }, 2000);
       } catch (error) {
+        console.log(error)
         throw new Error('something went wrong, restart the game');
       }
     };
@@ -123,9 +124,7 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
   
   const handleCellHover = (cell: Cell) => {
     setHoveredCell(cell);
-    console.log(cell)
     if (selectedCell) {
-      console.log(possibleMoves)
       const canAttackFromHoveredCell = possibleMoves?.some(move => move.actionName === 'attack' && move.from.row === cell.row && move.from.col === cell.col);
       const canAttackHoveredCell = possibleMoves?.some(move => move.actionName === 'attack' && move.to.row === cell.row && move.to.col === cell.col);
       const canShootHoveredCell = possibleMoves?.some(move => move.actionName === 'shoot' && move.to.row === cell.row && move.to.col === cell.col);
@@ -154,27 +153,39 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
       <div className={`h-[810px] w-[972px] flex flex-wrap bg-black ${cursor}`}>
         {board.cells.map((row) => {
           return row.map((cell) => {
+            const canMove = possibleMoves?.some(
+              (move) => move.actionName === 'move' && move.to.row === cell.row && move.to.col === cell.col
+            );
+            
+            const canBeAttacked = possibleMoves?.some(
+              (move) => move.actionName === 'attack' && move.to.row === cell.row && move.to.col === cell.col
+            );
+            
+            const canEnemyMove = enemyPossibleMoves?.some(
+              (move) =>
+                (move.actionName === 'move' || move.actionName === 'attack') &&
+                move.to.row === cell.row &&
+                move.to.col === cell.col
+            );
+            
             return (
               <CellComponent
                 key={`${cell.row}${cell.col}`}
                 cell={cell}
-                isLastHoveredCell={lastHoveredCell?.row === cell.row && lastHoveredCell.col === cell.col}
                 onClick={handleCellClick}
-                canMove={
-                  possibleMoves?.some(move => move.actionName === 'move' && move.to.row === cell.row && move.to.col === cell.col)
-                }
-                canEnemyMove={
-                  enemyPossibleMoves?.some(move => move.actionName === 'move' && move.to.row === cell.row && move.to.col === cell.col) ||
-                  enemyPossibleMoves?.some(move => move.actionName === 'attack' && move.to.row === cell.row && move.to.col === cell.col)
-                }
-                canBeAttacked={ 
-                  possibleMoves?.some(move => move.actionName === 'attack' && move.to.row === cell.row && move.to.col === cell.col)
+                onMouseEnter={handleCellHover}
+                canMove={canMove}
+                canEnemyMove={canEnemyMove}
+                canBeAttacked={canBeAttacked}
+                isLastHoveredCell={
+                  lastHoveredCell?.row === cell.row &&
+                  lastHoveredCell.col === cell.col
                 }
                 isSelected={
                   selectedCell?.row === cell.row &&
                   selectedCell.col === cell.col
                 }
-                onMouseEnter={handleCellHover}
+                
               />
             );
           });

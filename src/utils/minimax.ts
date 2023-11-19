@@ -36,7 +36,8 @@ function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha
         if (move.actionName === 'attack') {
           copyCharacter.attack(move.to, move.from, queueCharacterCell, boardCopy);
         }
-        if (move.actionName === 'move' && !(possibleMoves.some((move)=>(move.actionName == 'attack' || move.actionName === 'shoot')))) {
+        if (move.actionName === 'move') {
+          if((possibleMoves.some((move)=>(move.actionName == 'attack' || move.actionName === 'shoot')))) continue
           copyCharacter.move(move.to, move.from, boardCopy);
         }
         const updatedQueueCount = updateTurnQueueCount(queue, boardCopy)
@@ -69,7 +70,6 @@ function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha
     );
     if (queueCharacterCell) {
       const possibleMoves: Action[] = queueCharacterCell.character!.possibleMoves(board, queueCharacterCell);
-      console.log(possibleMoves)
       for (const move of possibleMoves) {
         const boardCopy = new Board(12,10);
         boardCopy.copyBoard(board);
@@ -111,21 +111,21 @@ function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha
 }
 
 function evalBoardPosition(board: Board) {
-  let playerTotalCount: number = 0;
-  let enemyTotalCount: number = 0;
+  let playerTotalStrength: number = 0;
+  let enemyTotalStrength: number = 0;
   for (let row = 0; row < board.sizeY; row++) {
     for (let col = 0; col < board.sizeX; col++) {
       const character = board.cells[row][col].character;
       if (character && character.team === Teams.Computer) {
-        enemyTotalCount = enemyTotalCount + character.count;
+        enemyTotalStrength += (character.strength * character.count);
       }
       if (character && character.team === Teams.Player) {
-        playerTotalCount = playerTotalCount + character.count;
+        playerTotalStrength += (character.strength * character.count);
       }
     }
   }
   
-  return playerTotalCount - enemyTotalCount;
+  return playerTotalStrength - enemyTotalStrength;
 }
 
 function isWinner(board: Board) {
@@ -135,10 +135,10 @@ function isWinner(board: Board) {
     for (let col = 0; col < board.sizeX; col++) {
       const character = board.cells[row][col].character;
       if (character && character.team === Teams.Computer) {
-        enemyTotalCount = enemyTotalCount + character.count;
+        enemyTotalCount = enemyTotalCount + (character.count*character.strength);
       }
       if (character && character.team === Teams.Player) {
-        playerTotalCount = playerTotalCount + character.count;
+        playerTotalCount = playerTotalCount + (character.count*character.strength);
       }
     }
   }

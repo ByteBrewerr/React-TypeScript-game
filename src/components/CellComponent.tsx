@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import Cell from '../models/Cell';
 import ArmyCountBar from './ArmyCountBar';
 import Teams from '../enums/Teams.enum';
+import { useGrid } from '../contexts/GridProvider';
 
 interface Props {
   cell: Cell;
@@ -24,15 +25,18 @@ const CellComponent: FC<Props> = ({
   isSelected,
   canBeAttacked
 }) => {
+  const { gridOn } = useGrid();
+
   const cellClasses = `
-    ${cell.row}${cell.col} w-[81px] h-[81px] relative flex items-start justify-start
+    ${cell.row}${cell.col} w-[81px] h-[81px] relative flex items-start justify-start 
     ${cell.character ? 'hover:opacity-80' : ''}
     ${isLastHoveredCell ? 'rounded-lg' : ''}
-    ${(canMove && !canEnemyMove && !isSelected)  ? 'opacity-90 hover:opacity-80' : ''}
+    ${(canMove && !canEnemyMove)  ? 'opacity-90 hover:opacity-80' : ''}
     ${isSelected ? 'opacity-70' : ''}
     ${canBeAttacked ? 'opacity-90' : ''}
-    ${canEnemyMove ? 'opacity-80' : ''}`;
-
+    ${canEnemyMove ? 'opacity-80' : ''}
+    ${gridOn ? 'border-[1px] border-gray-500' : ''}`;
+  // анимация opacity клетка к клетки, алгоритм дейкстры.
   return (
     <div
       onClick={() => onClick(cell)}

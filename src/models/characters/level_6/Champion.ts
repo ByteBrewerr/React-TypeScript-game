@@ -12,7 +12,7 @@ export default class Champion extends Character {
     super(team, count)
     this.logo = logo
     this.name = Names.Champion
-
+    this.strength = 2100
     this.assault = 16
     this.defence = 16
     this.minDamage = 20

@@ -9,7 +9,7 @@ export default class Wrath extends Character {
     super(team, count)
     this.logo = logo
     this.name = Names.Wrath
-
+    this.strength = 315
     this.assault = 7
     this.defence = 7
     this.minDamage = 3
@@ -17,7 +17,7 @@ export default class Wrath extends Character {
     this.initiative = 7 
     this.health = 18
     this.maxHealth = 18
-    this.speed = 6
+    this.speed = 5
     this.shooting = false
     this.isPerformingCounterAttack = false
     this.isCounterAttackPossible = true

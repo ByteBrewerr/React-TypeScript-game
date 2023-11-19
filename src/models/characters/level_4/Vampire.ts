@@ -9,7 +9,7 @@ export default class Vampire extends Character {
     super(team, count)
     this.logo = logo
     this.name = Names.Vampire
-
+    this.strength = 783
     this.assault = 10
     this.defence = 10
     this.minDamage = 5
@@ -17,7 +17,7 @@ export default class Vampire extends Character {
     this.initiative = 9 
     this.health = 40
     this.maxHealth = 40
-    this.speed = 8
+    this.speed = 6
     this.shooting = false
     this.isPerformingCounterAttack = false
     this.isCounterAttackPossible = true

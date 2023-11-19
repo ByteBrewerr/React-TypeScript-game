@@ -9,7 +9,7 @@ export default class Zombie extends Character {
     super(team, count)
     this.logo = logo
     this.name = Names.Zombie
-
+    this.strength = 128
     this.assault = 5
     this.defence = 5
     this.minDamage = 2

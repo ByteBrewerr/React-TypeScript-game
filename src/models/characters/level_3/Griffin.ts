@@ -9,7 +9,7 @@ export default class Griffin extends Character {
     super(team, count)
     this.logo = logo
     this.name = Names.Griffin
-
+    this.strength = 488
     this.assault = 9
     this.defence = 9
     this.minDamage = 3
@@ -17,7 +17,7 @@ export default class Griffin extends Character {
     this.initiative = 9 
     this.health = 25
     this.maxHealth = 25
-    this.speed = 8
+    this.speed = 6
     this.shooting = false
     this.isPerformingCounterAttack = false
     this.isCounterAttackPossible = true

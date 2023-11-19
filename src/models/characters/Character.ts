@@ -5,11 +5,13 @@ import Board from "../Board"
 import Cell from "../Cell"
 import Action from "../../interfaces/Action"
 import calculateDamage from "../../utils/calculateDamage"
+import calculateUnitsToLose from "../../utils/calculateUnitsToLose"
 
 export default class Character {
   team: Teams
   name: Names
   logo: typeof floor | null
+  strength: number
   count: number
   health: number
   maxHealth: number
@@ -27,7 +29,7 @@ export default class Character {
     this.team = team
     this.name = Names.Character
     this.logo = null
-
+    this.strength = 0
     this.count = count
     this.health = 0
     this.maxHealth = 0
@@ -194,15 +196,7 @@ export default class Character {
     const copyTarget = copyTargetCell.character!;
     const copyAttackFrom = board.getThisBoardCell(attackFrom);
   
-    const totalDamage = calculateDamage(copyTargetCell, copyAttackFrom);
-    const damagePerUnit = Math.min(totalDamage, copyTarget.count * copyTarget.maxHealth);
-  
-    const unitsToLose = totalDamage < this.maxHealth 
-    ? 
-    0 
-    : 
-    Math.floor(damagePerUnit / copyTarget.maxHealth);
-    const remainingDamage = damagePerUnit % copyTarget.maxHealth;
+    const {unitsToLose, remainingDamage} = calculateUnitsToLose(copyTargetCell, copyAttackFrom)
   
     copyTarget.count -= unitsToLose;
     copyTarget.health -= remainingDamage;
@@ -227,15 +221,7 @@ export default class Character {
   private performCounterAttack(target: Cell, attacker: Cell, board: Board): void {
     const totalDamage = calculateDamage(target, attacker);
     const targetCharacter = target.character!;
-    const damagePerUnit = Math.min(totalDamage, targetCharacter.count * targetCharacter.maxHealth);
-  
-    const unitsToLose = totalDamage < targetCharacter.maxHealth 
-    ? 
-    0 
-    : 
-    Math.floor(damagePerUnit / targetCharacter.maxHealth);
-
-    const remainingDamage = damagePerUnit % targetCharacter.maxHealth;
+    const {unitsToLose, remainingDamage} = calculateUnitsToLose(target, attacker)
   
     targetCharacter.count -= unitsToLose;
     targetCharacter.health -= remainingDamage;
@@ -265,37 +251,33 @@ export default class Character {
   
 
   public shoot(target: Cell, from: Cell, board: Board): void{
+    console.log(target.character?.count)
     if(!(this.canShoot(target, from, board))) return
-
-    const totalDamage = calculateDamage(target, from);
-    const targetCharacter = target.character!;
-    const damagePerUnit = Math.min(totalDamage, targetCharacter.count * targetCharacter.maxHealth);
   
-    const unitsToLose = totalDamage < targetCharacter.maxHealth 
-    ? 
-    0 
-    : 
-    Math.floor(damagePerUnit / targetCharacter.maxHealth);
-
-    const remainingDamage = damagePerUnit % targetCharacter.maxHealth;
+    const copyTargetCell = board.getThisBoardCell(target);
+    const copyTarget = copyTargetCell.character!;
+    const copyShootFrom = board.getThisBoardCell(from);
   
-    targetCharacter.count -= unitsToLose;
-    targetCharacter.health -= remainingDamage;
-    if (targetCharacter.count <= 0) {
-      target.removeCharacter();
+    const {unitsToLose, remainingDamage} = calculateUnitsToLose(copyTargetCell, copyShootFrom)
+  
+    copyTarget.count -= unitsToLose;
+    copyTarget.health -= remainingDamage;
+    if (copyTarget.count <= 0) {
+      copyTargetCell.removeCharacter();
     }
-    if (targetCharacter.health < 0) {
-      const overkill = Math.abs(targetCharacter.health);
+    if (copyTarget.health < 0) {
+      const overkill = Math.abs(copyTarget.health);
 
-      targetCharacter.count -= 1;
-      targetCharacter.health = targetCharacter.maxHealth - overkill;
+      copyTarget.count -= 1;
+      copyTarget.health = copyTarget.maxHealth - overkill;
       
-      if (targetCharacter.count <= 0) {
-        target.removeCharacter();
+      if (copyTarget.count <= 0) {
+        copyTargetCell.removeCharacter();
       }
 
     }
     
   }
+  
   
 }
