@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import Cell from '../models/Cell';
 import ArmyCountBar from './ArmyCountBar';
 import Teams from '../enums/Teams.enum';
@@ -15,7 +15,7 @@ interface Props {
   onMouseEnter: (cell: Cell) => void;
 }
 
-const CellComponent: FC<Props> = ({
+const CellComponent: FC<Props> = memo(({
   cell,
   isLastHoveredCell,
   onClick,
@@ -26,6 +26,7 @@ const CellComponent: FC<Props> = ({
   canBeAttacked
 }) => {
   const { gridOn } = useGrid();
+  
 
   const cellClasses = `
     ${cell.row}${cell.col} w-[81px] h-[81px] relative flex items-start justify-start 
@@ -37,6 +38,7 @@ const CellComponent: FC<Props> = ({
     ${canEnemyMove ? 'opacity-80' : ''}
     ${gridOn ? 'border-[1px] border-gray-500' : ''}`;
   // анимация opacity клетка к клетки, алгоритм дейкстры.
+  console.log('asd')
   return (
     <div
       onClick={() => onClick(cell)}
@@ -45,13 +47,11 @@ const CellComponent: FC<Props> = ({
       style={{ background: `url(${cell.bg}) no-repeat center / contain` }}
     >
       {cell.character?.logo && (
-        <div className='absolute'>
-           <img
+        <img
           src={cell.character.logo}
           alt='character'
           className={`absolute bottom-0 left-0 ${cell.character.team === Teams.Computer ? 'scale-x-[-1]' : ''}`}
         />
-        </div>
         
       )}
 
@@ -72,6 +72,6 @@ const CellComponent: FC<Props> = ({
       )}
     </div>
   );
-};
+});
 
 export default CellComponent;

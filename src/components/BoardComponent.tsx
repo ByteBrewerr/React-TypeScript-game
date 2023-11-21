@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, FC } from 'react';
+import React, { useEffect, useState, useMemo, FC, useCallback } from 'react';
 import Board from '../models/Board';
 import CellComponent from './CellComponent';
 import Character from '../models/characters/Character';
@@ -57,7 +57,7 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
       );
       setSelectedCell(queueCharacterCell!)
     }
-  }, [board, currentTurn, queue ]);
+  }, [board, currentTurn, queue, ]);
   
   const getBestMove = () => {
     minimaxWorker.postMessage({ board, depth: 4, isMaximizingPlayer: false, alpha: -Infinity, beta: Infinity, queue });
@@ -100,28 +100,26 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
     handleEndTurn() 
   };
   
-  const handleCellClick = (cell: Cell) => {
-  if (currentTurn === Teams.Player) {
-
-    if (selectedCell) {
-      if (cell.character?.team === Teams.Computer && selectedCell.character?.canShoot(cell, selectedCell, board)) {
-        selectedCell.character?.shoot(cell, selectedCell,board);
-      } else if (selectedCell.character?.canMove(cell, selectedCell, board)) {
-        selectedCell.character.move(cell, selectedCell, board);
-      } else if (cell.character && lastHoveredCell && selectedCell.character?.canAttack(cell, lastHoveredCell, selectedCell, board)) {
-        selectedCell.character.attack(cell, lastHoveredCell, selectedCell, board);
+  const handleCellClick = useMemo(() => (cell: Cell) => {
+    if (currentTurn === Teams.Player) {
+      if (selectedCell) {
+        if (cell.character?.team === Teams.Computer && selectedCell.character?.canShoot(cell, selectedCell, board)) {
+          selectedCell.character?.shoot(cell, selectedCell, board);
+        } else if (selectedCell.character?.canMove(cell, selectedCell, board)) {
+          selectedCell.character.move(cell, selectedCell, board);
+        } else if (cell.character && lastHoveredCell && selectedCell.character?.canAttack(cell, lastHoveredCell, selectedCell, board)) {
+          selectedCell.character.attack(cell, lastHoveredCell, selectedCell, board);
+        } else {
+          return;
+        }
+        setLastHoveredCell(null);
+        updateBoard();
       }
-      else {
-        return
-      }
-      setLastHoveredCell(null);
-      updateBoard();
     }
-  }
-};
+  }, []);
   
   
-  const handleCellHover = (cell: Cell) => {
+  const handleCellHover = useCallback((cell: Cell) => {
     setHoveredCell(cell);
     if (selectedCell) {
       const canAttackFromHoveredCell = possibleMoves?.some(move => move.actionName === 'attack' && move.from.row === cell.row && move.from.col === cell.col);
@@ -136,16 +134,16 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
         'cursor-no': !(canAttackHoveredCell || canMoveOnHoveredCell || canShootHoveredCell),
       };
       setCursor(Object.keys(cursorClass).find(className => cursorClass[className]) || '');
-  
-      if(canAttackFromHoveredCell){
-        setLastHoveredCell(cell)
-      }else if(cell.character?.team !== Teams.Computer){
-        setLastHoveredCell(null)
+
+      if (canAttackFromHoveredCell) {
+        setLastHoveredCell(cell);
+      } else if (cell.character?.team !== Teams.Computer) {
+        setLastHoveredCell(null);
       }
     } else {
       setCursor(cell.character?.team === Teams.Player ? 'cursor-pointer' : 'cursor-default');
     }
-  };
+  }, [selectedCell, possibleMoves]);
 
   return (
     <>

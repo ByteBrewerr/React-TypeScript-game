@@ -135,10 +135,10 @@ function isWinner(board: Board) {
     for (let col = 0; col < board.sizeX; col++) {
       const character = board.cells[row][col].character;
       if (character && character.team === Teams.Computer) {
-        enemyTotalCount = enemyTotalCount + (character.count*character.strength);
+        enemyTotalCount = enemyTotalCount + character.count;
       }
       if (character && character.team === Teams.Player) {
-        playerTotalCount = playerTotalCount + (character.count*character.strength);
+        playerTotalCount = playerTotalCount + character.count;
       }
     }
   }

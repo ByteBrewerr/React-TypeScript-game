@@ -13,7 +13,7 @@ const Modal:FC<ModalProps> = ({handleModalOpen}) => {
         return null;
       }
     return ReactDom.createPortal(
-        <div className='w-[500px] h-[500px] bg-red-500'>
+        <div className='w-[500px] h-[500px] bg-red-500 fixed left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2'>
             sdf
         </div>,
         portalRoot

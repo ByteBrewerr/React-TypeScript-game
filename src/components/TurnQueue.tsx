@@ -25,32 +25,30 @@ const TurnQueue: FC<TurnQueueProps> = ({queue}) => {
             }
             
             return (
-                <>
-                <div key={index}
-                onClick={handleModalOpen} 
-                className={`
-                w-[100px] h-[100px]
-                border-2 ${borderColor}
-                ${bgColor} m-[1px] 
-                mt-[20px] items-end
-                relative flex 
-                justify-center`}>
+                <button 
+                    key={index}
+                    onClick={handleModalOpen} 
+                    className={`
+                    w-[100px] h-[100px]
+                    border-2 ${borderColor}
+                    ${bgColor} m-[1px] 
+                    mt-[20px] items-end
+                    relative flex 
+                    justify-center`}>
 
                     <img src={character.logo} alt='character'/>
 
                     <div className='absolute right-0 bottom-0 text-white font-bold mr-1'>
                         {character.count}
-                    </div>     
-                                
-                </div>
-                
-                {isModalVisible && (
-                    <Modal handleModalOpen={handleModalOpen}/>
-                )}
-                </>
+                    </div>    
+
+                </button>
             )
             
         })}
+        {isModalVisible && (
+            <Modal handleModalOpen={handleModalOpen}/>
+        )}
     </div>  
   )
 }
