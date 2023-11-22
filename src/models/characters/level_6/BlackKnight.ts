@@ -9,6 +9,7 @@ export default class BlackKnight extends Character {
     super(team, count)
     this.logo = logo
     this.name = Names.BlackKnight
+    this.level = 6
     this.strength = 2382
     this.assault = 18
     this.defence = 18

@@ -9,7 +9,7 @@ export default class EnergyElemental extends Character {
     super(team, count)
     this.logo = logo
     this.name = Names.EnergyElemental
-
+    this.level = 4
     this.assault = 12
     this.defence = 8
     this.minDamage = 4

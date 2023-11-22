@@ -12,6 +12,7 @@ export default class Lich extends Character {
     super(team, count)
     this.logo = logo
     this.name = Names.Lich
+    this.level = 5
     this.strength = 1049
     this.assault = 13
     this.defence = 10

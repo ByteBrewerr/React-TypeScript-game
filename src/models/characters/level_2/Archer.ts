@@ -12,6 +12,7 @@ export default class Archer extends Character {
     super(team, count)
     this.logo = logo
     this.name = Names.Archer
+    this.level = 2
     this.strength = 184
     this.assault = 6
     this.defence = 3

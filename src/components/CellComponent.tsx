@@ -27,7 +27,7 @@ const CellComponent: FC<Props> = memo(({
 }) => {
   const { gridOn } = useGrid();
   
-
+  console.log('asd')
   const cellClasses = `
     ${cell.row}${cell.col} w-[81px] h-[81px] relative flex items-start justify-start 
     ${cell.character ? 'hover:opacity-80' : ''}
@@ -38,7 +38,6 @@ const CellComponent: FC<Props> = memo(({
     ${canEnemyMove ? 'opacity-80' : ''}
     ${gridOn ? 'border-[1px] border-gray-500' : ''}`;
   // анимация opacity клетка к клетки, алгоритм дейкстры.
-  console.log('asd')
   return (
     <div
       onClick={() => onClick(cell)}

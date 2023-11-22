@@ -18,7 +18,7 @@ interface BoardProps {
 const minimaxWorker = new Worker(new URL("../utils/minimaxWorker.ts" , import.meta.url));
 
 const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurrentTurn, handleEndTurn, queue}) => {
-  
+
   const [selectedCell, setSelectedCell] = useState<Cell | null>(null);
   const [hoveredCell, setHoveredCell] = useState<Cell | null>(null);
   const [lastHoveredCell, setLastHoveredCell] = useState<Cell | null>(null);
@@ -100,7 +100,7 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
     handleEndTurn() 
   };
   
-  const handleCellClick = useMemo(() => (cell: Cell) => {
+  const handleCellClick = useCallback((cell: Cell) => {
     if (currentTurn === Teams.Player) {
       if (selectedCell) {
         if (cell.character?.team === Teams.Computer && selectedCell.character?.canShoot(cell, selectedCell, board)) {
@@ -116,7 +116,7 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
         updateBoard();
       }
     }
-  }, []);
+  }, [selectedCell, currentTurn, board, lastHoveredCell,]);
   
   
   const handleCellHover = useCallback((cell: Cell) => {

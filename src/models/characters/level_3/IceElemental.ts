@@ -12,7 +12,7 @@ export default class IceElemental extends Character {
     super(team, count)
     this.logo = logo
     this.name = Names.IceElemental
-
+    this.level = 3
     this.assault = 8
     this.defence = 10
     this.minDamage = 3

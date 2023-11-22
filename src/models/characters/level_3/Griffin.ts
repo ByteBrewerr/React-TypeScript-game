@@ -9,6 +9,7 @@ export default class Griffin extends Character {
     super(team, count)
     this.logo = logo
     this.name = Names.Griffin
+    this.level = 3
     this.strength = 488
     this.assault = 9
     this.defence = 9

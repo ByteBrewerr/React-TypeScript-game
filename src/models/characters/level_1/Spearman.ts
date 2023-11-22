@@ -10,6 +10,7 @@ export default class Spearman extends Character {
     super(team, count)
     this.logo = logo
     this.name = Names.Spearman
+    this.level = 1
     this.strength = 115
     this.assault = 6
     this.defence = 5

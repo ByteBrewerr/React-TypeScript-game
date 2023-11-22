@@ -9,7 +9,7 @@ export default class MagicElemental extends Character {
     super(team, count)
     this.logo = logo
     this.name = Names.MagicElemental
-
+    this.level = 6
     this.assault = 15
     this.defence = 13
     this.minDamage = 15

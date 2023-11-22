@@ -25,7 +25,7 @@ import Zombie from "./level_2/Zombie";
 
 const characterClasses: { [name: string]: new (team: Teams, count: number) => Character } = {
   [Names.Archer]: Archer,
-  [Names.Champion]: Champion,
+  [Names.Champion]: Champion, 
   [Names.Spearman]: Spearman,
   [Names.Archangel]: Archangel,
   [Names.BlackKnight]: BlackKnight,

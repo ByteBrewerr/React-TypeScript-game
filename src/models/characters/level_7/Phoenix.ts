@@ -9,7 +9,7 @@ export default class Phoenix extends Character {
     super(team, count)
     this.logo = logo
     this.name = Names.Phoenix
-
+    this.level = 7
     this.assault = 21
     this.defence = 18
     this.minDamage = 30

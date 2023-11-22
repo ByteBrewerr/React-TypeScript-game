@@ -9,7 +9,7 @@ export default class Fairy extends Character {
     super(team, count)
     this.logo = logo
     this.name = Names.Fairy
-
+    this.level = 1
     this.assault = 2
     this.defence = 2
     this.minDamage = 1

@@ -9,6 +9,7 @@ export default class Crusader extends Character {
     super(team, count)
     this.logo = logo
     this.name = Names.Crusader
+    this.level = 4
     this.strength = 588
     this.assault = 12
     this.defence = 12

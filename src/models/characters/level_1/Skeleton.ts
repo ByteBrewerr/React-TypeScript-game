@@ -9,6 +9,7 @@ export default class Skeleton extends Character {
     super(team, count)
     this.logo = logo
     this.name = Names.Skeleton
+    this.level = 1
     this.strength = 85
     this.assault = 6
     this.defence = 6

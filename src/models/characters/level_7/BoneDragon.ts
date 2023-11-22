@@ -9,6 +9,7 @@ export default class BoneDragon extends Character {
     super(team, count)
     this.logo = logo
     this.name = Names.BoneDragon
+    this.level = 7
     this.strength = 4696
     this.assault = 19
     this.defence = 17

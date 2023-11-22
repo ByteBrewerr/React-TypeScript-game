@@ -3,7 +3,7 @@ import Teams from '../enums/Teams.enum'
 import Character from '../models/characters/Character';
 import ArmyCountBar from './ArmyCountBar';
 import Cell from '../models/Cell';
-import Modal from './Modal';
+import Modal from './characterModal/Modal';
 
 interface TurnQueueProps {
     queue: Character[] | []
@@ -11,9 +11,18 @@ interface TurnQueueProps {
 
 const TurnQueue: FC<TurnQueueProps> = ({queue}) => {
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
-    const handleModalOpen = () =>{
-        setIsModalVisible(prev=>!prev)
+    const [characterIndex, setCharacterIndex] = useState<number | undefined>(undefined)
+
+    const handleModalOpen = (index: number) =>{
+        setIsModalVisible(true)
+        setCharacterIndex(index)
     }
+     
+    const handleModalClose = () =>{
+        setIsModalVisible(false)
+        setCharacterIndex(undefined)
+    }
+
   return (
     <div className='flex'>
         {queue.map((character, index)=>{
@@ -27,7 +36,7 @@ const TurnQueue: FC<TurnQueueProps> = ({queue}) => {
             return (
                 <button 
                     key={index}
-                    onClick={handleModalOpen} 
+                    onClick={()=>handleModalOpen(index)} 
                     className={`
                     w-[100px] h-[100px]
                     border-2 ${borderColor}
@@ -46,8 +55,8 @@ const TurnQueue: FC<TurnQueueProps> = ({queue}) => {
             )
             
         })}
-        {isModalVisible && (
-            <Modal handleModalOpen={handleModalOpen}/>
+        {(isModalVisible && characterIndex) && (
+            <Modal handleModalClose={handleModalClose} character={queue[characterIndex]}/>
         )}
     </div>  
   )

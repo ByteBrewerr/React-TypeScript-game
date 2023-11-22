@@ -3,8 +3,8 @@ import Rock from './Rock'
 import Character from './characters/Character'
 
 class Cell {
-  row: number
-  col: number
+  readonly row: number
+  readonly col: number
   bg: typeof bg
   obstacle: Rock | null
   character: Character | null

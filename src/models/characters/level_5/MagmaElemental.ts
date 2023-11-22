@@ -9,7 +9,7 @@ export default class MagmaElemental extends Character {
     super(team, count)
     this.logo = logo
     this.name = Names.MagmaElemental
-
+    this.level = 5
     this.assault = 11
     this.defence = 11
     this.minDamage = 6

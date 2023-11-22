@@ -10,6 +10,7 @@ import calculateUnitsToLose from "../../utils/calculateUnitsToLose"
 export default class Character {
   team: Teams
   name: Names
+  level: number
   logo: typeof floor | null
   strength: number
   count: number
@@ -28,6 +29,7 @@ export default class Character {
   constructor(team: Teams, count: number) {
     this.team = team
     this.name = Names.Character
+    this.level = 0
     this.logo = null
     this.strength = 0
     this.count = count
