@@ -18,7 +18,7 @@ export default class Champion extends Character {
     this.defence = 16
     this.minDamage = 20
     this.maxDamage = 25
-    this.initiative = 9
+    this.initiative = 17
     this.health = 100
     this.maxHealth = 100
     this.speed = 7

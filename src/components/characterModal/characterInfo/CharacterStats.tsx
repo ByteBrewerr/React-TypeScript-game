@@ -4,6 +4,7 @@ import { GiHealthPotion, GiCheckedShield, GiSpearHook } from "react-icons/gi"
 import { RiSwordLine } from "react-icons/ri";
 import { MdHealthAndSafety } from "react-icons/md";
 import { FaRunning } from "react-icons/fa";
+import { PiSneakerMoveBold } from "react-icons/pi";
 
 
 interface CharacterStatsProps {
@@ -18,6 +19,7 @@ const CharacterStats: FC<CharacterStatsProps> = ({ character }) => {
     { icon: <GiSpearHook className='scale-y-[-1]'/>, property: 'maxDamage'},
     { icon: <GiHealthPotion />, property: 'health' },
     { icon: <MdHealthAndSafety />, property: 'maxHealth' },
+    { icon: <PiSneakerMoveBold />, property: 'initiative' },
     { icon: <FaRunning />, property: 'speed' },
     
   ];
@@ -29,7 +31,7 @@ const CharacterStats: FC<CharacterStatsProps> = ({ character }) => {
             {element.icon}
         </div>
         <div className='w-[20vh]  flex justify-between px-2'>
-          <span>{[element.property]}</span> 
+          <span>{element.property}</span> 
           <span>{character[element.property]}</span> 
         </div>
       </div>

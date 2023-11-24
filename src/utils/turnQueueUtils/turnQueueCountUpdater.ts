@@ -12,9 +12,8 @@ export default function updateTurnQueueCount(queue: Character[], board: Board): 
       );
 
       if (boardCharacter) {
-        if (queueCharacter.count !== boardCharacter.character?.count) {
-          queueCharacter.count = boardCharacter.character?.count || 0;
-        }
+        queueCharacter.count = boardCharacter.character!.count
+        queueCharacter.health = boardCharacter.character!.health 
         return true;
       }
 

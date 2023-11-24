@@ -11,7 +11,7 @@ export default class Archangel extends Character {
     this.name = Names.Archangel
     this.level = 7
     this.strength = 8776
-    this.assault = 30
+    this.assault = 20
     this.defence = 30
     this.minDamage = 50
     this.maxDamage = 50

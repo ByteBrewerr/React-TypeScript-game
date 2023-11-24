@@ -39,12 +39,12 @@ function App() {
   
   function handleEndTurn() {
     if(queue.length===1){
-      alert('the game ended')
+      alert('the game is ended')
     }
     setQueue((prevQueue) => {
       const updatedQueue = turnQueueUpdater(prevQueue)
-      const updaetdQueueCount = turnQueueCountUpdater(updatedQueue, board)
-      return updaetdQueueCount
+      const updaetedQueueCount = turnQueueCountUpdater(updatedQueue, board)
+      return updaetedQueueCount
     });
   
     const nextCharacter = queue[1];

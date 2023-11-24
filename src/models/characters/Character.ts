@@ -193,7 +193,7 @@ export default class Character {
     if (attackFrom != moveFrom) {
       this.move(attackFrom, moveFrom, board);
     }
-    
+   
     const copyTargetCell = board.getThisBoardCell(target);
     const copyTarget = copyTargetCell.character!;
     const copyAttackFrom = board.getThisBoardCell(attackFrom);
@@ -203,8 +203,8 @@ export default class Character {
     copyTarget.count -= unitsToLose;
     copyTarget.health -= remainingDamage;
 
-    if (copyTarget.health < 0) {
-      const overkill = Math.abs(copyTarget.health);
+    if (copyTarget.health <= 0) {
+      const overkill = Math.abs(copyTarget.health - remainingDamage);
       copyTarget.count -= 1;
       copyTarget.health = copyTarget.maxHealth - overkill;  
       if (copyTarget.count <= 0) {
@@ -214,44 +214,41 @@ export default class Character {
   
     if (copyTarget.count <= 0) {
       copyTargetCell.removeCharacter();
-    } else if (copyTarget.isCounterAttackPossible && !copyAttackFrom.character!.isPerformingCounterAttack) {
+    } else if (copyTarget.isCounterAttackPossible) {
       this.performCounterAttack(copyAttackFrom, copyTargetCell, board);
-      copyTarget.isPerformingCounterAttack = true;
     }
   }
   
   private performCounterAttack(target: Cell, attacker: Cell, board: Board): void {
-    const totalDamage = calculateDamage(target, attacker);
-    const targetCharacter = target.character!;
-    const {unitsToLose, remainingDamage} = calculateUnitsToLose(target, attacker)
+    const copyTargetCell = board.getThisBoardCell(target);
+    const copyTarget = copyTargetCell.character!;
+    const copyAttackFrom = board.getThisBoardCell(attacker);
+    if(attacker.character?.name === Names.Archangel){
+      console.log(target , '1')
+    }
+    const {unitsToLose, remainingDamage} = calculateUnitsToLose(copyTargetCell, copyAttackFrom)
   
-    targetCharacter.count -= unitsToLose;
-    targetCharacter.health -= remainingDamage;
-    if (targetCharacter.count <= 0) {
+    copyTarget.count -= unitsToLose;
+    copyTarget.health -= remainingDamage;
+    console.log(copyTarget.health, unitsToLose, remainingDamage)
+    if (copyTarget.count <= 0) {
       target.removeCharacter();
     }
-    if (targetCharacter.health < 0) {
-      const overkill = Math.abs(targetCharacter.health);
+    if (copyTarget.health <= 0) {
+      const overkill = Math.abs(copyTarget.health - remainingDamage);
 
-      targetCharacter.count -= 1;
-      targetCharacter.health = targetCharacter.maxHealth - overkill;
+      copyTarget.count -= 1;
+      copyTarget.health = copyTarget.maxHealth - overkill;
       
-      if (targetCharacter.count <= 0) {
+      if (copyTarget.count <= 0) {
         target.removeCharacter();
       }
 
     }
-    attacker.character!.isCounterAttackPossible = false;
+    console.log(target, '2')
+    copyAttackFrom.character!.isCounterAttackPossible = false;
   }
   
-  
-  
-  
-  
-  
-
-  
-
   public shoot(target: Cell, from: Cell, board: Board): void{
     console.log(target.character?.count)
     if(!(this.canShoot(target, from, board))) return
@@ -268,7 +265,7 @@ export default class Character {
       copyTargetCell.removeCharacter();
     }
     if (copyTarget.health < 0) {
-      const overkill = Math.abs(copyTarget.health);
+      const overkill = Math.abs(copyTarget.health - remainingDamage);
 
       copyTarget.count -= 1;
       copyTarget.health = copyTarget.maxHealth - overkill;

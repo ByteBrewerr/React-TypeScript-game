@@ -40,35 +40,26 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
     return null;
   }, [board, hoveredCell]);
 
-
+  console.log(hoveredCell)
 
   useEffect(() => {
-    if (currentTurn === Teams.Computer) {
+
       getBestMove()
-    }else{
-      const queueCharacter = queue[0]
 
-      // if(queueCharacter.team === Teams.Computer) throw Error('something went wrong')
-
-      const queueCharacterCell = board.getAllPositions().find(
-        (position) =>
-          queueCharacter.team === position.character?.team &&
-          queueCharacter.name === position.character?.name
-      );
-      setSelectedCell(queueCharacterCell!)
-    }
   }, [board, currentTurn, queue, ]);
   
   const getBestMove = () => {
-    minimaxWorker.postMessage({ board, depth: 4, isMaximizingPlayer: false, alpha: -Infinity, beta: Infinity, queue });
+    const isMaximizingPlayer = currentTurn === Teams.Player 
+    minimaxWorker.postMessage({ board, depth: 4, isMaximizingPlayer, alpha: -Infinity, beta: Infinity, queue });
     minimaxWorker.onmessage = (e) => {
       try {
-        const { bestMove, bestScore } = e.data;
-        console.log(bestMove);
-        console.log(bestScore);
-        const actionName = bestMove.actionName;
-        const character = board.getThisBoardCell(bestMove.from).character!
-        setTimeout(() => {
+        setTimeout(()=>{
+          const { bestMove, bestScore } = e.data;
+          console.log(bestMove);
+          console.log(bestScore);
+          const actionName = bestMove.actionName;
+          const character = board.getThisBoardCell(bestMove.from).character!
+
           if (actionName === 'move') {
             character.move(bestMove.to, bestMove.from, board);
           }
@@ -81,7 +72,8 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
           }
 
           updateBoard();
-        }, 2000);
+        }, 1000)
+        
       } catch (error) {
         console.log(error)
         throw new Error('something went wrong, restart the game');

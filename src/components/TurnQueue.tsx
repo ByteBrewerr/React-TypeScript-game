@@ -55,7 +55,7 @@ const TurnQueue: FC<TurnQueueProps> = ({queue}) => {
             )
             
         })}
-        {(isModalVisible && characterIndex) && (
+        {(isModalVisible && characterIndex != undefined) && (
             <Modal handleModalClose={handleModalClose} character={queue[characterIndex]}/>
         )}
     </div>  
