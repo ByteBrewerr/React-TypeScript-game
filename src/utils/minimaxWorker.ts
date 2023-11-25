@@ -1,5 +1,5 @@
 import minimax from './minimax';
-import Board from '../models/Board';
+import Board from '@models/Board';
 
 onmessage = (e: MessageEvent) => {
   const isMoveForComputer = !e.data.isMaximizingPlayer

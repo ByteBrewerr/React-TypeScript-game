@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import './App.css';
-import Board from './models/Board';
-import BoardComponent from './components/BoardComponent';
-import Teams from './enums/Teams.enum';
-import TurnQueue from './components/TurnQueue';
-import Character from './models/characters/Character';
-import turnQueueUpdater from './utils/turnQueueUtils/turnQueueUpdater';
-import makeBoard from './utils/makeBoard';
-import turnQueueCountUpdater from './utils/turnQueueUtils/turnQueueCountUpdater';
-import GameManipulator from './components/GameManipulator';
+import Board from '@models/Board';
+import BoardComponent from '@components/gameField/BoardComponent';
+import Teams from '@enums/Teams.enum';
+import TurnQueue from '@components/turnQueue/TurnQueue';
+import Character from '@models/characters/Character';
+import turnQueueUpdater from '@utils/turnQueueUtils/turnQueueUpdater';
+import makeBoard from '@utils/makeBoard';
+import turnQueueCountUpdater from '@utils/turnQueueUtils/turnQueueCountUpdater';
+import GameManipulator from '@components/GameManipulator';
 import { GridProvider } from './contexts/GridProvider';
 
 

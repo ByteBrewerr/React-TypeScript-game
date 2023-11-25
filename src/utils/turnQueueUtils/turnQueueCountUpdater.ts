@@ -1,6 +1,5 @@
-import Teams from "../../enums/Teams.enum";
-import Board from "../../models/Board";
-import Character from "../../models/characters/Character";
+import Board from "@models/Board";
+import Character from "@models/characters/Character";
 
 export default function updateTurnQueueCount(queue: Character[], board: Board): Character[] {
     const allPieces = board.getAllPositions();

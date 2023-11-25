@@ -1,4 +1,4 @@
-import Cell from "../models/Cell";
+import Cell from "@models/Cell";
 import calculateDamage from "./calculateDamage";
 
 export default function calculateUnitsTolose(target: Cell, attacker: Cell): { totalDamage: number, unitsToLose: number, remainingDamage: number } {

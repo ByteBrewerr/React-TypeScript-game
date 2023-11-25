@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import img from '../../../assets/characters/archangel.png'
+import img from '@assets/characters/archangel.png'
 
 
 

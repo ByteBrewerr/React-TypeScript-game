@@ -1,7 +1,7 @@
-import Teams from '../../../enums/Teams.enum'
-import logo from './../../../assets/characters/blackKnight.png'
-import Character from '../Character'
-import Names from '../../../enums/Name.enum'
+import Teams from '@enums/Teams.enum'
+import logo from '@assets/characters/blackKnight.png'
+import Character from '@models/characters/Character'
+import Names from '@enums/Name.enum'
 
 export default class BlackKnight extends Character {
 

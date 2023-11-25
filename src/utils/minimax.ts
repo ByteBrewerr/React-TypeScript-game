@@ -1,12 +1,12 @@
 import React from 'react';
-import Board from '../models/Board';
-import Teams from '../enums/Teams.enum';
-import Cell from '../models/Cell';
-import Character from '../models/characters/Character';
-import Action from '../interfaces/Action';
+import Board from '@models/Board';
+import Teams from '@enums/Teams.enum';
+import Cell from '@models/Cell';
+import Character from '@models/characters/Character';
+import Action from '@interfaces/Action';
 import updateTurnQueueCount from './turnQueueUtils/turnQueueCountUpdater';
 import updateTurnQueue from './turnQueueUtils/turnQueueUpdater';
-import Names from '../enums/Name.enum';
+
 
 function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha: number, beta: number, queue: Character[]) {
 
@@ -81,6 +81,10 @@ function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha
       const possibleMoves: Action[] = queueCharacterCell.character!.possibleMoves(board, queueCharacterCell);
       
       const isMovesOnly = (possibleMoves.every((move)=>(move.actionName == 'move')))
+      if(isMovesOnly){
+        const closestEnemy = findClosestEnemy(queueCharacterCell, board)
+        leftCellToClosestEnemy(possibleMoves, closestEnemy)
+      }
 
       for (const move of possibleMoves) {
         const boardCopy = new Board(12,10);
@@ -163,15 +167,15 @@ function isWinner(board: Board) {
 
 function leftCellToClosestEnemy(possibleMoves: Action[], closestEnemy: Cell){
   possibleMoves.sort((a, b) => {
-    const distanceX_A = Math.abs(a.to.col - closestEnemy.col);
-    const distanceY_A = Math.abs(a.to.row - closestEnemy.row);
-    const distanceX_B = Math.abs(b.to.col - closestEnemy.col);
-    const distanceY_B = Math.abs(b.to.row - closestEnemy.row);
-    return (Math.abs((distanceX_A + distanceY_A) - (distanceX_B + distanceY_B)));
+    const distanceX_A = Math.abs(a.to.col - closestEnemy.col); 
+    const distanceY_A = Math.abs(a.to.row - closestEnemy.row); 
+    const distanceX_B = Math.abs(b.to.col - closestEnemy.col); 
+    const distanceY_B = Math.abs(b.to.row - closestEnemy.row); 
+
+    return (((distanceX_A + distanceY_A) - (distanceX_B + distanceY_B)));
    
   })
-  console.log(possibleMoves)
-  possibleMoves.splice(0, possibleMoves.length-1)
+  possibleMoves.splice(1, possibleMoves.length)
 }
 
 function findClosestEnemy(moveFrom: Cell, board: Board): Cell{
@@ -179,10 +183,10 @@ function findClosestEnemy(moveFrom: Cell, board: Board): Cell{
   let distanceDif = Infinity
   let closestEnemy = moveFrom
   enemyPositions.forEach((pos)=>{
-    const distanceX = Math.abs(pos.col - moveFrom.col)
-    const distanceY = Math.abs(pos.row - moveFrom.row)
-    if((Math.abs(distanceX - distanceY)) <= distanceDif){
-      distanceDif = distanceX - distanceY
+    const distanceX = Math.abs(pos.col - moveFrom.col); 
+    const distanceY = Math.abs(pos.row - moveFrom.row);
+    if(distanceX + distanceY <= distanceDif){
+      distanceDif = distanceX + distanceY
       closestEnemy = pos
     }
   })

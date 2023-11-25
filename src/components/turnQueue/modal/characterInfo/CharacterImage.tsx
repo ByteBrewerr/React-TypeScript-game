@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
-import img from '../../../assets/characters/archangel.png'
-import Names from '../../../enums/Name.enum';
+import img from '@assets/characters/archangel.png'
+import Names from '@enums/Name.enum';
 
 interface CharacterImageProps {
     logo: typeof img

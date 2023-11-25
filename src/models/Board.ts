@@ -1,10 +1,9 @@
 import Cell from './Cell'
-import Teams from '../enums/Teams.enum'
+import Teams from '@enums/Teams.enum'
 import Archer from './characters/level_2/Archer'
 import Rock from './Rock'
 import Character from './characters/Character'
 import Champion from './characters/level_6/Champion'
-import Names from '../enums/Name.enum'
 import Spearman from './characters/level_1/Spearman'
 import characterClasses from "./characters/CharacterClasses";
 import Fairy from './characters/level_1/Fairy'
@@ -47,20 +46,20 @@ class Board {
     return this.cells[cell.row][cell.col]
  } 
   public addCharacters(){
-    // this.addCharacter(1,0, new Champion(Teams.Player, 47))
-    // this.addCharacter(2,0, new Archer(Teams.Player, 543))
-     this.addCharacter(5,0, new Spearman(Teams.Player, 869))
-    // this.addCharacter(7,0, new Zealot(Teams.Player, 133))
-    // this.addCharacter(8,0, new Archangel(Teams.Player, 11))
-    // this.addCharacter(9,0, new Griffin(Teams.Player, 204))
-    // this.addCharacter(3,0, new Crusader(Teams.Player, 170))
-    this.addCharacter(1,11, new Skeleton(Teams.Computer, 1176))
-    // this.addCharacter(2,11, new Zombie(Teams.Computer, 781))
-    // this.addCharacter(3,11, new Lich(Teams.Computer, 95))
-    // this.addCharacter(5,11, new Wrath(Teams.Computer, 317))
-    // this.addCharacter(6,11, new BoneDragon(Teams.Computer, 21))
-    // this.addCharacter(7,11, new BlackKnight(Teams.Computer, 41))
-    // this.addCharacter(9,11, new Vampire(Teams.Computer, 127))
+    this.addCharacter(1,0, new Champion(Teams.Player, 47))
+    this.addCharacter(2,0, new Archer(Teams.Player, 543))
+    this.addCharacter(5,0, new Spearman(Teams.Player, 869))
+    this.addCharacter(7,0, new Zealot(Teams.Player, 133))
+    this.addCharacter(8,0, new Archangel(Teams.Player, 11))
+    this.addCharacter(9,0, new Griffin(Teams.Player, 204))
+    this.addCharacter(3,0, new Crusader(Teams.Player, 170))
+    this.addCharacter(1,11, new Skeleton(Teams.Computer, 1376))
+    this.addCharacter(2,11, new Zombie(Teams.Computer, 881))
+    this.addCharacter(3,11, new Lich(Teams.Computer, 135))
+    this.addCharacter(5,11, new Wrath(Teams.Computer, 357))
+    this.addCharacter(6,11, new BoneDragon(Teams.Computer, 27))
+    this.addCharacter(7,11, new BlackKnight(Teams.Computer, 51))
+    this.addCharacter(9,11, new Vampire(Teams.Computer, 147))
     // this.addCharacter(1,0, new Champion(Teams.Computer, 47))
     // this.addCharacter(2,0, new Archer(Teams.Computer, 543))
     // this.addCharacter(5,0, new Spearman(Teams.Computer, 869))

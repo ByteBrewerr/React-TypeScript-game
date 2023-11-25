@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 import ReactDom from 'react-dom'
-import Teams from '../../enums/Teams.enum';
-import Character from '../../models/characters/Character';
+import Character from '@models/characters/Character';
 import CharacterImage from './characterInfo/CharacterImage';
 import CharacterStats from './characterInfo/CharacterStats';
 import  './modal.css'

@@ -1,5 +1,4 @@
-import Teams from "../../enums/Teams.enum";
-import Character from "../../models/characters/Character";
+import Character from "@models/characters/Character";
 
 export default function updateTurnQueue(queue: Character[]): Character[] {
     if (queue.length <= 1) {

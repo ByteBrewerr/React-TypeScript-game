@@ -1,10 +1,10 @@
-import Teams from '../../../enums/Teams.enum'
-import logo from './../../../assets/characters/lich.png'
-import Character from '../Character'
-import Names from '../../../enums/Name.enum'
-import Action from '../../../interfaces/Action'
-import Board from '../../Board'
-import Cell from '../../Cell'
+import Teams from '@enums/Teams.enum'
+import logo from '@assets/characters/lich.png'
+import Character from '@models/characters/Character'
+import Names from '@enums/Name.enum'
+import Action from '@interfaces/Action'
+import Board from '@models/Board'
+import Cell from '@models/Cell'
 
 export default class Lich extends Character {
 

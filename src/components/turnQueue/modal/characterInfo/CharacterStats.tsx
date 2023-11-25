@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import Character from '../../../models/characters/Character';
+import Character from '@models/characters/Character';
 import { GiHealthPotion, GiCheckedShield, GiSpearHook } from "react-icons/gi"
 import { RiSwordLine } from "react-icons/ri";
 import { MdHealthAndSafety } from "react-icons/md";

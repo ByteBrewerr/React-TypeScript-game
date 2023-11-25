@@ -1,11 +1,10 @@
-import Teams from "../../enums/Teams.enum"
-import Names from "../../enums/Name.enum"
-import floor from '../../assets/floor.jpg'
-import Board from "../Board"
-import Cell from "../Cell"
-import Action from "../../interfaces/Action"
-import calculateDamage from "../../utils/calculateDamage"
-import calculateUnitsToLose from "../../utils/calculateUnitsToLose"
+import Teams from "@enums/Teams.enum"
+import Names from "@enums/Name.enum"
+import floor from '@assets/floor.jpg'
+import Board from "@models/Board"
+import Cell from "@models/Cell"
+import Action from "@interfaces/Action"
+import calculateUnitsToLose from "@utils/calculateUnitsToLose"
 
 export default class Character {
   team: Teams

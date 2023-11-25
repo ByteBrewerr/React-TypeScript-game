@@ -1,10 +1,10 @@
-import Teams from '../../../enums/Teams.enum'
-import logo from './../../../assets/characters/archer.png'
-import Character from '../Character'
-import Names from '../../../enums/Name.enum'
-import Board from '../../Board'
-import Cell from '../../Cell'
-import Action from '../../../interfaces/Action'
+import Teams from '@enums/Teams.enum'
+import logo from '@assets/characters/archer.png'
+import Character from '@models/characters/Character'
+import Names from '@enums/Name.enum'
+import Board from '@models/Board'
+import Cell from '@models/Cell'
+import Action from '@interfaces/Action'
 
 export default class Archer extends Character {
   

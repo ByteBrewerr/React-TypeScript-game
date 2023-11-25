@@ -1,4 +1,4 @@
-import bg from '../assets/floor.jpg'
+import bg from '@/assets/floor.jpg'
 import Rock from './Rock'
 import Character from './characters/Character'
 
@@ -15,6 +15,13 @@ class Cell {
     this.bg = bg
     this.obstacle = null
     this.character = null
+  }
+  
+  public isEmpty(): boolean{
+    if(this.character || this.obstacle){
+      return false
+    }
+    return true
   }
 
   public setCharacter(character: Character): void {

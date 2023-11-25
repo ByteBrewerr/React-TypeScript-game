@@ -1,10 +1,7 @@
-import Teams from '../../../enums/Teams.enum'
-import logo from './../../../assets/characters/champion.png'
-import Character from '../Character'
-import Names from '../../../enums/Name.enum'
-import Board from '../../Board'
-import Cell from '../../Cell'
-import Action from '../../../interfaces/Action'
+import Teams from '@enums/Teams.enum'
+import logo from '@assets/characters/champion.png'
+import Character from '@models/characters/Character'
+import Names from '@enums/Name.enum'
 
 export default class Champion extends Character {
 

@@ -1,8 +1,8 @@
 import React, { FC, memo } from 'react';
-import Cell from '../models/Cell';
+import Cell from '@models/Cell';
 import ArmyCountBar from './ArmyCountBar';
-import Teams from '../enums/Teams.enum';
-import { useGrid } from '../contexts/GridProvider';
+import Teams from '@enums/Teams.enum';
+import { useGrid } from '../../../contexts/GridProvider';
 
 interface Props {
   cell: Cell;

@@ -1,4 +1,4 @@
-import Cell from "../models/Cell"
+import Cell from "@models/Cell"
 
 export default function calculateDamage(target: Cell, attacker: Cell){
     const attackerCharacter = attacker.character!

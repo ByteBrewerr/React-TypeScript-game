@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useMemo, FC, useCallback } from 'react';
-import Board from '../models/Board';
-import CellComponent from './CellComponent';
-import Character from '../models/characters/Character';
-import Cell from '../models/Cell';
-import Teams from '../enums/Teams.enum';
-import LineTo from 'react-lineto';
-import makeBoard from '../utils/makeBoard';
+import Board from '@models/Board';
+import CellComponent from './cell/CellComponent';
+import Character from '@models/characters/Character';
+import Cell from '@models/Cell';
+import Teams from '@enums/Teams.enum';
+import aStarSearch from '@utils/aStarSearch';
+import RoadLine from './RoadLine';
+import ShootLine from './ShootLine';
 
 interface BoardProps {
   currentTurn: Teams;
@@ -15,7 +16,7 @@ interface BoardProps {
   queue: Character[]
   handleEndTurn: () => void
 }
-const minimaxWorker = new Worker(new URL("../utils/minimaxWorker.ts" , import.meta.url));
+const minimaxWorker = new Worker(new URL("@utils/minimaxWorker.ts" , import.meta.url));
 
 const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurrentTurn, handleEndTurn, queue}) => {
 
@@ -23,30 +24,61 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
   const [hoveredCell, setHoveredCell] = useState<Cell | null>(null);
   const [lastHoveredCell, setLastHoveredCell] = useState<Cell | null>(null);
 
-  const [cursor, setCursor] = useState('');
+  const [cursor, setCursor] = useState<string>('');
 
-  const possibleMoves = useMemo(() => {
-    if (selectedCell) {
-      return selectedCell.character?.possibleMoves(board, selectedCell);
-    }
-    return null;
-  }, [board, selectedCell]);
+  const [road, setRoad] = useState<Cell[]>([])
+
+  const possibleMoves = selectedCell && selectedCell.character?.possibleMoves(board, selectedCell)
 
 
-  const enemyPossibleMoves = useMemo(() => {
-    if (hoveredCell && hoveredCell.character?.team===Teams.Computer) {
-      return hoveredCell.character?.possibleMoves(board, hoveredCell);
-    }
-    return null;
-  }, [board, hoveredCell]);
-
-  console.log(hoveredCell)
+  const enemyPossibleMoves = hoveredCell && hoveredCell.character?.possibleMoves(board, hoveredCell);
+   
 
   useEffect(() => {
+    if(!road.length){
+      if (currentTurn === Teams.Computer) {
+        getBestMove()
+      }else{
+        const queueCharacter = queue[0]
+  
+        // if(queueCharacter.team === Teams.Computer) throw Error('something went wrong')
+  
+        const queueCharacterCell = board.getAllPositions().find(
+          (position) =>
+            queueCharacter.team === position.character?.team &&
+            queueCharacter.name === position.character?.name
+        );
+        setSelectedCell(queueCharacterCell!)
+      }
+      //getBestMove()
+    }
+   
+  }, [board]);
 
-      getBestMove()
+  useEffect(() => {
+    let timer: NodeJS.Timeout | undefined;
+    if (road.length >=2) {
+      timer = setTimeout(() => {
+        const character = board.getThisBoardCell(road[0]).character!
+        if(road.length === 2){
+          character.move(road[1], road[0], board);
+          setRoad([])
+          updateBoard()
+          clearTimeout(timer);
+        }else{
+          character.move(road[1], road[0], board);
+          setRoad((prev) => {
+            return prev.slice(1);
+          });
+          updateBoardWithoutEndingTurn();  
+        }
+      }, 500);
+    }
 
-  }, [board, currentTurn, queue, ]);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [road]);
   
   const getBestMove = () => {
     const isMaximizingPlayer = currentTurn === Teams.Player 
@@ -55,14 +87,17 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
       try {
         setTimeout(()=>{
           const { bestMove, bestScore } = e.data;
+          const moves = aStarSearch(bestMove.from, bestMove.to, board)
+          setRoad(moves)
+          console.log(moves)
           console.log(bestMove);
           console.log(bestScore);
           const actionName = bestMove.actionName;
           const character = board.getThisBoardCell(bestMove.from).character!
 
-          if (actionName === 'move') {
-            character.move(bestMove.to, bestMove.from, board);
-          }
+          // if (actionName === 'move') {
+          //   character.move(bestMove.to, bestMove.from, board);
+          // }
           if (actionName === 'shoot') {
             character.shoot(bestMove.to, bestMove.from, board);
           }
@@ -70,9 +105,9 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
             const attacker = board.cells[bestMove.attacker.row][bestMove.attacker.col].character!;
             attacker.attack(bestMove.to, bestMove.from, bestMove.attacker, board);
           }
-
-          updateBoard();
-        }, 1000)
+          updateBoardWithoutEndingTurn()
+          //updateBoard();
+        }, 400)
         
       } catch (error) {
         console.log(error)
@@ -90,6 +125,16 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
       return newBoard;
     });
     handleEndTurn() 
+  };
+
+  const updateBoardWithoutEndingTurn = () => {
+    setSelectedCell(null)
+
+    setBoard((prevBoard) => {
+      const newBoard = new Board(12,10);
+      newBoard.copyBoard(prevBoard)
+      return newBoard;
+    });
   };
   
   const handleCellClick = useCallback((cell: Cell) => {
@@ -180,14 +225,19 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
           });
         })}
       </div>
-      {selectedCell && hoveredCell?.character?.team === Teams.Computer && selectedCell.character?.canShoot(hoveredCell, selectedCell, board) && (
-        <LineTo
-          className={`${cursor}`}
-          from={`${selectedCell.row}${selectedCell.col}`}
-          to={`${hoveredCell.row}${hoveredCell.col}`}
-          borderWidth={1}
+
+      <RoadLine road={road}/>
+      
+      {
+        selectedCell && 
+        hoveredCell && 
+        <ShootLine 
+          selectedCell={selectedCell} 
+          hoveredCell={hoveredCell} 
+          canShoot={selectedCell.character!.canShoot(hoveredCell, selectedCell, board)}
+          cursor={cursor}
         />
-      )}
+      }
     </>
     
   );
