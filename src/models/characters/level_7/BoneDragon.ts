@@ -18,7 +18,7 @@ export default class BoneDragon extends Character {
     this.initiative = 14 
     this.health = 200
     this.maxHealth = 200
-    this.speed = 9
+    this.speed = 10
     this.shooting = false
     this.isPerformingCounterAttack = false
     this.isCounterAttackPossible = true

@@ -1,9 +1,10 @@
 import React, {FC} from 'react'
 import Cell from '@models/Cell'
 import LineTo from 'react-lineto'
+import Road from '@interfaces/Road'
 
 interface RoadProps {
-    road: Cell[]
+    road: Road[]
 }
 
 const RoadLine: FC<RoadProps> = ({road}) => {
@@ -17,8 +18,8 @@ const RoadLine: FC<RoadProps> = ({road}) => {
                 return (
                     <LineTo
                     key={i}  
-                    from={`${road[i]?.row}${road[i]?.col}` || ''}
-                    to={`${road[i + 1]?.row}${road[i + 1]?.col}` || ''}
+                    from={`${road[i]?.cell.row}${road[i]?.cell.col}` || ''}
+                    to={`${road[i + 1]?.cell.row}${road[i + 1]?.cell.col}` || ''}
                     borderWidth={1}
                     />
                 )

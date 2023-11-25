@@ -16,7 +16,7 @@ function App() {
   const [board, setBoard] = useState<Board>(()=>makeBoard());
   const [queue, setQueue] =  useState<Character[]>(()=>buildQueue())
   const [currentTurn, setCurrentTurn] = useState<Teams>(queue[0].team);
-  
+   console.log('1') 
 
   function buildQueue(): Character[] {
   if (!board) return [];

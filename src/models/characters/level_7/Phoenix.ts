@@ -17,7 +17,7 @@ export default class Phoenix extends Character {
     this.initiative = 21 
     this.health = 200
     this.maxHealth = 200
-    this.speed = 10
+    this.speed = 11
     this.shooting = false
     this.isPerformingCounterAttack = false
     this.isCounterAttackPossible = true

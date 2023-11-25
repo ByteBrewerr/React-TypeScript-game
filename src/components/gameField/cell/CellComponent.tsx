@@ -26,7 +26,7 @@ const CellComponent: FC<Props> = memo(({
   canBeAttacked
 }) => {
   const { gridOn } = useGrid();
-  
+  console.log(123)
   const cellClasses = `
     ${cell.row}${cell.col} w-[81px] h-[81px] relative flex items-start justify-start 
     ${cell.character ? 'hover:opacity-80' : ''}
