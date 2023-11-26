@@ -45,7 +45,6 @@ export default class Character {
     this.isCounterAttackPossible = false
   }
 
-
   public canMove(target: Cell, from: Cell, board: Board): boolean {
    
     const possibleMoves = this.possibleMoves(board, from)
@@ -68,6 +67,10 @@ export default class Character {
   }
   
   public canAttack(target: Cell, attackFrom: Cell, moveFrom: Cell, board: Board): boolean {
+    if(!this.isSpecificEnemyNear(target, attackFrom, board)){
+      return false
+    }
+    
     const possibleMoves = this.possibleMoves(board, moveFrom)
     const canAttack = possibleMoves.some(move => move.actionName === 'attack' && move.to.row === target.row && move.to.col === target.col)
     

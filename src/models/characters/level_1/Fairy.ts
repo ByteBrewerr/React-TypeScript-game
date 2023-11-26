@@ -1,7 +1,7 @@
-import Teams from '../../../enums/Teams.enum'
-import logo from './../../../assets/characters/fairy.png'
+import Teams from '@enums/Teams.enum'
+import logo from '@assets/characters/fairy.png'
 import Character from '../Character'
-import Names from '../../../enums/Name.enum'
+import Names from '@enums/Name.enum'
 
 export default class Fairy extends Character {
 

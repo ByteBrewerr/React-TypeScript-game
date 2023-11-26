@@ -28,15 +28,15 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
   const [cursor, setCursor] = useState<string>('');
 
   const [road, setRoad] = useState<Road[]>([])
+  const [enemyShootLine, setEnemyShootLine] = useState<Cell[]>([])
 
   const possibleMoves = selectedCell && selectedCell.character?.possibleMoves(board, selectedCell)
 
 
   const enemyPossibleMoves = hoveredCell && hoveredCell.character?.possibleMoves(board, hoveredCell);
    
-
   useEffect(() => {
-    if(!road.length){
+    if(!road.length && !enemyShootLine.length){
       if (currentTurn === Teams.Computer) {
         getBestMove()
       }
@@ -57,6 +57,21 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
     }
    
   }, [board]);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout | undefined;
+    if(enemyShootLine.length){
+      const character = board.getThisBoardCell(enemyShootLine[0]).character!;
+      setTimeout(()=>{
+        setEnemyShootLine([])
+        character.shoot(enemyShootLine[1], enemyShootLine[0], board);
+        updateBoard();
+      }, 3000)
+    }
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [enemyShootLine]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout | undefined;
@@ -94,24 +109,29 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
         const actionName = bestMove.actionName;
         const character = board.getThisBoardCell(bestMove.from).character!;
         let road: Cell[] = [];
-  
+
         if (actionName === 'move') {
           road = aStarSearch(bestMove.from, bestMove.to, board);
         }
         if (actionName === 'shoot') {
-          character.shoot(bestMove.to, bestMove.from, board);
+          setEnemyShootLine([bestMove.from, bestMove.to])
+          //character.shoot(bestMove.to, bestMove.from, board);
         }
         if (actionName === 'attack') {
           road = aStarSearch(bestMove.attacker, bestMove.from, board);
         }
-  
+
+        if(road.length===1){
+          road.push(bestMove.from);
+        }
+
         const roadWithActionName: Road[] = road.map((cell) => {
           if (bestMove.attacker) {
             return { cell, targetToAttack: bestMove.to, actionName: 'attack' };
           }
           return { cell, actionName: 'move' };
         });
-  
+
         setRoad(roadWithActionName);
         updateBoardWithoutEndingTurn();
       } catch (error) {
@@ -151,37 +171,24 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
   const handleCellClick = useCallback((cell: Cell) => {
     if (currentTurn === Teams.Player) {
       if (selectedCell) {
-        handleSelectedCellClick(cell);
+        if (cell.character?.team === Teams.Computer && selectedCell.character?.canShoot(cell, selectedCell, board)) {
+        selectedCell.character?.shoot(cell, selectedCell, board);
+        } else if (selectedCell.character?.canMove(cell, selectedCell, board)) {
+        selectedCell.character.move(cell, selectedCell, board);
+        } else if (cell.character && lastHoveredCell && selectedCell.character?.canAttack(cell, lastHoveredCell, selectedCell, board)) {
+        selectedCell.character.attack(cell, lastHoveredCell, selectedCell, board);
+        } else {
+        return;
+        }
+        setLastHoveredCell(null);
+        updateBoard();
       }
     }
   }, [selectedCell, lastHoveredCell]);
 
-  const handleSelectedCellClick = (cell: Cell) => {
-    if (selectedCell) {
-      if (cell.character?.team === Teams.Computer && selectedCell.character?.canShoot(cell, selectedCell, board)) {
-      selectedCell.character?.shoot(cell, selectedCell, board);
-      } else if (selectedCell.character?.canMove(cell, selectedCell, board)) {
-      selectedCell.character.move(cell, selectedCell, board);
-      } else if (cell.character && lastHoveredCell && selectedCell.character?.canAttack(cell, lastHoveredCell, selectedCell, board)) {
-      selectedCell.character.attack(cell, lastHoveredCell, selectedCell, board);
-      } else {
-      return;
-      }
-      setLastHoveredCell(null);
-      updateBoard();
-    }
-  };
 
   const handleCellHover = useCallback((cell: Cell) => {
     setHoveredCell(cell);
-    if (selectedCell) {
-      handleSelectedCellHover(cell);
-    } else {
-      setCursor(cell.character?.team === Teams.Player ? 'cursor-pointer' : 'cursor-default');
-    }
-  }, [selectedCell]);
-
-  const handleSelectedCellHover = (cell: Cell) => {
     const canAttackFromHoveredCell = possibleMoves?.some((move) => move.actionName === 'attack' && move.from.row === cell.row && move.from.col === cell.col);
     const canAttackHoveredCell = possibleMoves?.some((move) => move.actionName === 'attack' && move.to.row === cell.row && move.to.col === cell.col);
     const canShootHoveredCell = possibleMoves?.some((move) => move.actionName === 'shoot' && move.to.row === cell.row && move.to.col === cell.col);
@@ -200,7 +207,7 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
     } else if (cell.character?.team !== Teams.Computer) {
       setLastHoveredCell(null);
     }
-  };
+  }, [selectedCell]);
 
   return (
     <>
@@ -247,13 +254,14 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
       </div>
 
       <RoadLine road={road}/>
+      {enemyShootLine.length!==0 && <ShootLine from={enemyShootLine[0]} to={enemyShootLine[1]} cursor={cursor}/>}
       
       {
         selectedCell && 
         hoveredCell && 
         <ShootLine 
-          selectedCell={selectedCell} 
-          hoveredCell={hoveredCell} 
+          from={selectedCell} 
+          to={hoveredCell} 
           canShoot={selectedCell.character!.canShoot(hoveredCell, selectedCell, board)}
           cursor={cursor}
         />

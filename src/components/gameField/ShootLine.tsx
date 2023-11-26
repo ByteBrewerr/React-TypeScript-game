@@ -4,15 +4,15 @@ import LineTo from 'react-lineto'
 import Teams from '@enums/Teams.enum'
 
 interface ShootProps {
-    selectedCell: Cell 
-    hoveredCell: Cell 
-    canShoot: boolean 
+    from: Cell 
+    to: Cell 
+    canShoot?: boolean
     cursor: string
 }
 
-const ShootLine: FC<ShootProps> = ({selectedCell, hoveredCell, canShoot, cursor}) => {
+const ShootLine: FC<ShootProps> = ({from, to, canShoot, cursor}) => {
     
-    if(!canShoot || hoveredCell.character?.team === Teams.Player || !hoveredCell.character){
+    if(canShoot===false || from.character?.team === to.character?.team  || !to.character){
         return null
     }
 
@@ -20,8 +20,8 @@ const ShootLine: FC<ShootProps> = ({selectedCell, hoveredCell, canShoot, cursor}
         <div>
             <LineTo
                 className={`${cursor}`}
-                from={`${selectedCell.row}${selectedCell.col}`}
-                to={`${hoveredCell.row}${hoveredCell.col}`}
+                from={`${from.row}${from.col}`}
+                to={`${to.row}${to.col}`}
                 borderWidth={1}
             />
         </div>
