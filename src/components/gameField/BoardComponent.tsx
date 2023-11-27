@@ -31,10 +31,8 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
   const [road, setRoad] = useState<Road[]>([])
   const [enemyShootLine, setEnemyShootLine] = useState<Cell[]>([])
 
-  const possibleMoves = selectedCell && selectedCell.character?.possibleMoves(board, selectedCell)
-
-
-  const enemyPossibleMoves = hoveredCell && hoveredCell.character?.possibleMoves(board, hoveredCell);
+  const possibleMoves = useMemo(() => selectedCell && selectedCell.character?.possibleMoves(board, selectedCell), [selectedCell, board]);
+  const enemyPossibleMoves = useMemo(() => hoveredCell && hoveredCell.character?.possibleMoves(board, hoveredCell), [hoveredCell, board]);
    
   useEffect(() => {
     if(!road.length && !enemyShootLine.length){
@@ -67,7 +65,7 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
         setEnemyShootLine([])
         character.shoot(enemyShootLine[1], enemyShootLine[0], board);
         updateBoard();
-      }, 3000)
+      }, 1500)
     }
     return () => {
       clearTimeout(timer);
@@ -161,13 +159,13 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
   };
   
   const updateBoard = () => {
-    setSelectedCell(null);
+
     setBoard((prevBoard) => initializeBoard(prevBoard));
     handleEndTurn();
   };
   
   const updateBoardWithoutEndingTurn = () => {
-    setSelectedCell(null);
+
     setBoard((prevBoard) => initializeBoard(prevBoard));
   };
 
@@ -196,7 +194,7 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
     const canShootHoveredCell = possibleMoves?.some((move) => move.actionName === 'shoot' && move.to.row === cell.row && move.to.col === cell.col);
     const canMoveOnHoveredCell = possibleMoves?.some((move) => move.actionName === 'move' && move.to.row === cell.row && move.to.col === cell.col);
   
-    const cursorClass: any = {
+    const cursorClass: Record<string, boolean | undefined> = {
       'cursor-move': canMoveOnHoveredCell,
       'cursor-attack': canAttackHoveredCell,
       'cursor-shoot': canShootHoveredCell,

@@ -17,10 +17,11 @@ const RoadLine: FC<RoadProps> = ({road}) => {
             {road.map((_, i)=>{
                 return (
                     <LineTo
-                    key={i}  
-                    from={`${road[i]?.cell.row}${road[i]?.cell.col}` || ''}
-                    to={`${road[i + 1]?.cell.row}${road[i + 1]?.cell.col}` || ''}
-                    borderWidth={1}
+                        key={i}  
+                        from={`${road[i]?.cell.row}${road[i]?.cell.col}` || ''}
+                        to={`${road[i + 1]?.cell.row}${road[i + 1]?.cell.col}` || ''}
+                        borderWidth={1}
+                        borderColor='gray'
                     />
                 )
             })}

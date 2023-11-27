@@ -18,7 +18,7 @@ export default class Archangel extends Character {
     this.initiative = 18 
     this.health = 250
     this.maxHealth = 250
-    this.speed = 11
+    this.speed = 10
     this.shooting = false
     this.isPerformingCounterAttack = false
     this.isCounterAttackPossible = true

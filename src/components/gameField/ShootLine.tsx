@@ -23,6 +23,7 @@ const ShootLine: FC<ShootProps> = ({from, to, canShoot, cursor}) => {
                 from={`${from.row}${from.col}`}
                 to={`${to.row}${to.col}`}
                 borderWidth={1}
+                borderColor='gray'
             />
         </div>
     )

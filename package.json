@@ -14,6 +14,7 @@
     "@types/react-dom": "^18.2.7",
     "circ-clone": "^2.1.4",
     "circular-json": "^0.5.9",
+    "framer-motion": "^10.16.5",
     "immer": "^10.0.2",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
@@ -23,7 +24,6 @@
     "react-lineto": "^3.3.0",
     "react-lodash": "^0.1.2",
     "react-scripts": "5.0.1",
-    "react-spring": "^9.7.2",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },

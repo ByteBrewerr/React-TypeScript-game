@@ -208,7 +208,7 @@ export default class Character {
     if (copyTarget.health < 0) {
       const overkill = Math.abs(copyTarget.health - remainingDamage);
       copyTarget.count -= 1;
-      copyTarget.health = copyTarget.maxHealth - overkill;  
+      copyTarget.health = Math.abs(copyTarget.maxHealth - overkill) 
       if (copyTarget.count <= 0) {
         copyTargetCell.removeCharacter();
       } 
@@ -232,7 +232,6 @@ export default class Character {
   
     copyTarget.count -= unitsToLose;
     copyTarget.health -= remainingDamage;
-    console.log(copyTarget.health, unitsToLose, remainingDamage)
     if (copyTarget.count <= 0) {
       target.removeCharacter();
     }
@@ -240,7 +239,7 @@ export default class Character {
       const overkill = Math.abs(copyTarget.health - remainingDamage);
 
       copyTarget.count -= 1;
-      copyTarget.health = copyTarget.maxHealth - overkill;
+      copyTarget.health = Math.abs(copyTarget.maxHealth - overkill)
       
       if (copyTarget.count <= 0) {
         target.removeCharacter();
@@ -251,7 +250,6 @@ export default class Character {
   }
   
   public shoot(target: Cell, from: Cell, board: Board): void{
-    console.log(target.character?.count)
     if(!(this.canShoot(target, from, board))) return
   
     const copyTargetCell = board.getThisBoardCell(target);
@@ -269,7 +267,7 @@ export default class Character {
       const overkill = Math.abs(copyTarget.health - remainingDamage);
 
       copyTarget.count -= 1;
-      copyTarget.health = copyTarget.maxHealth - overkill;
+      copyTarget.health = Math.abs(copyTarget.maxHealth - overkill)
       
       if (copyTarget.count <= 0) {
         copyTargetCell.removeCharacter();
