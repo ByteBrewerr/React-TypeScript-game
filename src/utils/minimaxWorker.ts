@@ -2,7 +2,6 @@ import minimax from './minimax';
 import Board from '@models/Board';
 
 onmessage = (e: MessageEvent) => {
-  const isMoveForComputer = !e.data.isMaximizingPlayer
   const board: Board = e.data.board;
   const isMaximizingPlayer = e.data.isMaximizingPlayer
   const newBoard = new Board(12,10)

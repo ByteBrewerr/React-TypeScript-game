@@ -70,7 +70,7 @@ export default class Character {
     if(!this.isSpecificEnemyNear(target, attackFrom, board)){
       return false
     }
-    
+
     const possibleMoves = this.possibleMoves(board, moveFrom)
     const canAttack = possibleMoves.some(move => move.actionName === 'attack' && move.to.row === target.row && move.to.col === target.col)
     
@@ -205,7 +205,7 @@ export default class Character {
     copyTarget.count -= unitsToLose;
     copyTarget.health -= remainingDamage;
 
-    if (copyTarget.health <= 0) {
+    if (copyTarget.health < 0) {
       const overkill = Math.abs(copyTarget.health - remainingDamage);
       copyTarget.count -= 1;
       copyTarget.health = copyTarget.maxHealth - overkill;  
@@ -236,7 +236,7 @@ export default class Character {
     if (copyTarget.count <= 0) {
       target.removeCharacter();
     }
-    if (copyTarget.health <= 0) {
+    if (copyTarget.health < 0) {
       const overkill = Math.abs(copyTarget.health - remainingDamage);
 
       copyTarget.count -= 1;
@@ -247,7 +247,6 @@ export default class Character {
       }
 
     }
-    console.log(target, '2')
     copyAttackFrom.character!.isCounterAttackPossible = false;
   }
   

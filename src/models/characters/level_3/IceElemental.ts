@@ -5,8 +5,9 @@ import Names from '@enums/Name.enum'
 import Action from '@interfaces/Action'
 import Board from '@models/Board'
 import Cell from '@models/Cell'
+import RangeCharacter from '../RangeCharacter'
 
-export default class IceElemental extends Character {
+export default class IceElemental extends RangeCharacter {
 
   constructor(team: Teams, count: number) {
     super(team, count)

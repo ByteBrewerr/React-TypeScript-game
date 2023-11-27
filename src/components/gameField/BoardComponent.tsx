@@ -8,6 +8,7 @@ import aStarSearch from '@utils/aStarSearch';
 import RoadLine from './RoadLine';
 import ShootLine from './ShootLine';
 import Road from '@interfaces/Road';
+import Action from '@interfaces/Action';
 
 interface BoardProps {
   currentTurn: Teams;
@@ -76,7 +77,7 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
   useEffect(() => {
     let timer: NodeJS.Timeout | undefined;
     if (road.length >= 2) {
-      timer = setTimeout(processRoad, 500);
+      timer = setTimeout(processRoad, 300);
     }
     return () => {
       clearTimeout(timer);
@@ -106,34 +107,8 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
         const { bestMove, bestScore } = e.data;
         console.log(bestMove);
         console.log(bestScore);
-        const actionName = bestMove.actionName;
-        const character = board.getThisBoardCell(bestMove.from).character!;
-        let road: Cell[] = [];
+        handleAction(bestMove)
 
-        if (actionName === 'move') {
-          road = aStarSearch(bestMove.from, bestMove.to, board);
-        }
-        if (actionName === 'shoot') {
-          setEnemyShootLine([bestMove.from, bestMove.to])
-          //character.shoot(bestMove.to, bestMove.from, board);
-        }
-        if (actionName === 'attack') {
-          road = aStarSearch(bestMove.attacker, bestMove.from, board);
-        }
-
-        if(road.length===1){
-          road.push(bestMove.from);
-        }
-
-        const roadWithActionName: Road[] = road.map((cell) => {
-          if (bestMove.attacker) {
-            return { cell, targetToAttack: bestMove.to, actionName: 'attack' };
-          }
-          return { cell, actionName: 'move' };
-        });
-
-        setRoad(roadWithActionName);
-        updateBoardWithoutEndingTurn();
       } catch (error) {
         console.log(error);
         throw new Error('something went wrong, restart the game');
@@ -150,6 +125,34 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
     minimaxWorker.onmessage = handleWorkerMessage;
     minimaxWorker.onerror = handleWorkerError;
   };
+
+  const handleAction  = (action: Action) => {
+    let road: Cell[] = [];
+
+        if (action.actionName === 'move') {
+          road = aStarSearch(action.from, action.to, board);
+        }
+        if (action.actionName === 'shoot') {
+          setEnemyShootLine([action.from, action.to])
+        }
+        if (action.actionName === 'attack' && action.attacker) {
+          road = aStarSearch(action.attacker, action.from, board);
+        }
+
+        if(road.length===1){
+          road.push(action.from);
+        }
+
+        const roadWithActionName: Road[] = road.map((cell) => {
+          if (action.attacker) {
+            return { cell, targetToAttack: action.to, actionName: 'attack' };
+          }
+          return { cell, actionName: 'move' };
+        });
+
+        setRoad(roadWithActionName);
+        updateBoardWithoutEndingTurn();
+  }
 
   const initializeBoard = (prevBoard: Board) => {
     const newBoard = new Board(12, 10);
@@ -172,16 +175,15 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
     if (currentTurn === Teams.Player) {
       if (selectedCell) {
         if (cell.character?.team === Teams.Computer && selectedCell.character?.canShoot(cell, selectedCell, board)) {
-        selectedCell.character?.shoot(cell, selectedCell, board);
+          handleAction({actionName: 'shoot', from: selectedCell, to: cell})
         } else if (selectedCell.character?.canMove(cell, selectedCell, board)) {
-        selectedCell.character.move(cell, selectedCell, board);
+          handleAction({actionName: 'move', from: selectedCell, to: cell})
         } else if (cell.character && lastHoveredCell && selectedCell.character?.canAttack(cell, lastHoveredCell, selectedCell, board)) {
-        selectedCell.character.attack(cell, lastHoveredCell, selectedCell, board);
+          handleAction({actionName: 'attack', from: lastHoveredCell, to: cell, attacker: selectedCell})
         } else {
-        return;
+          return;
         }
         setLastHoveredCell(null);
-        updateBoard();
       }
     }
   }, [selectedCell, lastHoveredCell]);

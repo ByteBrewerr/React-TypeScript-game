@@ -22,6 +22,7 @@ function aStarSearch(start: Cell, end: Cell, board: Board) {
       { row: position.row + 1, col: position.col },
       { row: position.row, col: position.col - 1 },
       { row: position.row, col: position.col + 1 },
+     
     ];
 
     for (const dir of directions) {
