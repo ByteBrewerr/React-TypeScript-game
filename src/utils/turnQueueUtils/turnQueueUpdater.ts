@@ -1,6 +1,6 @@
 import Character from "@models/characters/Character";
 
-export default function updateTurnQueue(queue: Character[]): Character[] {
+export default function updateTurnQueue<T>(queue: T[]): T[] {
     if (queue.length <= 1) {
       return queue;
     }
