@@ -153,6 +153,7 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
   }
 
   const initializeBoard = (prevBoard: Board) => {
+    setSelectedCell(null)
     const newBoard = new Board(12, 10);
     newBoard.copyBoard(prevBoard);
     return newBoard;

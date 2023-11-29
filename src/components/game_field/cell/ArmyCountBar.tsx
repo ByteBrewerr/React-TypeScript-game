@@ -17,7 +17,7 @@ const ArmyCountBar: FC<ArmyCountBarProps> = memo(({ armyCount, team }) => {
 
       const timer = setTimeout(() => {
         setBgColor(team === Teams.Player ? 'bg-sky-900' : 'bg-slate-500');
-      }, 500);
+      }, 1000);
 
       
 

@@ -10,6 +10,7 @@ export default class Phoenix extends Character {
     this.logo = logo
     this.name = Names.Phoenix
     this.level = 7
+    this.strength = 6721
     this.assault = 21
     this.defence = 18
     this.minDamage = 30

@@ -10,6 +10,7 @@ export default class Fairy extends Character {
     this.logo = logo
     this.name = Names.Fairy
     this.level = 1
+    this.strength = 95
     this.assault = 2
     this.defence = 2
     this.minDamage = 1

@@ -9,6 +9,8 @@
       "@enums/*": ["enums/*"],
       "@contexts/*": ["contexts/*"],
       "@assets/*": ["assets/*"],
+      "@stores/*": ["stores/*"],
+      "@pages/*": ["pages/*"],
     },
     "target": "es5",
     "lib": [

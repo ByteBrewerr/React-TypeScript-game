@@ -14,6 +14,7 @@ export default class IceElemental extends RangeCharacter {
     this.logo = logo
     this.name = Names.IceElemental
     this.level = 3
+    this.strength = 380
     this.assault = 8
     this.defence = 10
     this.minDamage = 3

@@ -1,7 +1,7 @@
 import React, {FC, useState} from 'react'
 import Teams from '@enums/Teams.enum'
 import Character from '@models/characters/Character';
-import Modal from './modal/Modal';
+import Modal from './Modal';
 
 interface TurnQueueProps {
     queue: Character[] | []

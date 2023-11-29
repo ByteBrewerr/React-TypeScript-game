@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 import ReactDom from 'react-dom'
 import Character from '@models/characters/Character';
-import CharacterImage from './characterInfo/CharacterImage';
-import CharacterStats from './characterInfo/CharacterStats';
+import CharacterImage from './character_info/CharacterImage';
+import CharacterStats from './character_info/CharacterStats';
 import  './modal.css'
 
 interface ModalProps {

@@ -11,6 +11,8 @@ module.exports = {
       '@enums': path.resolve(__dirname, 'src/enums'),
       '@interfaces': path.resolve(__dirname, 'src/interfaces'),
       '@contexts': path.resolve(__dirname, 'src/contexts'),
+      '@pages': path.resolve(__dirname, 'src/pages'),
+      '@stores': path.resolve(__dirname, 'src/stores'),
     }
   },
 };

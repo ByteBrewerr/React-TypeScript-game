@@ -47,4 +47,20 @@ const characterClasses: { [name: string]: new (team: Teams, count: number) => Ch
   [Names.Zombie]: Zombie,
 };
 
+export const createCharacterInstances = (team: Teams): Character[] => {
+  const instances: Character[] = [];
+
+  for (const className in characterClasses) {
+    if (characterClasses.hasOwnProperty(className)) {
+      const CharacterClass = characterClasses[className];
+      const instance = new CharacterClass(team, 0);
+
+      instances.push(instance);
+    }
+  }
+
+  return instances;
+};
+
+
 export default characterClasses;

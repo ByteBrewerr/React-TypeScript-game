@@ -225,9 +225,7 @@ export default class Character {
     const copyTargetCell = board.getThisBoardCell(target);
     const copyTarget = copyTargetCell.character!;
     const copyAttackFrom = board.getThisBoardCell(attacker);
-    if(attacker.character?.name === Names.Archangel){
-      console.log(target , '1')
-    }
+  
     const {unitsToLose, remainingDamage} = calculateUnitsToLose(copyTargetCell, copyAttackFrom)
   
     copyTarget.count -= unitsToLose;

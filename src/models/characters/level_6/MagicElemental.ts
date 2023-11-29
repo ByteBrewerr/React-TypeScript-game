@@ -10,6 +10,7 @@ export default class MagicElemental extends Character {
     this.logo = logo
     this.name = Names.MagicElemental
     this.level = 6
+    this.strength = 2012
     this.assault = 15
     this.defence = 13
     this.minDamage = 15
