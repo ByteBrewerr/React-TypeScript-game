@@ -26,7 +26,6 @@ const CellComponent: FC<Props> = memo(({
   canBeAttacked
 }) => {
   const { gridOn } = useGrid();
-  console.log(123)
   const cellClasses = `
     ${cell.row}${cell.col} w-[81px] h-[81px] relative flex items-start justify-start 
     ${cell.character ? 'hover:opacity-80' : ''}
@@ -36,7 +35,6 @@ const CellComponent: FC<Props> = memo(({
     ${canBeAttacked ? 'opacity-90' : ''}
     ${canEnemyMove ? 'opacity-80' : ''}
     ${gridOn ? 'border-[1px] border-gray-500' : ''}`;
-  // анимация opacity клетка к клетки, алгоритм дейкстры.
 
   const isImageReversed = cell.character?.team === Teams.Computer ? 'scale-x-[-1]' : ''
   const isPulsing = (cell.character && isSelected) ? 'animate-pulse' : ''

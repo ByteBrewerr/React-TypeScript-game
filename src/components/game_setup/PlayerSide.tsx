@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { Slider, Button} from 'antd';
 import { CaretRightOutlined } from '@ant-design/icons';
 import { createCharacterInstances } from '@models/characters/CharacterClasses';
@@ -7,22 +7,33 @@ import Character from '@models/characters/Character';
 import updateTurnQueue from '@utils/turnQueueUtils/turnQueueUpdater';
 import gameSetupStore from '@stores/GameSetupStore';
 import { observer } from 'mobx-react-lite';
+import { Link } from 'react-router-dom';
 
+interface PlayerSideProps{
+    handleResetComputerSide: ()=>void
+}
 
 const allCharacters = createCharacterInstances(Teams.Player)
 
-const PlayerSide = observer(() => {
-    const {valueToSpend, maxValueToSpend, setValueToSpend, setMaxValueToSpend, setPlayerCharactes, pickOrder, updatePickOrder, reset, playerCharacters} = gameSetupStore
+const PlayerSide:FC<PlayerSideProps> = observer(({handleResetComputerSide}) => {
+    const {
+        valueToSpend,
+        maxValueToSpend,
+        setValueToSpend,
+        setMaxValueToSpend,
+        setPlayerCharacters,
+        updatePickOrder,
+        resetGameSetup,
+        playerCharacters,
+      } = gameSetupStore;
 
     const [currentPick, setCurrentPick] = useState<number>(0)
     const [currentUnits, setCurrentUnits] = useState<Character[]>(allCharacters.filter((character)=>character.level === 1))
     const [pickedUnits, setPickedUnits] = useState<Character[]>([])
-    const [defaultSliderValue, setDefaultSliderValue] = useState<number>(0)
-
-    const unitCount = parseInt((maxValueToSpend / currentUnits[0].strength).toFixed(0))
+    
+    const unitCount = Math.floor((maxValueToSpend / currentUnits[0].strength))
     
     const handleCurrentUnits = (index: number) =>{
-        setDefaultSliderValue(0)
         if(currentPick === index){
             setCurrentUnits(prev=>{
                 const newOrder = updateTurnQueue(prev)
@@ -30,35 +41,35 @@ const PlayerSide = observer(() => {
             })
         }
     }
-    console.log(pickOrder)
     const handleNextPick = () => {
 
         if (valueToSpend < 0 || currentUnits[0].count === 0) {
-          return;
+            return;
         }
-      
+        
         setPickedUnits((prev) => [...prev, currentUnits[0]]);
         
         setCurrentPick((prev) => prev + 1);
 
         updatePickOrder()
-      
+        
         if (currentPick === 6) {
-          setPlayerCharactes([...playerCharacters, currentUnits[0]]);
-          return;
+            setPlayerCharacters([...playerCharacters, currentUnits[0]]);
+            return;
         }
-      
+        
         setCurrentUnits(allCharacters.filter((character) => character.level === currentPick + 2));
-      
-        setPlayerCharactes([...playerCharacters, currentUnits[0]]);
+        
+        setPlayerCharacters([...playerCharacters, currentUnits[0]]);
         setMaxValueToSpend(valueToSpend);
-      };
+    };
 
     const handleRestartDraft = () =>{
         setCurrentPick(0)
         setCurrentUnits(allCharacters.filter((character)=>character.level ===  1))
         setPickedUnits([])
-        reset()
+        resetGameSetup()
+        handleResetComputerSide()
     }
 
     const handleSlider = (value: number) =>{
@@ -81,13 +92,14 @@ const PlayerSide = observer(() => {
                                 onClick={()=>{handleCurrentUnits(index)}}
                             >       
                                 {currentPick === index &&  <img className='w-[100%] h-[100%]' src={currentUnits[0].logo} alt="logo" />}
-                                {pickedUnits[index] && <img className='w-[100%] h-[100%]' src={pickedUnits[index].logo} alt="logo" />  }             
+                                {pickedUnits[index] && <img className='w-[100%] h-[100%]' src={pickedUnits[index].logo} alt="logo" />  }  
+                                         
                             </Button>
 
                         </div>
 
                         <div className='w-[20vh]'>
-                           {currentPick === index && <Slider onAfterChange={(value)=>{handleSlider(value)}} defaultValue={defaultSliderValue} max={unitCount} />}
+                           {currentPick === index && <Slider onAfterChange={(value)=>{handleSlider(value)}} max={unitCount} autoFocus={true}/>}
                            {pickedUnits[index] && <span className='text-white'>{pickedUnits[index].count}</span>}
                         </div>  
                         <Button 
@@ -103,7 +115,7 @@ const PlayerSide = observer(() => {
                 })}
             </div>
             <div className='flex flex-col w-[20vh] justify-center items-center'>
-                <span className={`text-white font-bold text-[5vh] ${valueToSpend< 0 ? 'animate-pulse text-red-500' : ''}`}>
+                <span className={`text-white font-bold text-[5vh] ${valueToSpend< 0 ? 'animate-pulse text-red-700' : ''}`}>
                     {valueToSpend}
                 </span>
                 <Button 
@@ -112,6 +124,15 @@ const PlayerSide = observer(() => {
                 >
                     RESTART DRAFT
                 </Button>
+                {playerCharacters.length === 7 &&
+                    <Link 
+                        to='/play'
+                        className='text-white animate-pulse mt-[2vh] w-[12vh] h-[5vh] bg-yellow-700 font-bold border-[2px]'
+                    >
+                        START
+                    </Link>
+                }
+                
             </div>
            
         </div> 

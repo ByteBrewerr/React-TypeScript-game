@@ -12,15 +12,14 @@ import Action from '@interfaces/Action';
 
 interface BoardProps {
   currentTurn: Teams;
-  setCurrentTurn: React.Dispatch<React.SetStateAction<Teams>>;
-  board: Board 
+    board: Board 
   setBoard: React.Dispatch<React.SetStateAction<Board>>;
   queue: Character[]
   handleEndTurn: () => void
 }
 const minimaxWorker = new Worker(new URL("@utils/minimaxWorker.ts" , import.meta.url));
 
-const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurrentTurn, handleEndTurn, queue}) => {
+const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, handleEndTurn, queue}) => {
 
   const [selectedCell, setSelectedCell] = useState<Cell | null>(null);
   const [hoveredCell, setHoveredCell] = useState<Cell | null>(null);
@@ -36,12 +35,12 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, setCurren
    
   useEffect(() => {
     if(!road.length && !enemyShootLine.length){
-      if (currentTurn === Teams.Computer) {
+      const queueCharacter = queue[0]
+      if (currentTurn === Teams.Computer || queueCharacter.team === Teams.Computer) {
         getBestMove()
       }
       
       if(currentTurn === Teams.Player){
-        const queueCharacter = queue[0]
   
         // if(queueCharacter.team === Teams.Computer) throw Error('something went wrong')
   
