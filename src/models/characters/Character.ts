@@ -200,9 +200,9 @@ export default class Character {
     const copyTarget = copyTargetCell.character!;
     const copyAttackFrom = board.getThisBoardCell(attackFrom);
   
-    const {unitsToLose, remainingDamage} = calculateUnitsToLose(copyTargetCell, copyAttackFrom)
+    const {averageUnitsToLose, remainingDamage} = calculateUnitsToLose(copyTargetCell, copyAttackFrom)
   
-    copyTarget.count -= unitsToLose;
+    copyTarget.count -= averageUnitsToLose;
     copyTarget.health -= remainingDamage;
 
     if (copyTarget.health < 0) {
@@ -226,9 +226,9 @@ export default class Character {
     const copyTarget = copyTargetCell.character!;
     const copyAttackFrom = board.getThisBoardCell(attacker);
   
-    const {unitsToLose, remainingDamage} = calculateUnitsToLose(copyTargetCell, copyAttackFrom)
+    const {averageUnitsToLose, remainingDamage} = calculateUnitsToLose(copyTargetCell, copyAttackFrom)
   
-    copyTarget.count -= unitsToLose;
+    copyTarget.count -= averageUnitsToLose;
     copyTarget.health -= remainingDamage;
     if (copyTarget.count <= 0) {
       target.removeCharacter();
@@ -254,9 +254,9 @@ export default class Character {
     const copyTarget = copyTargetCell.character!;
     const copyShootFrom = board.getThisBoardCell(from);
   
-    const {unitsToLose, remainingDamage} = calculateUnitsToLose(copyTargetCell, copyShootFrom)
+    const {averageUnitsToLose, remainingDamage} = calculateUnitsToLose(copyTargetCell, copyShootFrom)
   
-    copyTarget.count -= unitsToLose;
+    copyTarget.count -= averageUnitsToLose;
     copyTarget.health -= remainingDamage;
     if (copyTarget.count <= 0) {
       copyTargetCell.removeCharacter();

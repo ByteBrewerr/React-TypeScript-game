@@ -17,5 +17,32 @@ export default function calculateDamage(target: Cell, attacker: Cell){
     }else{
       totalDamage = Math.round(oneUnitDamage * attackerCharacter.count / ((targerCharacter.defence - attackerCharacter.assault) * 0.05 + 1));
     }
-    return totalDamage
+    return {
+      totalDamage, 
+      minDamage: calculateMinDamage(target, attacker, isAttackMoreThenDefence), 
+      maxDamage: calculateMaxDamage(target, attacker, isAttackMoreThenDefence)
+    }
+}
+
+function calculateMinDamage(target: Cell, attacker: Cell, isAttackHigher: boolean): number{
+  const attackerCharacter = attacker.character!
+  const targerCharacter = target.character!
+
+  if(isAttackHigher){
+    return  Math.round(attackerCharacter.minDamage * attackerCharacter.count * ((attackerCharacter.assault - targerCharacter.defence) * 0.05 + 1));
+  }else{
+    return Math.round(attackerCharacter.minDamage * attackerCharacter.count / ((targerCharacter.defence - attackerCharacter.assault) * 0.05 + 1));
+  }
+}
+
+
+function calculateMaxDamage(target: Cell, attacker: Cell, isAttackHigher: boolean): number{
+  const attackerCharacter = attacker.character!
+  const targerCharacter = target.character!
+
+  if(isAttackHigher){
+    return  Math.round(attackerCharacter.maxDamage * attackerCharacter.count * ((attackerCharacter.assault - targerCharacter.defence) * 0.05 + 1));
+  }else{
+    return Math.round(attackerCharacter.maxDamage * attackerCharacter.count / ((targerCharacter.defence - attackerCharacter.assault) * 0.05 + 1));
+  }
 }

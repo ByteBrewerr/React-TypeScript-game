@@ -5,7 +5,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.8);
   border-radius: 6%;
   z-index: -1;
   animation: fadeIn 0.5s ease-in-out; /* Анимация с названием fadeIn, длительностью 0.5 секунд, с плавным входом и выходом */

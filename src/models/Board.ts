@@ -41,13 +41,23 @@ class Board {
       this.cells.push(cellsRow);
     }
   }
+  
+  public isWinner(): Teams | undefined{
+    if(this.getComputerPositions().length===0){
+      return Teams.Player
+    }
+    if(this.getPlayerPositions().length===0){
+      return Teams.Computer
+    }
+  }
 
- public getThisBoardCell(cell: Cell): Cell{
+  public getThisBoardCell(cell: Cell): Cell{
     return this.cells[cell.row][cell.col]
- } 
+  } 
+
   public addCharacters(playerCharacters: Character[], computerCharacters: Character[]){
-    let playerEmptyPlaces = [0,1,2,3,4,5,6,7,8,9]
-    let computerEmptyPlaces = [0,1,2,3,4,5,6,7,8,9]
+    let playerEmptyPlaces = [1,2,3,4,5,6,7,8,9]
+    let computerEmptyPlaces = [1,2,3,4,5,6,7,8,9]
 
     for(let character of playerCharacters){
       character.team = Teams.Player
@@ -68,13 +78,21 @@ class Board {
     }
 
   }
-  public addObstacles(){
-    this.addRock(5,5)
-    this.addRock(5,1)
-    this.addRock(4,4)
-    this.addRock(3,6)
-    this.addRock(2,2)
-    this.addRock(2,1)
+  public addObstacles():void{
+    let rocks: {row: number, col: number}[] = []
+
+    while (rocks.length < 7){
+      const row = Math.floor(Math.random() * 9);
+      const col = Math.floor(Math.random() * 8) + 2;
+
+      if (row !== 0 && row !== 11 && col !== 0 && col !== 11) {
+        const isDuplicated = rocks.some(mountain => mountain.row === row && mountain.col === col);
+        if (!isDuplicated) {
+          rocks.push({ row, col });
+          this.addRock(row, col)
+        }
+      }
+    }
 
   }
 
@@ -95,13 +113,17 @@ class Board {
     }
   }
 
-  public copyBoard(oldBoard: Board) {
+  public copyBoard(oldBoard: Board):void {
     this.init();
-    this.addObstacles();
 
     for (let row = 0; row < this.sizeY; row++) {
       for (let col = 0; col < this.sizeX; col++) {
         const oldCell = oldBoard.cells[row][col];
+
+        if (oldCell.obstacle) {
+          this.addRock(row, col);
+        }
+
         if (oldCell.character) {
           const newCharacter = Board.copyCharacter(oldCell.character);
           this.addCharacter(row, col, newCharacter);
@@ -122,7 +144,7 @@ class Board {
   }
   
 
-  public getPlayerPositions(){
+  public getPlayerPositions(): Cell[]{
     let positions: Cell[] = []
     for (let row=0; row<this.sizeY; row++) { 
       for (let col=0; col<this.sizeX; col++) {
@@ -134,7 +156,7 @@ class Board {
     } 
     return positions
   }
-  public getComputerPositions(){
+  public getComputerPositions(): Cell[]{
     let positions: Cell[] = []
     for (let row=0; row<this.sizeY; row++) { 
       for (let col=0; col<this.sizeX; col++) {
@@ -147,7 +169,7 @@ class Board {
     
     return positions
   }
-  public getAllPositions(){
+  public getAllPositions(): Cell[]{
     const computerPieces = this.getComputerPositions()
     const playerPieces = this.getPlayerPositions()
 

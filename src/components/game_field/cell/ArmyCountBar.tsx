@@ -10,16 +10,12 @@ const ArmyCountBar: FC<ArmyCountBarProps> = memo(({ armyCount, team }) => {
   const [bgColor, setBgColor] = useState<string>(`${team === Teams.Player ? 'bg-sky-900' : 'bg-slate-500'}`);
   const prevArmyCountRef = useRef<number>(armyCount);
   useEffect(() => {
-    
     if (armyCount !== prevArmyCountRef.current) {
-      debugger
       setBgColor('bg-red-500 animate-ping');
 
       const timer = setTimeout(() => {
         setBgColor(team === Teams.Player ? 'bg-sky-900' : 'bg-slate-500');
       }, 1000);
-
-      
 
       return () => clearTimeout(timer);
     }

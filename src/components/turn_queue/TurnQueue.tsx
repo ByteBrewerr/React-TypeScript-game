@@ -26,7 +26,7 @@ const TurnQueue: FC<TurnQueueProps> = ({queue}) => {
         {queue.map((character, index)=>{
             const borderColor = `${index === 0 ? 'border-yellow-200' : 'border-gray-800'}`
             const bgColor = `${character.team === Teams.Player ? 'bg-sky-900' : 'bg-slate-500'}`
-
+            const isReversed = `${character.team === Teams.Computer ? 'scale-x-[-1]' : ''}`
             if(character.count <=0){
                 return null
             }
@@ -43,7 +43,7 @@ const TurnQueue: FC<TurnQueueProps> = ({queue}) => {
                     relative flex 
                     justify-center`}>
 
-                    <img src={character.logo} alt='character'/>
+                    <img className={`${isReversed}`} src={character.logo} alt='character'/>
 
                     <div className='absolute right-0 bottom-0 text-white font-bold mr-1'>
                         {character.count}

@@ -9,17 +9,21 @@ import RoadLine from './RoadLine';
 import ShootLine from './ShootLine';
 import Road from '@interfaces/Road';
 import Action from '@interfaces/Action';
+import { observer } from 'mobx-react-lite';
+import { useHoveredEnemyDamage } from '@contexts/HoveredEnemyDamage';
+import calculateUnitsTolose from '@utils/calculateUnitsToLose';
 
 interface BoardProps {
   currentTurn: Teams;
-    board: Board 
-  setBoard: React.Dispatch<React.SetStateAction<Board>>;
+  board: Board 
+  setNewBoard: (board: Board)=>void;
   queue: Character[]
   handleEndTurn: () => void
 }
 const minimaxWorker = new Worker(new URL("@utils/minimaxWorker.ts" , import.meta.url));
 
-const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, handleEndTurn, queue}) => {
+const BoardComponent: FC<BoardProps> = ({board, setNewBoard, currentTurn, handleEndTurn, queue}) => {
+  const { updateHoveredEnemyDamage, updateUnitsToLose, hoveredEnemyDamage, resetHoveredEnemyDamage } = useHoveredEnemyDamage();
 
   const [selectedCell, setSelectedCell] = useState<Cell | null>(null);
   const [hoveredCell, setHoveredCell] = useState<Cell | null>(null);
@@ -160,13 +164,13 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, handleEnd
   
   const updateBoard = () => {
 
-    setBoard((prevBoard) => initializeBoard(prevBoard));
+    setNewBoard((initializeBoard(board)));
     handleEndTurn();
   };
   
   const updateBoardWithoutEndingTurn = () => {
 
-    setBoard((prevBoard) => initializeBoard(prevBoard));
+    setNewBoard((initializeBoard(board)));
   };
 
   const handleCellClick = useCallback((cell: Cell) => {
@@ -189,6 +193,8 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, handleEnd
 
   const handleCellHover = useCallback((cell: Cell) => {
     setHoveredCell(cell);
+    handleShowDamage(cell)
+
     const canAttackFromHoveredCell = possibleMoves?.some((move) => move.actionName === 'attack' && move.from.row === cell.row && move.from.col === cell.col);
     const canAttackHoveredCell = possibleMoves?.some((move) => move.actionName === 'attack' && move.to.row === cell.row && move.to.col === cell.col);
     const canShootHoveredCell = possibleMoves?.some((move) => move.actionName === 'shoot' && move.to.row === cell.row && move.to.col === cell.col);
@@ -208,6 +214,18 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, handleEnd
       setLastHoveredCell(null);
     }
   }, [selectedCell]);
+
+  function handleShowDamage(cell: Cell){
+    if(selectedCell && cell.character?.team === Teams.Computer){
+      const {minDamage, maxDamage, minUnitsToLose, maxUnitsToLose} = calculateUnitsTolose(cell, selectedCell)
+      updateHoveredEnemyDamage(minDamage, maxDamage)
+      updateUnitsToLose(minUnitsToLose, maxUnitsToLose)
+    }
+
+    if(selectedCell && cell.character?.team !== Teams.Computer && hoveredEnemyDamage !== null){   
+      resetHoveredEnemyDamage()
+    }
+  }
 
   return (
     <>
@@ -271,4 +289,4 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentTurn, handleEnd
   );
 };
 
-export default BoardComponent;
+export default observer(BoardComponent)

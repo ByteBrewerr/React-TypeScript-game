@@ -10,8 +10,8 @@ import updateTurnQueue from './turnQueueUtils/turnQueueUpdater';
 
 function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha: number, beta: number, queue: Character[]) {
 
-  const winner = isWinner(board); 
-  if (depth === 0 || winner) { 
+ 
+  if (depth === 0 || board.isWinner()) { 
     return { bestScore: evalBoardPosition(board) };
   }
 
@@ -143,26 +143,6 @@ function evalBoardPosition(board: Board) {
   }
   
   return playerTotalStrength - enemyTotalStrength;
-}
-
-function isWinner(board: Board) {
-  let playerTotalCount: number = 0;
-  let enemyTotalCount: number = 0;
-  for (let row = 0; row < board.sizeY; row++) {
-    for (let col = 0; col < board.sizeX; col++) {
-      const character = board.cells[row][col].character;
-      if (character && character.team === Teams.Computer) {
-        enemyTotalCount = enemyTotalCount + character.count;
-      }
-      if (character && character.team === Teams.Player) {
-        playerTotalCount = playerTotalCount + character.count;
-      }
-    }
-  }
-  if(playerTotalCount === 0) return Teams.Computer
-  if(enemyTotalCount === 0) return Teams.Player
-
-  return undefined
 }
 
 function leftCellToClosestEnemy(possibleMoves: Action[], closestEnemy: Cell){

@@ -27,7 +27,7 @@ const CellComponent: FC<Props> = memo(({
 }) => {
   const { gridOn } = useGrid();
   const cellClasses = `
-    ${cell.row}${cell.col} w-[81px] h-[81px] relative flex items-start justify-start 
+    ${cell.row}${cell.col} w-[81px] h-[81px] relative flex items-start justify-start  
     ${cell.character ? 'hover:opacity-80' : ''}
     ${isLastHoveredCell ? 'rounded-lg' : ''}
     ${(canMove && !canEnemyMove)  ? 'opacity-90 hover:opacity-80' : ''}
@@ -38,6 +38,7 @@ const CellComponent: FC<Props> = memo(({
 
   const isImageReversed = cell.character?.team === Teams.Computer ? 'scale-x-[-1]' : ''
   const isPulsing = (cell.character && isSelected) ? 'animate-pulse' : ''
+  console.log('cell')
   return (
     <div
       onClick={() => onClick(cell)}
@@ -65,7 +66,7 @@ const CellComponent: FC<Props> = memo(({
           <img
             src={cell.obstacle.logo}
             alt='obstacle'
-            className='w-[50px] h-[50px]'
+            className='w-[70px] h-[70px]'
           />
         </div>
       )}

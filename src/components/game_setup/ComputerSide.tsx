@@ -62,7 +62,6 @@ const ComputerSide:FC<ComputerSideProps> = observer(({resetComputerSide, handleR
       {Array(7).fill(null).map((el, index) => {
         return (
           <div className='flex items-center space-x-20 ' key={index}>
-  
             
             <div className='flex w-[20vh] justify-between items-center '>
               {pickedUnits[index] && <span className='text-white'>{pickedUnits[index].count}</span>}
