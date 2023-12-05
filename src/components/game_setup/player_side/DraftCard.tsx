@@ -1,48 +1,80 @@
-import React, {FC} from 'react';
-import { Button, Slider } from 'antd';
-import { CaretRightOutlined } from '@ant-design/icons';
-import Character from '@models/characters/Character';
+import React, { FC } from "react";
+import { Button, Slider } from "antd";
+import { CaretRightOutlined } from "@ant-design/icons";
+import Character from "@models/characters/Character";
 
 interface DraftCardProps {
-    currentPick: number,
-    handleCurrentUnits: (index: number)=>void,
-    handleNextPick: ()=>void,
-    currentUnits: Character[],
-    pickedUnits: Character[],
-    unitCount: number,
-    handleSlider: (value: number)=>void,
-    index: number
+  currentPick: number;
+  handleCurrentUnits: (index: number) => void;
+  handleNextPick: () => void;
+  currentUnits: Character[];
+  pickedUnits: Character[];
+  unitCount: number;
+  handleSlider: (value: number) => void;
+  index: number;
 }
 
-const DraftCard:FC<DraftCardProps> = ({ currentPick, handleCurrentUnits, handleNextPick, currentUnits, pickedUnits, unitCount, handleSlider, index }) => (
-    <div className='flex items-center space-x-20' key={index}>
-    <div className='flex'>
-        {currentPick === index && <CaretRightOutlined className='text-white animate-pulse text-[5vh]'/>}
+const DraftCard: FC<DraftCardProps> = ({
+  currentPick,
+  handleCurrentUnits,
+  handleNextPick,
+  currentUnits,
+  pickedUnits,
+  unitCount,
+  handleSlider,
+  index,
+}) => (
+  <div className="flex items-center space-x-[2vw]" key={index}>
+    <div className="flex">
+      {currentPick === index && (
+        <CaretRightOutlined className="text-white animate-pulse text-[4vw]" />
+      )}
 
-        <Button
-            className='border-yellow-600 border-[2px] w-24 h-24 flex justify-center items-center bg-gray-600'
-            onClick={()=>{handleCurrentUnits(index)}}
-        >       
-            {currentPick === index &&  <img className='w-[100%] h-[100%]' src={currentUnits[0].logo} alt="logo" />}
-            {pickedUnits[index] && <img className='w-[100%] h-[100%]' src={pickedUnits[index].logo} alt="logo" />  }  
-                     
-        </Button>
-
+      <Button
+        className="border-yellow-600 border-[2px] w-[6vw] h-[6vw] flex justify-center items-center bg-gray-600"
+        onClick={() => {
+          handleCurrentUnits(index);
+        }}
+      >
+        {currentPick === index && (
+          <img
+            className="w-[100%] h-[100%] min-w-[30px] min-h-[30px]"
+            src={currentUnits[0].logo}
+            alt="logo"
+          />
+        )}
+        {pickedUnits[index] && (
+          <img
+            className="w-[100%] h-[100%] min-w-[30px] min-h-[30px]"
+            src={pickedUnits[index].logo}
+            alt="logo"
+          />
+        )}
+      </Button>
     </div>
 
-    <div className='w-[20vh]'>
-       {currentPick === index && <Slider onAfterChange={(value)=>{handleSlider(value)}} max={unitCount} autoFocus={true}/>}
-       {pickedUnits[index] && <span className='text-white'>{pickedUnits[index].count}</span>}
-    </div>  
-    <Button 
-        className='text-white'
-
-        onClick={()=>handleNextPick()}
-        disabled={currentPick!==index}
+    <div className="w-[10vw]">
+      {currentPick === index && (
+        <Slider
+          onAfterChange={(value) => {
+            handleSlider(value);
+          }}
+          max={unitCount}
+          autoFocus={true}
+        />
+      )}
+      {pickedUnits[index] && (
+        <span className="text-white">{pickedUnits[index].count}</span>
+      )}
+    </div>
+    <Button
+      className="text-white w-[8vw] min-w-[60px]"
+      onClick={() => handleNextPick()}
+      disabled={currentPick !== index}
     >
-        CONFIRM
+      <p style={{ fontSize: "clamp(8px, .8vw, 18px)" }}>CONFIRM</p>
     </Button>
-</div>
+  </div>
 );
 
 export default DraftCard;

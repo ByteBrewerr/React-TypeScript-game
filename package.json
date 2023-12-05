@@ -57,6 +57,7 @@
   "devDependencies": {
     "@types/lodash": "^4.14.197",
     "customize-cra": "^1.0.0",
+    "prettier": "3.1.0",
     "react-app-rewired": "^2.2.1",
     "tailwindcss": "^3.3.3"
   }

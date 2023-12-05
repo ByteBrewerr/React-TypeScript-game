@@ -1,30 +1,36 @@
-import React, { FC, memo, useEffect, useState, useRef } from 'react';
-import Teams from '@enums/Teams.enum';
+import React, { FC, memo, useEffect, useState, useRef } from "react";
+import Teams from "@enums/Teams.enum";
+import Character from "@models/characters/Character";
 
 interface ArmyCountBarProps {
-  armyCount: number;
-  team: Teams;
+  character: Character;
 }
 
-const ArmyCountBar: FC<ArmyCountBarProps> = memo(({ armyCount, team }) => {
-  const [bgColor, setBgColor] = useState<string>(`${team === Teams.Player ? 'bg-sky-900' : 'bg-slate-500'}`);
-  const prevArmyCountRef = useRef<number>(armyCount);
+const ArmyCountBar: FC<ArmyCountBarProps> = memo(({ character }) => {
+  const { count, team } = character;
+  const [bgColor, setBgColor] = useState<string>(
+    `${character?.team === Teams.Player ? "bg-sky-900" : "bg-slate-500"}`,
+  );
+  const prevArmyCountRef = useRef<number>(count || 0);
+
   useEffect(() => {
-    if (armyCount !== prevArmyCountRef.current) {
-      setBgColor('bg-red-500 animate-ping');
+    if (character?.count !== prevArmyCountRef.current) {
+      setBgColor("bg-red-500 animate-ping");
 
       const timer = setTimeout(() => {
-        setBgColor(team === Teams.Player ? 'bg-sky-900' : 'bg-slate-500');
-      }, 1000);
+        setBgColor(team === Teams.Player ? "bg-sky-900" : "bg-slate-500");
+      }, 800);
 
       return () => clearTimeout(timer);
     }
-    prevArmyCountRef.current = armyCount;
-  }, [armyCount]);
+    prevArmyCountRef.current = count || 0;
+  }, [count]);
 
   return (
-    <div className={`rounded-sm px-[10px] text-[10px] font-bold absolute bottom-0 right-0 text-white ${bgColor}`}>
-      {armyCount}
+    <div
+      className={`rounded-sm px-[10px] text-[7px] sm:text-[7px] lg:text-[9px] xl:text-[10px] font-bold absolute bottom-0 right-0 text-white ${bgColor}`}
+    >
+      {count}
     </div>
   );
 });

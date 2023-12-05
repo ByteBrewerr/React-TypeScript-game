@@ -1,15 +1,7 @@
-import React, { FC } from 'react';
-import img from '@assets/characters/archangel.png'
+import React, { FC } from "react";
 
+const CharacterDescription = () => {
+  return <span></span>;
+};
 
-
-const CharacterImage = (logo: typeof img) => {
-    
-    
-    return (
-        <span>aboba</span>
-
-    );
-}
-
-export default CharacterImage;
+export default CharacterDescription;
