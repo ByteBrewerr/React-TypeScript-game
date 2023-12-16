@@ -14,6 +14,7 @@ const WinnerComponent: FC<WinnerProps> = ({ winner }) => {
     winner === Teams.Player ? "Вы победили" : "Компьютер победил";
   const navigate = useNavigate();
   const restartGame = () => {
+    sessionStorage.clear();
     resetGameSetup();
     navigate("/");
   };

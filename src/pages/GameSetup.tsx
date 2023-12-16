@@ -1,13 +1,11 @@
+import React, { FC, useEffect, useState } from "react";
 import ComputerSide from "@components/game_setup/ComputerSide";
 import PlayerSide from "@components/game_setup/player_side/PlayerSide";
-import { Divider } from "antd";
-import React, { FC, useState } from "react";
+import { Navigate } from "react-router-dom";
 
 const GameSetup: FC = () => {
   const [resetComputerSide, setResetComputerSide] = useState(false);
-
-  localStorage.clear();
-
+  sessionStorage.clear();
   const handleIsReseted = () => {
     setResetComputerSide((prev) => !prev);
   };
@@ -15,7 +13,6 @@ const GameSetup: FC = () => {
   return (
     <div className="w-full h-[100vh] bg-black p-10 flex space-x-10 ">
       <PlayerSide handleIsReseted={handleIsReseted} />
-      {/* <Divider className="bg-white h-full" type="vertical" /> */}
       <ComputerSide
         resetComputerSide={resetComputerSide}
         handleIsReseted={handleIsReseted}

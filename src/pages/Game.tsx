@@ -1,5 +1,6 @@
-import turnQueueUpdater from "@utils/turnQueueUtils/turnQueueUpdater";
 import React, { FC, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import turnQueueUpdater from "@utils/turnQueueUtils/turnQueueUpdater";
 import GameManipulator from "@components/board_sidebar/BoardSidebar";
 import BoardComponent from "@components/game_field/BoardComponent";
 import TurnQueue from "@components/turn_queue/TurnQueue";
@@ -13,24 +14,32 @@ import { HoveredEnemyDamageProvider } from "@contexts/HoveredEnemyDamage";
 import WinnerComponent from "@components/game_field/WinnerComponent";
 
 const Game: FC = () => {
+  const navigate = useNavigate();
   const { playerCharacters, computerCharacters } = GameSetupStore;
-  const [board, setBoard] = useState<Board>(() => makeFirstBoard());
+  const [board, setBoard] = useState<Board>(() => makeBoard());
   const [queue, setQueue] = useState<Character[]>(() => buildQueue());
-  const [currentTurn, setCurrentTurn] = useState<Teams>(queue[0].team);
+  const [currentTurn, setCurrentTurn] = useState<Teams | null>(
+    queue[0] ? queue[0].team : null,
+  );
 
+  const localBoard = sessionStorage.getItem("board");
   useEffect(() => {
-    localStorage.setItem("board", JSON.stringify(board));
-    localStorage.setItem("queue", JSON.stringify(queue));
+    if (playerCharacters.length === 0 && localBoard === null) {
+      navigate("/");
+    }
+  }, [playerCharacters, navigate]);
+  useEffect(() => {
+    sessionStorage.setItem("board", JSON.stringify(board));
+    sessionStorage.setItem("queue", JSON.stringify(queue));
   }, [queue]);
 
-  function makeFirstBoard(): Board {
+  function makeBoard(): Board {
     const newBoard = new Board(12, 10);
-    const localBoard = localStorage.getItem("board");
+    const localBoard = sessionStorage.getItem("board");
 
     if (localBoard !== null) {
       const parsedBoard = JSON.parse(localBoard);
       newBoard.copyBoard(parsedBoard);
-      return newBoard;
     } else {
       newBoard.init();
       newBoard.addCharacters(playerCharacters, computerCharacters);
@@ -47,7 +56,7 @@ const Game: FC = () => {
   function buildQueue(): Character[] {
     if (!board) return [];
 
-    const localQueue = localStorage.getItem("queue");
+    const localQueue = sessionStorage.getItem("queue");
 
     if (localQueue !== null) {
       const parsedQueue = JSON.parse(localQueue);
@@ -108,7 +117,7 @@ const Game: FC = () => {
               <BoardComponent
                 board={board}
                 setNewBoard={setNewBoard}
-                currentTurn={currentTurn}
+                currentTurn={currentTurn!}
                 handleEndTurn={handleEndTurn}
                 queue={queue}
               />
@@ -124,6 +133,7 @@ const Game: FC = () => {
   if (board === null) {
     return null;
   }
+
   return (
     <div className="App cursor-default w-full h-full flex flex-col items-center animated-background">
       {board.isWinner() ? renderWinner() : renderBoard()}

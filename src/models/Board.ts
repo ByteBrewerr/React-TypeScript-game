@@ -38,10 +38,10 @@ class Board {
     return this.cells[cell.row][cell.col];
   }
 
-  public resetCounterAttack(){
-    const allPositions = this.getAllPositions()
-    for(const position of allPositions){
-      position.character!.isCounterAttackPossible = true
+  public resetCounterAttack() {
+    const allPositions = this.getAllPositions();
+    for (const position of allPositions) {
+      position.character!.isCounterAttackPossible = true;
     }
   }
 
@@ -49,6 +49,9 @@ class Board {
     playerCharacters: Character[],
     computerCharacters: Character[],
   ) {
+    if (playerCharacters.length === 0 || computerCharacters.length === 0)
+      return;
+
     let playerEmptyPlaces = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     let computerEmptyPlaces = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -102,7 +105,7 @@ class Board {
         oldCharacter.count,
       );
       Object.assign(newCharacter, oldCharacter);
-      
+
       return newCharacter;
     } else {
       throw new Error("Invalid character name");
@@ -159,7 +162,7 @@ class Board {
 
     return positions;
   }
-  
+
   public getAllPositions(): Cell[] {
     const computerPieces = this.getComputerPositions();
     const playerPieces = this.getPlayerPositions();
