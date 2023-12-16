@@ -27,11 +27,11 @@ const DraftCard: FC<DraftCardProps> = ({
   <div className="flex items-center space-x-[2vw]" key={index}>
     <div className="flex">
       {currentPick === index && (
-        <CaretRightOutlined className="text-white animate-pulse text-[4vw]" />
+        <CaretRightOutlined className="text-white animate-pulse text-[6vh]" />
       )}
 
       <Button
-        className="border-yellow-600 border-[2px] w-[6vw] h-[6vw] flex justify-center items-center bg-gray-600"
+        className="border-yellow-600 border-[2px] w-[11vh] h-[11vh] min-w-[3rem] min-h-[3rem] flex justify-center items-center bg-gray-600"
         onClick={() => {
           handleCurrentUnits(index);
         }}

@@ -12,6 +12,7 @@ import Action from "@interfaces/Action";
 import { observer } from "mobx-react-lite";
 import { useHoveredEnemyDamage } from "@contexts/HoveredEnemyDamage";
 import detailsOnHoverEnemy from "@utils/detailsOnHoverEnemy";
+import { useNavigate } from "react-router-dom";
 
 interface BoardProps {
   currentTurn: Teams;
@@ -306,6 +307,7 @@ const BoardComponent: FC<BoardProps> = ({
     if (selectedCell && cell.character?.team === Teams.Computer) {
       const { minDamage, maxDamage, minUnitsToLose, maxUnitsToLose } =
         detailsOnHoverEnemy(cell, selectedCell);
+
       updateHoveredEnemyDamage(minDamage, maxDamage);
       updateUnitsToLose(minUnitsToLose, maxUnitsToLose);
     }
@@ -322,7 +324,8 @@ const BoardComponent: FC<BoardProps> = ({
   return (
     <>
       <div
-        className={`h-[380px] w-[456px] sm:w-[480px] sm:h-[400px] md:w-[600px] md:h-[500px] lg:w-[720px] lg:h-[600px] xl:w-[840px] xl:h-[700px] 2xl:w-[972px] 2xl:h-[810px] flex flex-wrap bg-black ${cursor}`}
+        className={`h-[380px] w-[456px] sm:w-[480px] sm:h-[400px] md:w-[600px] md:h-[500px] lg:w-[720px] lg:h-[600px] xl:w-[840px] xl:h-[700px] 
+        2xl:w-[972px] 2xl:h-[810px] flex flex-wrap bg-black ${cursor}`}
       >
         {board.cells.map((row) => {
           return row.map((cell) => {

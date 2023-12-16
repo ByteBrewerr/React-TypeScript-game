@@ -10,19 +10,33 @@ import Character from "@models/characters/Character";
 import turnQueueCountUpdater from "@utils/turnQueueUtils/turnQueueCountUpdater";
 import GameSetupStore from "@stores/GameSetupStore";
 import { HoveredEnemyDamageProvider } from "@contexts/HoveredEnemyDamage";
+import WinnerComponent from "@components/game_field/WinnerComponent";
 
 const Game: FC = () => {
   const { playerCharacters, computerCharacters } = GameSetupStore;
-
   const [board, setBoard] = useState<Board>(() => makeFirstBoard());
   const [queue, setQueue] = useState<Character[]>(() => buildQueue());
   const [currentTurn, setCurrentTurn] = useState<Teams>(queue[0].team);
 
+  useEffect(() => {
+    localStorage.setItem("board", JSON.stringify(board));
+    localStorage.setItem("queue", JSON.stringify(queue));
+  }, [queue]);
+
   function makeFirstBoard(): Board {
     const newBoard = new Board(12, 10);
-    newBoard.init();
-    newBoard.addCharacters(playerCharacters, computerCharacters);
-    newBoard.addObstacles();
+    const localBoard = localStorage.getItem("board");
+
+    if (localBoard !== null) {
+      const parsedBoard = JSON.parse(localBoard);
+      newBoard.copyBoard(parsedBoard);
+      return newBoard;
+    } else {
+      newBoard.init();
+      newBoard.addCharacters(playerCharacters, computerCharacters);
+      newBoard.addObstacles();
+    }
+
     return newBoard;
   }
 
@@ -32,6 +46,13 @@ const Game: FC = () => {
 
   function buildQueue(): Character[] {
     if (!board) return [];
+
+    const localQueue = localStorage.getItem("queue");
+
+    if (localQueue !== null) {
+      const parsedQueue = JSON.parse(localQueue);
+      return parsedQueue;
+    }
 
     const computerPieces = board.getComputerPositions();
     const playerPieces = board.getPlayerPositions();
@@ -57,7 +78,7 @@ const Game: FC = () => {
     }
     setQueue((prevQueue) => {
       const updatedQueue = turnQueueUpdater(prevQueue);
-      const updaetedQueueCount = turnQueueCountUpdater(updatedQueue, board);
+      const updaetedQueueCount = turnQueueCountUpdater(updatedQueue, board!);
       return updaetedQueueCount;
     });
 
@@ -70,23 +91,42 @@ const Game: FC = () => {
     }
   }
 
+  const renderWinner = () => {
+    const winner = board.isWinner();
+    return <WinnerComponent winner={winner} />;
+  };
+
+  const renderBoard = () => {
+    if (board === null) {
+      return null;
+    }
+    return (
+      <>
+        <div className="flex mt-4">
+          <HoveredEnemyDamageProvider>
+            <GridProvider>
+              <BoardComponent
+                board={board}
+                setNewBoard={setNewBoard}
+                currentTurn={currentTurn}
+                handleEndTurn={handleEndTurn}
+                queue={queue}
+              />
+              <GameManipulator />
+            </GridProvider>
+          </HoveredEnemyDamageProvider>
+        </div>
+        <TurnQueue queue={queue} />
+      </>
+    );
+  };
+
+  if (board === null) {
+    return null;
+  }
   return (
     <div className="App cursor-default w-full h-full flex flex-col items-center animated-background">
-      <div className="flex mt-4">
-        <HoveredEnemyDamageProvider>
-          <GridProvider>
-            <BoardComponent
-              board={board}
-              setNewBoard={setNewBoard}
-              currentTurn={currentTurn}
-              handleEndTurn={handleEndTurn}
-              queue={queue}
-            />
-            <GameManipulator />
-          </GridProvider>
-        </HoveredEnemyDamageProvider>
-      </div>
-      <TurnQueue queue={queue} />
+      {board.isWinner() ? renderWinner() : renderBoard()}
     </div>
   );
 };

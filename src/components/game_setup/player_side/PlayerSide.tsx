@@ -83,7 +83,7 @@ const PlayerSide: FC<PlayerSideProps> = observer(({ handleIsReseted }) => {
   };
 
   return (
-    <div className="flex justify-center items-center space-x-[3vw]">
+    <div className="flex justify-center items-center space-x-4">
       <div className="space-y-4 flex flex-col">
         {Array(7)
           .fill(null)

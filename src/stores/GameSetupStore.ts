@@ -45,7 +45,7 @@ class GameSetupStore {
     this.computerCharacters = [];
     this.valueToSpend = 1_000_000;
     this.maxValueToSpend = 1_000_000;
-    this.computerMaxValueToSpend = 1_000_000;
+    this.computerMaxValueToSpend = 1_100_000;
     this.FIXED_VALUE_TO_SPEND = 1_000_000;
     this.pickOrder = buildDraft();
     this.isGameStarted = false;

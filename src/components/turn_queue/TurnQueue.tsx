@@ -41,7 +41,7 @@ const TurnQueue: FC<TurnQueueProps> = ({ queue }) => {
 
         return (
           <button
-            key={index}
+            key={character.name}
             onClick={() => handleModalOpen(index)}
             className={`
                 w-[38px] h-[38px]

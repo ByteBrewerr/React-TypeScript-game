@@ -6,17 +6,14 @@ import React, { FC, useState } from "react";
 const GameSetup: FC = () => {
   const [resetComputerSide, setResetComputerSide] = useState(false);
 
+  localStorage.clear();
+
   const handleIsReseted = () => {
     setResetComputerSide((prev) => !prev);
   };
-  type arrayType = {
-    label: string;
-    id: number;
-    des: string;
-  };
 
   return (
-    <div className="w-[100%] h-[100vh] bg-black p-10 flex space-x-10">
+    <div className="w-full h-[100vh] bg-black p-10 flex space-x-10 ">
       <PlayerSide handleIsReseted={handleIsReseted} />
       {/* <Divider className="bg-white h-full" type="vertical" /> */}
       <ComputerSide
