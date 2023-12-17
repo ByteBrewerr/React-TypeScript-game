@@ -8,14 +8,7 @@ onmessage = (e: MessageEvent) => {
   newBoard.copyBoard(board);
   const depth = e.data.depth;
   const queue = e.data.queue;
-  const result = minimax(
-    newBoard,
-    depth,
-    isMaximizingPlayer,
-    -Infinity,
-    Infinity,
-    queue,
-  );
+  const result = minimax(newBoard, depth, isMaximizingPlayer, -Infinity, Infinity, queue);
 
   postMessage(result);
 };

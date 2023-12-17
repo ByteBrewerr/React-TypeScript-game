@@ -25,12 +25,7 @@ function aStarSearch(start: Cell, end: Cell, board: Board) {
     ];
 
     for (const dir of directions) {
-      if (
-        dir.row >= 0 &&
-        dir.row < numRows &&
-        dir.col >= 0 &&
-        dir.col < numCols
-      ) {
+      if (dir.row >= 0 && dir.row < numRows && dir.col >= 0 && dir.col < numCols) {
         if (board.getThisBoardCell(new Cell(dir.row, dir.col)).isEmpty()) {
           moves.push(new Cell(dir.row, dir.col));
         }
@@ -69,10 +64,7 @@ function aStarSearch(start: Cell, end: Cell, board: Board) {
     openList.splice(currentIndex, 1);
     closedList.push(currentNode);
 
-    if (
-      currentNode.position.row === end.row &&
-      currentNode.position.col === end.col
-    ) {
+    if (currentNode.position.row === end.row && currentNode.position.col === end.col) {
       let path: Cell[] = [];
       let current: Node | null = currentNode;
       while (current !== null) {
@@ -94,10 +86,7 @@ function aStarSearch(start: Cell, end: Cell, board: Board) {
 
       let isInClosedList: boolean = false;
       for (const node of closedList) {
-        if (
-          node.position.row === neighborNode.position.row &&
-          node.position.col === neighborNode.position.col
-        ) {
+        if (node.position.row === neighborNode.position.row && node.position.col === neighborNode.position.col) {
           isInClosedList = true;
           break;
         }

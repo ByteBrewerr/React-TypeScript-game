@@ -16,16 +16,7 @@ interface Props {
 }
 
 const CellComponent: FC<Props> = memo(
-  ({
-    cell,
-    isLastHoveredCell,
-    onClick,
-    canMove,
-    canEnemyMove,
-    onMouseEnter,
-    isSelected,
-    canBeAttacked,
-  }) => {
+  ({ cell, isLastHoveredCell, onClick, canMove, canEnemyMove, onMouseEnter, isSelected, canBeAttacked }) => {
     const { gridOn } = useGrid();
 
     const cellClasses = `${cell.row}${cell.col} 
@@ -44,10 +35,8 @@ const CellComponent: FC<Props> = memo(
     ${canEnemyMove ? "opacity-80" : ""}
     ${gridOn ? "border-[1px] border-gray-500" : ""}`;
 
-    const isImageReversed =
-      cell.character?.team === Teams.Computer ? "scale-x-[-1]" : "";
+    const isImageReversed = cell.character?.team === Teams.Computer ? "scale-x-[-1]" : "";
     const isPulsing = cell.character && isSelected ? "animate-pulse" : "";
-    console.log("cell");
 
     return (
       <div
@@ -68,11 +57,7 @@ const CellComponent: FC<Props> = memo(
 
         {cell.obstacle?.logo && (
           <div className="flex items-center justify-center w-full h-full">
-            <img
-              src={cell.obstacle.logo}
-              alt="obstacle"
-              className="w-[80%] h-[80%]"
-            />
+            <img src={cell.obstacle.logo} alt="obstacle" className="w-[80%] h-[80%]" />
           </div>
         )}
       </div>

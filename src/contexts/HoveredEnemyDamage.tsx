@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  FC,
-  useState,
-  ReactNode,
-} from "react";
+import React, { createContext, useContext, FC, useState, ReactNode } from "react";
 
 type Damage = { minDamage: number; maxDamage: number };
 
@@ -18,16 +12,10 @@ interface HoveredEnemyDamageContextProps {
   resetHoveredEnemyDamage: () => void;
 }
 
-const HoveredEnemyDamageContext = createContext<
-  HoveredEnemyDamageContextProps | undefined
->(undefined);
+const HoveredEnemyDamageContext = createContext<HoveredEnemyDamageContextProps | undefined>(undefined);
 
-export const HoveredEnemyDamageProvider: FC<{ children: ReactNode }> = ({
-  children,
-}) => {
-  const [hoveredEnemyDamage, setHoveredEnemyDamage] = useState<Damage | null>(
-    null,
-  );
+export const HoveredEnemyDamageProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const [hoveredEnemyDamage, setHoveredEnemyDamage] = useState<Damage | null>(null);
 
   const [hoveredUnitsToLose, setHoveredUnitsToLose] = useState<UnitsToLose>({
     minUnitsToLose: 0,
@@ -38,10 +26,7 @@ export const HoveredEnemyDamageProvider: FC<{ children: ReactNode }> = ({
     setHoveredEnemyDamage({ minDamage, maxDamage });
   };
 
-  const updateUnitsToLose = (
-    minUnitsToLose: number,
-    maxUnitsToLose: number,
-  ) => {
+  const updateUnitsToLose = (minUnitsToLose: number, maxUnitsToLose: number) => {
     setHoveredUnitsToLose({ minUnitsToLose, maxUnitsToLose });
   };
 

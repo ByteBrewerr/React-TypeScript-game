@@ -45,12 +45,8 @@ class Board {
     }
   }
 
-  public addCharacters(
-    playerCharacters: Character[],
-    computerCharacters: Character[],
-  ) {
-    if (playerCharacters.length === 0 || computerCharacters.length === 0)
-      return;
+  public addCharacters(playerCharacters: Character[], computerCharacters: Character[]) {
+    if (playerCharacters.length === 0 || computerCharacters.length === 0) return;
 
     let playerEmptyPlaces = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     let computerEmptyPlaces = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -65,9 +61,7 @@ class Board {
 
     for (let character of computerCharacters) {
       character.team = Teams.Computer;
-      const randomIndex = Math.floor(
-        Math.random() * computerEmptyPlaces.length,
-      );
+      const randomIndex = Math.floor(Math.random() * computerEmptyPlaces.length);
       const randomPlace = computerEmptyPlaces[randomIndex];
       this.addCharacter(randomPlace, 11, character);
       computerEmptyPlaces.splice(randomIndex, 1);
@@ -81,9 +75,7 @@ class Board {
       const col = Math.floor(Math.random() * 8) + 2;
 
       if (row !== 0 && row !== 11 && col !== 0 && col !== 11) {
-        const isDuplicated = rocks.some(
-          (mountain) => mountain.row === row && mountain.col === col,
-        );
+        const isDuplicated = rocks.some((mountain) => mountain.row === row && mountain.col === col);
         if (!isDuplicated) {
           rocks.push({ row, col });
           this.addRock(row, col);
@@ -100,10 +92,7 @@ class Board {
   static copyCharacter(oldCharacter: Character): Character {
     const characterClass = characterClasses[oldCharacter.name];
     if (characterClass) {
-      const newCharacter = new characterClass(
-        oldCharacter.team,
-        oldCharacter.count,
-      );
+      const newCharacter = new characterClass(oldCharacter.team, oldCharacter.count);
       Object.assign(newCharacter, oldCharacter);
 
       return newCharacter;

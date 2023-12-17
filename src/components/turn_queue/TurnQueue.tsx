@@ -9,9 +9,7 @@ interface TurnQueueProps {
 
 const TurnQueue: FC<TurnQueueProps> = ({ queue }) => {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const [characterIndex, setCharacterIndex] = useState<number | undefined>(
-    undefined,
-  );
+  const [characterIndex, setCharacterIndex] = useState<number | undefined>(undefined);
 
   const handleModalOpen = (index: number) => {
     setIsModalVisible(true);
@@ -26,15 +24,9 @@ const TurnQueue: FC<TurnQueueProps> = ({ queue }) => {
   return (
     <div className="flex">
       {queue.map((character, index) => {
-        const borderColor = `${
-          index === 0 ? "border-yellow-200" : "border-gray-800"
-        }`;
-        const bgColor = `${
-          character.team === Teams.Player ? "bg-sky-900" : "bg-slate-500"
-        }`;
-        const isReversed = `${
-          character.team === Teams.Computer ? "scale-x-[-1]" : ""
-        }`;
+        const borderColor = `${index === 0 ? "border-yellow-200" : "border-gray-800"}`;
+        const bgColor = `${character.team === Teams.Player ? "bg-sky-900" : "bg-slate-500"}`;
+        const isReversed = `${character.team === Teams.Computer ? "scale-x-[-1]" : ""}`;
         if (character.count <= 0) {
           return null;
         }
@@ -56,26 +48,16 @@ const TurnQueue: FC<TurnQueueProps> = ({ queue }) => {
                 relative flex 
                 justify-center`}
           >
-            <img
-              className={`${isReversed} max-h-[110%]`}
-              src={character.logo}
-              alt="character"
-            />
+            <img className={`${isReversed} max-h-[110%]`} src={character.logo} alt="character" />
 
-            <span
-              className="absolute right-0 bottom-0 text-white font-bold mr-1"
-              style={{ fontSize: "clamp(10px, 1vw, 20px)" }}
-            >
+            <span className="absolute right-0 bottom-0 text-white font-bold mr-1" style={{ fontSize: "clamp(10px, 1vw, 20px)" }}>
               {character.count}
             </span>
           </button>
         );
       })}
       {isModalVisible && characterIndex != undefined && (
-        <Modal
-          handleModalClose={handleModalClose}
-          character={queue[characterIndex]}
-        />
+        <Modal handleModalClose={handleModalClose} character={queue[characterIndex]} />
       )}
     </div>
   );

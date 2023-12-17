@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  FC,
-  ReactNode,
-} from "react";
+import React, { createContext, useContext, useState, FC, ReactNode } from "react";
 
 interface GridContextProps {
   gridOn: boolean;
@@ -20,11 +14,7 @@ export const GridProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setGridOn(!gridOn);
   };
 
-  return (
-    <GridContext.Provider value={{ gridOn, toggleGrid }}>
-      {children}
-    </GridContext.Provider>
-  );
+  return <GridContext.Provider value={{ gridOn, toggleGrid }}>{children}</GridContext.Provider>;
 };
 
 export const useGrid = () => {

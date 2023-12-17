@@ -11,17 +11,16 @@ interface CharacterStatsProps {
 }
 
 const CharacterStats: FC<CharacterStatsProps> = ({ character }) => {
-  const rowElements: { icon: React.ReactElement; property: keyof Character }[] =
-    [
-      { icon: <RiSwordLine />, property: "assault" },
-      { icon: <GiCheckedShield />, property: "defence" },
-      { icon: <GiSpearHook className="scale-x-[-1]" />, property: "minDamage" },
-      { icon: <GiSpearHook className="scale-y-[-1]" />, property: "maxDamage" },
-      { icon: <GiHealthPotion />, property: "health" },
-      { icon: <MdHealthAndSafety />, property: "maxHealth" },
-      { icon: <PiSneakerMoveBold />, property: "initiative" },
-      { icon: <FaRunning />, property: "speed" },
-    ];
+  const rowElements: { icon: React.ReactElement; property: keyof Character }[] = [
+    { icon: <RiSwordLine />, property: "assault" },
+    { icon: <GiCheckedShield />, property: "defence" },
+    { icon: <GiSpearHook className="scale-x-[-1]" />, property: "minDamage" },
+    { icon: <GiSpearHook className="scale-y-[-1]" />, property: "maxDamage" },
+    { icon: <GiHealthPotion />, property: "health" },
+    { icon: <MdHealthAndSafety />, property: "maxHealth" },
+    { icon: <PiSneakerMoveBold />, property: "initiative" },
+    { icon: <FaRunning />, property: "speed" },
+  ];
 
   const renderRows = () => {
     return rowElements.map((element, index) => (

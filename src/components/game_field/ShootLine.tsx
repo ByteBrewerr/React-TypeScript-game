@@ -11,23 +11,13 @@ interface ShootProps {
 }
 
 const ShootLine: FC<ShootProps> = ({ from, to, canShoot, cursor }) => {
-  if (
-    canShoot === false ||
-    from.character?.team === to.character?.team ||
-    !to.character
-  ) {
+  if (canShoot === false || from.character?.team === to.character?.team || !to.character) {
     return null;
   }
 
   return (
     <div>
-      <LineTo
-        className={`${cursor}`}
-        from={`${from.row}${from.col}`}
-        to={`${to.row}${to.col}`}
-        borderWidth={1}
-        borderColor="gray"
-      />
+      <LineTo className={`${cursor}`} from={`${from.row}${from.col}`} to={`${to.row}${to.col}`} borderWidth={1} borderColor="gray" />
     </div>
   );
 };

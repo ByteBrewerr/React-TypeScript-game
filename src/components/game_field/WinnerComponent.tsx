@@ -10,8 +10,7 @@ interface WinnerProps {
 
 const WinnerComponent: FC<WinnerProps> = ({ winner }) => {
   const { resetGameSetup } = gameSetupStore;
-  const winnerToString =
-    winner === Teams.Player ? "Вы победили" : "Компьютер победил";
+  const winnerToString = winner === Teams.Player ? "Вы победили" : "Компьютер победил";
   const navigate = useNavigate();
   const restartGame = () => {
     sessionStorage.clear();

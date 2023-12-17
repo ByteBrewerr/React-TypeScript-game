@@ -7,14 +7,7 @@ import Action from "@interfaces/Action";
 import updateTurnQueueCount from "./turnQueueUtils/turnQueueCountUpdater";
 import updateTurnQueue from "./turnQueueUtils/turnQueueUpdater";
 
-function minimax(
-  board: Board,
-  depth: number,
-  isMaximizingPlayer: boolean,
-  alpha: number,
-  beta: number,
-  queue: Character[],
-) {
+function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha: number, beta: number, queue: Character[]) {
   if (depth === 0 || board.isWinner()) {
     return { bestScore: evalBoardPosition(board) };
   }
@@ -25,19 +18,12 @@ function minimax(
     const queueCharacter = queue[0];
     const queueCharacterCell = board
       .getAllPositions()
-      .find(
-        (position) =>
-          queueCharacter.team === position.character?.team &&
-          queueCharacter.name === position.character?.name,
-      );
+      .find((position) => queueCharacter.team === position.character?.team && queueCharacter.name === position.character?.name);
 
     if (queueCharacter && queueCharacterCell) {
-      const possibleMoves: Action[] =
-        queueCharacterCell.character!.possibleMoves(board, queueCharacterCell);
+      const possibleMoves: Action[] = queueCharacterCell.character!.possibleMoves(board, queueCharacterCell);
 
-      const isMovesOnly = possibleMoves.every(
-        (move) => move.actionName == "move",
-      );
+      const isMovesOnly = possibleMoves.every((move) => move.actionName == "move");
       if (isMovesOnly) {
         const closestEnemy = findClosestEnemy(queueCharacterCell, board);
         leftCellToClosestEnemy(possibleMoves, closestEnemy);
@@ -45,19 +31,12 @@ function minimax(
       for (const move of possibleMoves) {
         const boardCopy = new Board(12, 10);
         boardCopy.copyBoard(board);
-        const copyCharacter =
-          boardCopy.cells[queueCharacterCell.row][queueCharacterCell.col]
-            .character!;
+        const copyCharacter = boardCopy.cells[queueCharacterCell.row][queueCharacterCell.col].character!;
         if (move.actionName === "shoot") {
           copyCharacter.shoot(move.to, move.from, boardCopy);
         }
         if (move.actionName === "attack") {
-          copyCharacter.attack(
-            move.to,
-            move.from,
-            queueCharacterCell,
-            boardCopy,
-          );
+          copyCharacter.attack(move.to, move.from, queueCharacterCell, boardCopy);
         }
         if (move.actionName === "move") {
           if (!isMovesOnly) {
@@ -69,14 +48,7 @@ function minimax(
         const updatedQueue = updateTurnQueue(updatedQueueCount);
 
         const isMaximizingPlayerNext = updatedQueue[0].team === Teams.Player;
-        let result = minimax(
-          boardCopy,
-          depth - 1,
-          isMaximizingPlayerNext,
-          alpha,
-          beta,
-          updatedQueue,
-        );
+        let result = minimax(boardCopy, depth - 1, isMaximizingPlayerNext, alpha, beta, updatedQueue);
         let score = result.bestScore;
         if (score > bestScore) {
           bestScore = score;
@@ -96,18 +68,11 @@ function minimax(
     const queueCharacter = queue[0];
     const queueCharacterCell = board
       .getAllPositions()
-      .find(
-        (position) =>
-          queueCharacter.team === position.character?.team &&
-          queueCharacter.name === position.character?.name,
-      );
+      .find((position) => queueCharacter.team === position.character?.team && queueCharacter.name === position.character?.name);
     if (queueCharacterCell) {
-      const possibleMoves: Action[] =
-        queueCharacterCell.character!.possibleMoves(board, queueCharacterCell);
+      const possibleMoves: Action[] = queueCharacterCell.character!.possibleMoves(board, queueCharacterCell);
 
-      const isMovesOnly = possibleMoves.every(
-        (move) => move.actionName == "move",
-      );
+      const isMovesOnly = possibleMoves.every((move) => move.actionName == "move");
       if (isMovesOnly) {
         const closestEnemy = findClosestEnemy(queueCharacterCell, board);
         leftCellToClosestEnemy(possibleMoves, closestEnemy);
@@ -116,19 +81,12 @@ function minimax(
       for (const move of possibleMoves) {
         const boardCopy = new Board(12, 10);
         boardCopy.copyBoard(board);
-        const copyCharacter =
-          boardCopy.cells[queueCharacterCell.row][queueCharacterCell.col]
-            .character!;
+        const copyCharacter = boardCopy.cells[queueCharacterCell.row][queueCharacterCell.col].character!;
         if (move.actionName === "shoot") {
           copyCharacter.shoot(move.to, move.from, boardCopy);
         }
         if (move.actionName === "attack") {
-          copyCharacter.attack(
-            move.to,
-            move.from,
-            queueCharacterCell,
-            boardCopy,
-          );
+          copyCharacter.attack(move.to, move.from, queueCharacterCell, boardCopy);
         }
         if (move.actionName === "move") {
           if (!isMovesOnly) {
@@ -140,14 +98,7 @@ function minimax(
         const updatedQueue = updateTurnQueue(updatedQueueCount);
         const isMaximizingPlayerNext = updatedQueue[0].team === Teams.Player;
 
-        let result = minimax(
-          boardCopy,
-          depth - 1,
-          isMaximizingPlayerNext,
-          alpha,
-          beta,
-          updatedQueue,
-        );
+        let result = minimax(boardCopy, depth - 1, isMaximizingPlayerNext, alpha, beta, updatedQueue);
 
         let score = result.bestScore;
 
@@ -198,10 +149,7 @@ function leftCellToClosestEnemy(possibleMoves: Action[], closestEnemy: Cell) {
 }
 
 function findClosestEnemy(moveFrom: Cell, board: Board): Cell {
-  const enemyPositions =
-    moveFrom.character!.team === Teams.Computer
-      ? board.getPlayerPositions()
-      : board.getComputerPositions();
+  const enemyPositions = moveFrom.character!.team === Teams.Computer ? board.getPlayerPositions() : board.getComputerPositions();
   let distanceDif = Infinity;
   let closestEnemy = moveFrom;
   enemyPositions.forEach((pos) => {

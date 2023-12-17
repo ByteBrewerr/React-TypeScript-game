@@ -8,9 +8,7 @@ interface ArmyCountBarProps {
 
 const ArmyCountBar: FC<ArmyCountBarProps> = memo(({ character }) => {
   const { count, team } = character;
-  const [bgColor, setBgColor] = useState<string>(
-    `${character?.team === Teams.Player ? "bg-sky-900" : "bg-slate-500"}`,
-  );
+  const [bgColor, setBgColor] = useState<string>(`${character?.team === Teams.Player ? "bg-sky-900" : "bg-slate-500"}`);
   const prevArmyCountRef = useRef<number>(count || 0);
 
   useEffect(() => {

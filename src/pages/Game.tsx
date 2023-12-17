@@ -18,16 +18,16 @@ const Game: FC = () => {
   const { playerCharacters, computerCharacters } = GameSetupStore;
   const [board, setBoard] = useState<Board>(() => makeBoard());
   const [queue, setQueue] = useState<Character[]>(() => buildQueue());
-  const [currentTurn, setCurrentTurn] = useState<Teams | null>(
-    queue[0] ? queue[0].team : null,
-  );
+  const [currentTurn, setCurrentTurn] = useState<Teams | null>(queue[0] ? queue[0].team : null);
 
   const localBoard = sessionStorage.getItem("board");
+
   useEffect(() => {
     if (playerCharacters.length === 0 && localBoard === null) {
       navigate("/");
     }
   }, [playerCharacters, navigate]);
+
   useEffect(() => {
     sessionStorage.setItem("board", JSON.stringify(board));
     sessionStorage.setItem("queue", JSON.stringify(queue));
@@ -66,9 +66,7 @@ const Game: FC = () => {
     const computerPieces = board.getComputerPositions();
     const playerPieces = board.getPlayerPositions();
 
-    const allPieces = [...playerPieces, ...computerPieces].map(
-      (piece) => piece.character!,
-    );
+    const allPieces = [...playerPieces, ...computerPieces].map((piece) => piece.character!);
 
     allPieces.sort((a, b) => {
       if (a.initiative === b.initiative) {

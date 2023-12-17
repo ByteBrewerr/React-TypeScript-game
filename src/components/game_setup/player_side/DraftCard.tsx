@@ -26,9 +26,7 @@ const DraftCard: FC<DraftCardProps> = ({
 }) => (
   <div className="flex items-center space-x-[2vw]" key={index}>
     <div className="flex">
-      {currentPick === index && (
-        <CaretRightOutlined className="text-white animate-pulse text-[6vh]" />
-      )}
+      {currentPick === index && <CaretRightOutlined className="text-white animate-pulse text-[6vh]" />}
 
       <Button
         className="border-yellow-600 border-[2px] w-[11vh] h-[11vh] min-w-[3rem] min-h-[3rem] flex justify-center items-center bg-gray-600"
@@ -37,18 +35,10 @@ const DraftCard: FC<DraftCardProps> = ({
         }}
       >
         {currentPick === index && (
-          <img
-            className="w-[100%] h-[100%] min-w-[30px] min-h-[30px]"
-            src={currentUnits[0].logo}
-            alt="logo"
-          />
+          <img className="w-[100%] h-[100%] min-w-[30px] min-h-[30px]" src={currentUnits[0].logo} alt="logo" />
         )}
         {pickedUnits[index] && (
-          <img
-            className="w-[100%] h-[100%] min-w-[30px] min-h-[30px]"
-            src={pickedUnits[index].logo}
-            alt="logo"
-          />
+          <img className="w-[100%] h-[100%] min-w-[30px] min-h-[30px]" src={pickedUnits[index].logo} alt="logo" />
         )}
       </Button>
     </div>
@@ -63,15 +53,9 @@ const DraftCard: FC<DraftCardProps> = ({
           autoFocus={true}
         />
       )}
-      {pickedUnits[index] && (
-        <span className="text-white">{pickedUnits[index].count}</span>
-      )}
+      {pickedUnits[index] && <span className="text-white">{pickedUnits[index].count}</span>}
     </div>
-    <Button
-      className="text-white w-[8vw] min-w-[60px]"
-      onClick={() => handleNextPick()}
-      disabled={currentPick !== index}
-    >
+    <Button className="text-white w-[8vw] min-w-[60px]" onClick={() => handleNextPick()} disabled={currentPick !== index}>
       <p style={{ fontSize: "clamp(8px, .8vw, 18px)" }}>CONFIRM</p>
     </Button>
   </div>

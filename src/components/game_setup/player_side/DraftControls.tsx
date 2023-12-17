@@ -10,16 +10,10 @@ interface DraftControlProps {
   handleRestartDraft: () => void;
 }
 
-const DraftControls: FC<DraftControlProps> = ({
-  valueToSpend,
-  handleRestartDraft,
-  playerCharacters,
-}) => (
+const DraftControls: FC<DraftControlProps> = ({ valueToSpend, handleRestartDraft, playerCharacters }) => (
   <div className="flex flex-col w-[20vw] justify-center items-center">
     <span
-      className={`text-white font-bold text-[5vh] ${
-        valueToSpend < 0 ? "animate-pulse text-red-700" : ""
-      }`}
+      className={`text-white font-bold text-[5vh] ${valueToSpend < 0 ? "animate-pulse text-red-700" : ""}`}
       style={{ fontSize: "clamp(20px,2vw,30px)" }}
     >
       {valueToSpend}

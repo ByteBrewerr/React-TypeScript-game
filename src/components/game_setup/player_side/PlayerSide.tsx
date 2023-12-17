@@ -30,9 +30,7 @@ const PlayerSide: FC<PlayerSideProps> = observer(({ handleIsReseted }) => {
   } = gameSetupStore;
 
   const [currentPick, setCurrentPick] = useState<number>(0);
-  const [currentUnits, setCurrentUnits] = useState<Character[]>(
-    allCharacters.filter((character) => character.level === 1),
-  );
+  const [currentUnits, setCurrentUnits] = useState<Character[]>(allCharacters.filter((character) => character.level === 1));
   const [pickedUnits, setPickedUnits] = useState<Character[]>([]);
 
   const unitCount = Math.floor(maxValueToSpend / currentUnits[0].strength);
@@ -61,9 +59,7 @@ const PlayerSide: FC<PlayerSideProps> = observer(({ handleIsReseted }) => {
       return;
     }
 
-    setCurrentUnits(
-      allCharacters.filter((character) => character.level === currentPick + 2),
-    );
+    setCurrentUnits(allCharacters.filter((character) => character.level === currentPick + 2));
 
     setPlayerCharacters([...playerCharacters, currentUnits[0]]);
     setMaxValueToSpend(valueToSpend);
@@ -103,11 +99,7 @@ const PlayerSide: FC<PlayerSideProps> = observer(({ handleIsReseted }) => {
             );
           })}
       </div>
-      <DraftControls
-        valueToSpend={valueToSpend}
-        playerCharacters={playerCharacters}
-        handleRestartDraft={handleRestartDraft}
-      />
+      <DraftControls valueToSpend={valueToSpend} playerCharacters={playerCharacters} handleRestartDraft={handleRestartDraft} />
     </div>
   );
 });

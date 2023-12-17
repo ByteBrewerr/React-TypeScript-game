@@ -6,15 +6,10 @@ export default function calculateUnitsTolose(target: Cell, attacker: Cell) {
   const attackerCharacter = attacker.character!;
   const { totalDamage } = calculateDamage(target, attacker);
 
-  const avgDamagePerUnit = Math.min(
-    totalDamage,
-    targetCharacter.count * targetCharacter.maxHealth,
-  );
+  const avgDamagePerUnit = Math.min(totalDamage, targetCharacter.count * targetCharacter.maxHealth);
 
   const averageUnitsToLose =
-    totalDamage < attackerCharacter.health
-      ? 0
-      : Math.floor(avgDamagePerUnit / targetCharacter.maxHealth);
+    totalDamage < attackerCharacter.health ? 0 : Math.floor(avgDamagePerUnit / targetCharacter.maxHealth);
 
   const remainingDamage = avgDamagePerUnit % targetCharacter.maxHealth;
 

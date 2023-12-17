@@ -48,11 +48,7 @@ export default class Character {
   public canMove(target: Cell, from: Cell, board: Board): boolean {
     const possibleMoves = this.possibleMoves(board, from);
     for (const move of possibleMoves) {
-      if (
-        move.actionName === "move" &&
-        move.to.row === target.row &&
-        move.to.col === target.col
-      ) {
+      if (move.actionName === "move" && move.to.row === target.row && move.to.col === target.col) {
         return true;
       }
     }
@@ -67,22 +63,14 @@ export default class Character {
     }
   }
 
-  public canAttack(
-    target: Cell,
-    attackFrom: Cell,
-    moveFrom: Cell,
-    board: Board,
-  ): boolean {
+  public canAttack(target: Cell, attackFrom: Cell, moveFrom: Cell, board: Board): boolean {
     if (!this.isSpecificEnemyNear(target, attackFrom, board)) {
       return false;
     }
 
     const possibleMoves = this.possibleMoves(board, moveFrom);
     const canAttack = possibleMoves.some(
-      (move) =>
-        move.actionName === "attack" &&
-        move.to.row === target.row &&
-        move.to.col === target.col,
+      (move) => move.actionName === "attack" && move.to.row === target.row && move.to.col === target.col,
     );
 
     return canAttack;
@@ -95,39 +83,24 @@ export default class Character {
     return true;
   }
   public isEnemyNear(character: Cell, board: Board) {
-    const characterPositions =
-      this.team === Teams.Computer
-        ? board.getPlayerPositions()
-        : board.getComputerPositions();
+    const characterPositions = this.team === Teams.Computer ? board.getPlayerPositions() : board.getComputerPositions();
 
     for (const enemy of characterPositions) {
       const distanceX = Math.abs(enemy.col - character.col);
       const distanceY = Math.abs(enemy.row - character.row);
-      if (
-        distanceX <= 1 &&
-        distanceY <= 1 &&
-        !(distanceX === 0 && distanceY === 0)
-      ) {
+      if (distanceX <= 1 && distanceY <= 1 && !(distanceX === 0 && distanceY === 0)) {
         return true;
       }
     }
     return false;
   }
 
-  public isSpecificEnemyNear(
-    specificEnemy: Cell,
-    characterFrom: Cell,
-    board: Board,
-  ) {
+  public isSpecificEnemyNear(specificEnemy: Cell, characterFrom: Cell, board: Board) {
     if (specificEnemy == characterFrom) return true;
 
     const distanceX = Math.abs(specificEnemy.col - characterFrom.col);
     const distanceY = Math.abs(specificEnemy.row - characterFrom.row);
-    if (
-      distanceX <= 1 &&
-      distanceY <= 1 &&
-      !(distanceX === 0 && distanceY === 0)
-    ) {
+    if (distanceX <= 1 && distanceY <= 1 && !(distanceX === 0 && distanceY === 0)) {
       return true;
     }
 
@@ -135,10 +108,7 @@ export default class Character {
   }
 
   public possibleMoves(board: Board, from: Cell): Action[] {
-    const enemyPositions =
-      this.team === Teams.Player
-        ? board.getComputerPositions()
-        : board.getPlayerPositions();
+    const enemyPositions = this.team === Teams.Player ? board.getComputerPositions() : board.getPlayerPositions();
 
     const possibleMoves: Action[] = [];
     const visited: Set<Cell> = new Set();
@@ -182,18 +152,9 @@ export default class Character {
         const newRow = cell.row + direction.row;
         const newCol = cell.col + direction.col;
 
-        if (
-          newRow >= 0 &&
-          newRow < board.sizeY &&
-          newCol >= 0 &&
-          newCol < board.sizeX
-        ) {
+        if (newRow >= 0 && newRow < board.sizeY && newCol >= 0 && newCol < board.sizeX) {
           const targetCell = board.cells[newRow][newCol];
-          if (
-            !visited.has(targetCell) &&
-            !targetCell.obstacle &&
-            (!targetCell.character || targetCell.character === this)
-          ) {
+          if (!visited.has(targetCell) && !targetCell.obstacle && (!targetCell.character || targetCell.character === this)) {
             possibleMoves.push({
               actionName: "move",
               from,
@@ -202,8 +163,7 @@ export default class Character {
 
             queue.push({ cell: targetCell, distance: distance + 1 });
             for (let enemyPosition of enemyPositions) {
-              if (this.shooting == true && !this.isEnemyNear(from, board))
-                continue;
+              if (this.shooting == true && !this.isEnemyNear(from, board)) continue;
 
               if (this.isSpecificEnemyNear(enemyPosition, targetCell, board)) {
                 possibleMoves.push({
@@ -222,12 +182,7 @@ export default class Character {
     return possibleMoves;
   }
 
-  public attack(
-    target: Cell,
-    attackFrom: Cell,
-    moveFrom: Cell,
-    board: Board,
-  ): void {
+  public attack(target: Cell, attackFrom: Cell, moveFrom: Cell, board: Board): void {
     if (attackFrom != moveFrom) {
       this.move(attackFrom, moveFrom, board);
     }
@@ -236,10 +191,7 @@ export default class Character {
     const copyTarget = copyTargetCell.character!;
     const copyAttackFrom = board.getThisBoardCell(attackFrom);
 
-    const { averageUnitsToLose, remainingDamage } = calculateUnitsToLose(
-      copyTargetCell,
-      copyAttackFrom,
-    );
+    const { averageUnitsToLose, remainingDamage } = calculateUnitsToLose(copyTargetCell, copyAttackFrom);
 
     copyTarget.count -= averageUnitsToLose;
     copyTarget.health -= remainingDamage;
@@ -260,19 +212,12 @@ export default class Character {
     }
   }
 
-  private performCounterAttack(
-    target: Cell,
-    attacker: Cell,
-    board: Board,
-  ): void {
+  private performCounterAttack(target: Cell, attacker: Cell, board: Board): void {
     const copyTargetCell = board.getThisBoardCell(target);
     const copyTarget = copyTargetCell.character!;
     const copyAttackFrom = board.getThisBoardCell(attacker);
 
-    const { averageUnitsToLose, remainingDamage } = calculateUnitsToLose(
-      copyTargetCell,
-      copyAttackFrom,
-    );
+    const { averageUnitsToLose, remainingDamage } = calculateUnitsToLose(copyTargetCell, copyAttackFrom);
 
     copyTarget.count -= averageUnitsToLose;
     copyTarget.health -= remainingDamage;
@@ -299,10 +244,7 @@ export default class Character {
     const copyTarget = copyTargetCell.character!;
     const copyShootFrom = board.getThisBoardCell(from);
 
-    const { averageUnitsToLose, remainingDamage } = calculateUnitsToLose(
-      copyTargetCell,
-      copyShootFrom,
-    );
+    const { averageUnitsToLose, remainingDamage } = calculateUnitsToLose(copyTargetCell, copyShootFrom);
 
     copyTarget.count -= averageUnitsToLose;
     copyTarget.health -= remainingDamage;
