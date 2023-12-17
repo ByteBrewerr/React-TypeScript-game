@@ -11,10 +11,13 @@ export default function detailsOnHoverEnemy(target: Cell, attacker: Cell) {
   const minDamagePerUnit = Math.min(minDamage, targetCharacter.count * targetCharacter.maxHealth);
   const maxDamagePerUnit = Math.min(maxDamage, targetCharacter.count * targetCharacter.maxHealth);
 
-  const minUnitsToLose = minDamage < attackerCharacter.health ? 0 : Math.floor(minDamagePerUnit / targetCharacter.maxHealth);
+  let minUnitsToLose = minDamage < attackerCharacter.health ? 0 : Math.floor(minDamagePerUnit / targetCharacter.maxHealth);
 
   let maxUnitsToLose = maxDamage < attackerCharacter.health ? 0 : Math.floor(maxDamagePerUnit / targetCharacter.maxHealth);
 
+  if (maxDamage > targetCharacter.health) maxUnitsToLose += 1;
+  if (minDamage > targetCharacter.health) minUnitsToLose += 1;
+  console.log(minUnitsToLose);
   return {
     minDamage,
     maxDamage,
