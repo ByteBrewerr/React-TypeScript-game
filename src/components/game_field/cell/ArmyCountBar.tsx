@@ -6,6 +6,10 @@ interface ArmyCountBarProps {
   character: Character;
 }
 
+/**
+ * Компонент, отображающий счетчик количества персонажей в армии.
+ * Анимирует изменение цвета при уменьшении количества персонажей.
+ */
 const ArmyCountBar: FC<ArmyCountBarProps> = memo(({ character }) => {
   const { count, team } = character;
   const [bgColor, setBgColor] = useState<string>(`${character?.team === Teams.Player ? "bg-sky-900" : "bg-slate-500"}`);

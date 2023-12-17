@@ -7,7 +7,9 @@ import Action from "@interfaces/Action";
 import updateTurnQueueCount from "./turnQueueUtils/turnQueueCountUpdater";
 import updateTurnQueue from "./turnQueueUtils/turnQueueUpdater";
 
+// Алгоритм минимакс для оценки и выбора лучшего хода
 function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha: number, beta: number, queue: Character[]) {
+  // Базовые случаи: если глубина равна 0 или есть победитель, возвращаем оценку
   if (depth === 0 || board.isWinner()) {
     return { bestScore: evalBoardPosition(board) };
   }
@@ -20,18 +22,24 @@ function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha
       .getAllPositions()
       .find((position) => queueCharacter.team === position.character?.team && queueCharacter.name === position.character?.name);
 
+    // Проверяем, действительны ли персонаж очереди и его ячейка
     if (queueCharacter && queueCharacterCell) {
       const possibleMoves: Action[] = queueCharacterCell.character!.possibleMoves(board, queueCharacterCell);
 
+      // Проверяем, все ли возможные ходы - это действия "move"
       const isMovesOnly = possibleMoves.every((move) => move.actionName == "move");
       if (isMovesOnly) {
+        // Если возможны только действия "move", корректируем ходы в зависимости от ближайшего врага
         const closestEnemy = findClosestEnemy(queueCharacterCell, board);
         leftCellToClosestEnemy(possibleMoves, closestEnemy);
       }
+
+      // Итерируемся по возможным ходам и оцениваем лучший
       for (const move of possibleMoves) {
         const boardCopy = new Board(12, 10);
         boardCopy.copyBoard(board);
         const copyCharacter = boardCopy.cells[queueCharacterCell.row][queueCharacterCell.col].character!;
+        // Применяем ход к копии доски
         if (move.actionName === "shoot") {
           copyCharacter.shoot(move.to, move.from, boardCopy);
         }
@@ -39,6 +47,7 @@ function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha
           copyCharacter.attack(move.to, move.from, queueCharacterCell, boardCopy);
         }
         if (move.actionName === "move") {
+          // Пропускаем ход, если это не действительный ход "move"
           if (!isMovesOnly) {
             continue;
           }
@@ -48,14 +57,18 @@ function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha
         const updatedQueue = updateTurnQueue(updatedQueueCount);
 
         const isMaximizingPlayerNext = updatedQueue[0].team === Teams.Player;
+        // Рекурсивный вызов минимакса для следующего уровня
         let result = minimax(boardCopy, depth - 1, isMaximizingPlayerNext, alpha, beta, updatedQueue);
         let score = result.bestScore;
+        // Обновляем лучший ход и оценку, если найден лучший ход
         if (score > bestScore) {
           bestScore = score;
           bestMove = move;
         }
+        // Обновляем альфа для отсечения
         alpha = Math.max(alpha, score);
         if (beta <= alpha) {
+          // Отсечение бета: выход из цикла, если выполняется условие отсечения
           break;
         }
       }
@@ -63,6 +76,7 @@ function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha
 
     return { bestScore, bestMove };
   } else {
+    // Ход уменьшающегося игрока
     let bestScore = Infinity;
     let bestMove;
     const queueCharacter = queue[0];
@@ -107,8 +121,10 @@ function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha
           bestMove = move;
         }
 
+        // Обновляем бета для отсечения
         beta = Math.min(beta, score);
         if (beta <= alpha) {
+          // Отсечение бета: выход из цикла, если выполняется условие отсечения
           break;
         }
       }
@@ -118,6 +134,7 @@ function minimax(board: Board, depth: number, isMaximizingPlayer: boolean, alpha
   }
 }
 
+// Оцениваем позицию доски на основе силы и количества персонажей
 function evalBoardPosition(board: Board) {
   let playerTotalStrength: number = 0;
   let enemyTotalStrength: number = 0;
@@ -133,9 +150,11 @@ function evalBoardPosition(board: Board) {
     }
   }
 
+  // Оценка основана на разнице между силой игрока и врага
   return playerTotalStrength - enemyTotalStrength;
 }
 
+// Изменяем порядок возможных ходов в зависимости от близости к ближайшему врагу
 function leftCellToClosestEnemy(possibleMoves: Action[], closestEnemy: Cell) {
   possibleMoves.sort((a, b) => {
     const distanceX_A = Math.abs(a.to.col - closestEnemy.col);
@@ -143,11 +162,14 @@ function leftCellToClosestEnemy(possibleMoves: Action[], closestEnemy: Cell) {
     const distanceX_B = Math.abs(b.to.col - closestEnemy.col);
     const distanceY_B = Math.abs(b.to.row - closestEnemy.row);
 
+    // Сортировка ходов в зависимости от общего расстояния до ближайшего врага
     return distanceX_A + distanceY_A - (distanceX_B + distanceY_B);
   });
+  // Оставляем только первый ход, отбрасывая остальные
   possibleMoves.splice(1, possibleMoves.length);
 }
 
+// Находим ближайшего врага к заданной ячейке
 function findClosestEnemy(moveFrom: Cell, board: Board): Cell {
   const enemyPositions = moveFrom.character!.team === Teams.Computer ? board.getPlayerPositions() : board.getComputerPositions();
   let distanceDif = Infinity;

@@ -1,7 +1,8 @@
+// Импорт необходимых библиотек и компонентов
 import React, { FC, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import turnQueueUpdater from "@utils/turnQueueUtils/turnQueueUpdater";
-import GameManipulator from "@components/board_sidebar/BoardSidebar";
+import BoardSidebar from "@components/board_sidebar/BoardSidebar";
 import BoardComponent from "@components/game_field/BoardComponent";
 import TurnQueue from "@components/turn_queue/TurnQueue";
 import { GridProvider } from "@contexts/GridProvider";
@@ -13,26 +14,33 @@ import GameSetupStore from "@stores/GameSetupStore";
 import { HoveredEnemyDamageProvider } from "@contexts/HoveredEnemyDamage";
 import WinnerComponent from "@components/game_field/WinnerComponent";
 
+// Определение интерфейса для свойств компонента Game
 const Game: FC = () => {
   const navigate = useNavigate();
+
   const { playerCharacters, computerCharacters } = GameSetupStore;
+
   const [board, setBoard] = useState<Board>(() => makeBoard());
   const [queue, setQueue] = useState<Character[]>(() => buildQueue());
   const [currentTurn, setCurrentTurn] = useState<Teams | null>(queue[0] ? queue[0].team : null);
 
+  // Получение сохраненной доски из sessionStorage при монтировании компонента
   const localBoard = sessionStorage.getItem("board");
 
+  // Эффект для проверки, что игрок имеет персонажей и доска существует
   useEffect(() => {
     if (playerCharacters.length === 0 && localBoard === null) {
       navigate("/");
     }
   }, [playerCharacters, navigate]);
 
+  // Эффект для сохранения состояния доски и очереди ходов в sessionStorage
   useEffect(() => {
     sessionStorage.setItem("board", JSON.stringify(board));
     sessionStorage.setItem("queue", JSON.stringify(queue));
   }, [queue]);
 
+  // Функция для создания или восстановления состояния доски
   function makeBoard(): Board {
     const newBoard = new Board(12, 10);
     const localBoard = sessionStorage.getItem("board");
@@ -49,10 +57,12 @@ const Game: FC = () => {
     return newBoard;
   }
 
+  // Функция для установки нового состояния доски
   function setNewBoard(board: Board) {
     setBoard(board);
   }
 
+  // Функция для создания или восстановления очереди ходов
   function buildQueue(): Character[] {
     if (!board) return [];
 
@@ -79,14 +89,15 @@ const Game: FC = () => {
     return allPieces;
   }
 
+  // Обработчик завершения хода
   function handleEndTurn() {
     if (queue.length === 1) {
-      alert("the game is ended");
+      alert("The game is ended");
     }
     setQueue((prevQueue) => {
       const updatedQueue = turnQueueUpdater(prevQueue);
-      const updaetedQueueCount = turnQueueCountUpdater(updatedQueue, board!);
-      return updaetedQueueCount;
+      const updatedQueueCount = turnQueueCountUpdater(updatedQueue, board!);
+      return updatedQueueCount;
     });
 
     const nextCharacter = queue[1];
@@ -98,11 +109,13 @@ const Game: FC = () => {
     }
   }
 
+  // Функция для отображения компонента WinnerComponent в случае победы
   const renderWinner = () => {
     const winner = board.isWinner();
     return <WinnerComponent winner={winner} />;
   };
 
+  // Функция для отображения компонентов доски и очереди ходов
   const renderBoard = () => {
     if (board === null) {
       return null;
@@ -119,15 +132,18 @@ const Game: FC = () => {
                 handleEndTurn={handleEndTurn}
                 queue={queue}
               />
-              <GameManipulator />
+
+              <BoardSidebar />
             </GridProvider>
           </HoveredEnemyDamageProvider>
         </div>
+
         <TurnQueue queue={queue} />
       </>
     );
   };
 
+  // Проверка, что доска существует
   if (board === null) {
     return null;
   }

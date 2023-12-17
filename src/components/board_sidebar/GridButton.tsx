@@ -2,6 +2,10 @@ import React from "react";
 import { useGrid } from "@contexts/GridProvider";
 import { Button } from "antd";
 
+/**
+ * Компонент `GridButton` представляет кнопку для включения и выключения отображения сетки на игровом поле.
+ * Использует контекст `GridProvider` для управления состоянием сетки.
+ */
 export const GridButton = () => {
   const { gridOn, toggleGrid } = useGrid();
 

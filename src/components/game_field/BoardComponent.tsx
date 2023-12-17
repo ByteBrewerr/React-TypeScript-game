@@ -12,7 +12,6 @@ import Action from "@interfaces/Action";
 import { observer } from "mobx-react-lite";
 import { useHoveredEnemyDamage } from "@contexts/HoveredEnemyDamage";
 import detailsOnHoverEnemy from "@utils/detailsOnHoverEnemy";
-import { useNavigate } from "react-router-dom";
 
 interface BoardProps {
   currentTurn: Teams;
@@ -21,17 +20,16 @@ interface BoardProps {
   queue: Character[];
   handleEndTurn: () => void;
 }
+
+// Создание веб-воркера для вычислений минимакса
 const minimaxWorker = new Worker(new URL("@utils/minimaxWorker.ts", import.meta.url));
 
 const BoardComponent: FC<BoardProps> = ({ board, setNewBoard, currentTurn, handleEndTurn, queue }) => {
   const { updateHoveredEnemyDamage, updateUnitsToLose, hoveredEnemyDamage, resetHoveredEnemyDamage } = useHoveredEnemyDamage();
-
   const [selectedCell, setSelectedCell] = useState<Cell | null>(null);
   const [hoveredCell, setHoveredCell] = useState<Cell | null>(null);
   const [lastHoveredCell, setLastHoveredCell] = useState<Cell | null>(null);
-
   const [cursor, setCursor] = useState<string>("");
-
   const [road, setRoad] = useState<Road[]>([]);
   const [enemyShootLine, setEnemyShootLine] = useState<Cell[]>([]);
 
@@ -44,6 +42,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setNewBoard, currentTurn, handl
     [hoveredCell, board],
   );
 
+  // Эффект для инициализации хода компьютера или игрока
   useEffect(() => {
     if (!road.length && !enemyShootLine.length) {
       const queueCharacter = queue[0];
@@ -62,6 +61,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setNewBoard, currentTurn, handl
     }
   }, [board]);
 
+  // Эффект для обработки стрельбы
   useEffect(() => {
     let timer: NodeJS.Timeout | undefined;
     if (enemyShootLine.length) {
@@ -77,6 +77,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setNewBoard, currentTurn, handl
     };
   }, [enemyShootLine]);
 
+  // Эффект для обработки движения по дорожке
   useEffect(() => {
     let timer: NodeJS.Timeout | undefined;
     if (road.length >= 2) {
@@ -87,6 +88,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setNewBoard, currentTurn, handl
     };
   }, [road]);
 
+  // Функция для обработки дорожки
   const processRoad = () => {
     const character = board.getThisBoardCell(road[0].cell).character!;
     character.move(road[1].cell, road[0].cell, board);
@@ -104,6 +106,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setNewBoard, currentTurn, handl
     }
   };
 
+  // Функция для получения лучшего хода с использованием веб-воркера
   const getBestMove = () => {
     const handleWorkerMessage = (e: MessageEvent) => {
       try {
@@ -132,6 +135,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setNewBoard, currentTurn, handl
     minimaxWorker.onerror = handleWorkerError;
   };
 
+  // Функция для обработки полученного действия
   const handleAction = (action: Action) => {
     let road: Cell[] = [];
 
@@ -160,6 +164,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setNewBoard, currentTurn, handl
     updateBoardWithoutEndingTurn();
   };
 
+  // Функция для инициализации доски
   const initializeBoard = (prevBoard: Board) => {
     setSelectedCell(null);
     const newBoard = new Board(12, 10);
@@ -167,15 +172,18 @@ const BoardComponent: FC<BoardProps> = ({ board, setNewBoard, currentTurn, handl
     return newBoard;
   };
 
+  // Функция для обновления доски с завершением хода
   const updateBoard = () => {
     setNewBoard(initializeBoard(board));
     handleEndTurn();
   };
 
+  // Функция для обновления доски без завершения хода
   const updateBoardWithoutEndingTurn = () => {
     setNewBoard(initializeBoard(board));
   };
 
+  // Обработчик клика по ячейке
   const handleCellClick = useCallback(
     (cell: Cell) => {
       if (currentTurn === Teams.Player) {
@@ -205,6 +213,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setNewBoard, currentTurn, handl
     [selectedCell, lastHoveredCell],
   );
 
+  // Обработчик наведения на ячейку
   const handleCellHover = useCallback(
     (cell: Cell) => {
       setHoveredCell(cell);
@@ -241,6 +250,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setNewBoard, currentTurn, handl
     [selectedCell, hoveredEnemyDamage],
   );
 
+  // Обработка отображения урона при наведении
   function handleShowDamage(cell: Cell) {
     if (selectedCell && cell.character?.team === Teams.Computer) {
       const { minDamage, maxDamage, minUnitsToLose, maxUnitsToLose } = detailsOnHoverEnemy(cell, selectedCell);

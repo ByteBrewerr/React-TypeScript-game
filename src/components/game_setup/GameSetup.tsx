@@ -1,11 +1,14 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useState } from "react";
 import ComputerSide from "@components/game_setup/ComputerSide";
 import PlayerSide from "@components/game_setup/player_side/PlayerSide";
-import { Navigate } from "react-router-dom";
 
+// Компонент GameSetup, представляющий настройку игры
 const GameSetup: FC = () => {
   const [resetComputerSide, setResetComputerSide] = useState(false);
+
   sessionStorage.clear();
+
+  // Функция для обновления состояния сброса стороны компьютера
   const handleIsReseted = () => {
     setResetComputerSide((prev) => !prev);
   };

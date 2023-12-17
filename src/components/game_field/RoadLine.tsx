@@ -1,3 +1,4 @@
+// Импорт React и необходимых компонентов и интерфейсов
 import React, { FC } from "react";
 import Cell from "@models/Cell";
 import LineTo from "react-lineto";
@@ -7,10 +8,13 @@ interface RoadProps {
   road: Road[];
 }
 
+// Компонент RoadLine, представляющий линии для отображения движения по дорожке
 const RoadLine: FC<RoadProps> = ({ road }) => {
+  // Если дорожка пуста, возвращаем null
   if (!road.length) {
     return null;
   }
+
   return (
     <div>
       {road.map((_, i) => {
@@ -28,4 +32,5 @@ const RoadLine: FC<RoadProps> = ({ road }) => {
   );
 };
 
+// Экспорт компонента RoadLine
 export default RoadLine;

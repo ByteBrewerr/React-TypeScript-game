@@ -4,7 +4,7 @@ import ArmyCountBar from "./ArmyCountBar";
 import Teams from "@enums/Teams.enum";
 import { useGrid } from "../../../contexts/GridProvider";
 
-interface Props {
+interface CellProps {
   cell: Cell;
   isLastHoveredCell: boolean | null;
   onClick: (cell: Cell) => void;
@@ -15,10 +15,18 @@ interface Props {
   onMouseEnter: (cell: Cell) => void;
 }
 
-const CellComponent: FC<Props> = memo(
+/**
+ * Компонент `CellComponent` представляет отдельную ячейку игрового поля.
+ * Этот компонент отображает изображение ячейки, реагирует на события клика и наведения мыши,
+ * а также может отображать информацию о наличии персонажа, его логотипе и количестве.
+ */
+
+const CellComponent: FC<CellProps> = memo(
   ({ cell, isLastHoveredCell, onClick, canMove, canEnemyMove, onMouseEnter, isSelected, canBeAttacked }) => {
+    // Используем контекст для получения информации о состоянии сетки
     const { gridOn } = useGrid();
 
+    // Определяем классы для стилизации ячейки в зависимости от различных условий
     const cellClasses = `${cell.row}${cell.col} 
     w-[38px] h-[38px]
     sm:w-[40px] sm:h-[40px] 
@@ -35,6 +43,7 @@ const CellComponent: FC<Props> = memo(
     ${canEnemyMove ? "opacity-80" : ""}
     ${gridOn ? "border-[1px] border-gray-500" : ""}`;
 
+    // Определяем стили для изображения персонажа (перевернуто или пульсирующее)
     const isImageReversed = cell.character?.team === Teams.Computer ? "scale-x-[-1]" : "";
     const isPulsing = cell.character && isSelected ? "animate-pulse" : "";
 
@@ -45,6 +54,7 @@ const CellComponent: FC<Props> = memo(
         className={cellClasses}
         style={{ background: `url(${cell.bg}) no-repeat center / contain ` }}
       >
+        {/* Отображаем логотип персонажа, если он есть */}
         {cell.character?.logo && (
           <img
             src={cell.character.logo}
@@ -53,8 +63,10 @@ const CellComponent: FC<Props> = memo(
           />
         )}
 
+        {/* Отображаем информацию о количестве существ в ячейке */}
         {cell.character && <ArmyCountBar character={cell.character} />}
 
+        {/* Отображаем логотип препятствия, если оно есть */}
         {cell.obstacle?.logo && (
           <div className="flex items-center justify-center w-full h-full">
             <img src={cell.obstacle.logo} alt="obstacle" className="w-[80%] h-[80%]" />

@@ -1,6 +1,6 @@
+import React, { FC } from "react";
 import Teams from "@enums/Teams.enum";
 import { Button } from "antd";
-import React, { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import gameSetupStore from "@stores/GameSetupStore";
 
@@ -8,10 +8,15 @@ interface WinnerProps {
   winner: Teams | undefined;
 }
 
+// Компонент WinnerComponent, отображающий победителя игры
 const WinnerComponent: FC<WinnerProps> = ({ winner }) => {
   const { resetGameSetup } = gameSetupStore;
+
   const winnerToString = winner === Teams.Player ? "Вы победили" : "Компьютер победил";
+
   const navigate = useNavigate();
+
+  // Функция для перезапуска игры
   const restartGame = () => {
     sessionStorage.clear();
     resetGameSetup();
@@ -30,4 +35,5 @@ const WinnerComponent: FC<WinnerProps> = ({ winner }) => {
   );
 };
 
+// Экспорт компонента WinnerComponent
 export default WinnerComponent;

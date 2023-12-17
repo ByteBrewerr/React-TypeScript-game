@@ -9,7 +9,7 @@ interface Node {
   f: number;
   parent: Node | null;
 }
-
+//функция поиска кратчайшего пути с использованием алгоритма A*
 function aStarSearch(start: Cell, end: Cell, board: Board) {
   function calculateHeuristic(start: Cell, end: Cell): number {
     return Math.abs(end.row - start.row) + Math.abs(end.col - start.col);

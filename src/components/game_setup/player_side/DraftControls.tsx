@@ -1,6 +1,5 @@
 import React, { FC } from "react";
-import { Button, Slider } from "antd";
-import { CaretRightOutlined } from "@ant-design/icons";
+import { Button } from "antd";
 import Character from "@models/characters/Character";
 import { Link } from "react-router-dom";
 
@@ -10,8 +9,11 @@ interface DraftControlProps {
   handleRestartDraft: () => void;
 }
 
+// Компонент DraftControls, представляющий элементы управления в драфте
 const DraftControls: FC<DraftControlProps> = ({ valueToSpend, handleRestartDraft, playerCharacters }) => (
+  // Обертка для элементов управления
   <div className="flex flex-col w-[20vw] justify-center items-center">
+    {/* Отображение текущего значения для расходования */}
     <span
       className={`text-white font-bold text-[5vh] ${valueToSpend < 0 ? "animate-pulse text-red-700" : ""}`}
       style={{ fontSize: "clamp(20px,2vw,30px)" }}
@@ -19,6 +21,7 @@ const DraftControls: FC<DraftControlProps> = ({ valueToSpend, handleRestartDraft
       {valueToSpend}
     </span>
 
+    {/* Кнопка для перезапуска драфта */}
     <Button
       className="text-white w-[12vw] min-w-[120px]"
       onClick={() => {
@@ -28,6 +31,7 @@ const DraftControls: FC<DraftControlProps> = ({ valueToSpend, handleRestartDraft
       RESTART DRAFT
     </Button>
 
+    {/* Ссылка для начала игры, активная при наличии 7 персонажей у игрока */}
     {playerCharacters.length === 7 && (
       <Link
         to="/play"
