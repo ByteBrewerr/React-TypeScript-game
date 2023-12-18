@@ -91,9 +91,6 @@ const Game: FC = () => {
 
   // Обработчик завершения хода
   function handleEndTurn() {
-    if (queue.length === 1) {
-      alert("The game is ended");
-    }
     setQueue((prevQueue) => {
       const updatedQueue = turnQueueUpdater(prevQueue);
       const updatedQueueCount = turnQueueCountUpdater(updatedQueue, board!);

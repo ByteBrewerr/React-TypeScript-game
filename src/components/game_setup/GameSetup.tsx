@@ -14,7 +14,7 @@ const GameSetup: FC = () => {
   };
 
   return (
-    <div className="w-full h-[100vh] bg-black p-10 flex space-x-10 ">
+    <div className="min-h-[100vh] bg-black p-10 flex space-x-10 ">
       <PlayerSide handleIsReseted={handleIsReseted} />
       <ComputerSide resetComputerSide={resetComputerSide} handleIsReseted={handleIsReseted} />
     </div>
