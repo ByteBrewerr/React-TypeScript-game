@@ -9,15 +9,14 @@ export default function calculateUnitsToLose(target: Cell, attacker: Cell) {
   // Расчет общего урона с использованием вспомогательной функции
   const { totalDamage } = calculateDamage(target, attacker);
 
-  // Расчет среднего урона на одну единицу
-  const avgDamagePerUnit = Math.min(totalDamage, targetCharacter.count * targetCharacter.maxHealth);
+  // Расчет урона на одну единицу
+  const damagePerUnit = Math.min(totalDamage, targetCharacter.count * targetCharacter.maxHealth);
 
-  // Расчет среднего количества потерянных юнитов
-  const averageUnitsToLose =
-    totalDamage < attackerCharacter.health ? 0 : Math.floor(avgDamagePerUnit / targetCharacter.maxHealth);
+  // Расчет количества потерянных юнитов
+  const unitsToLose = totalDamage < attackerCharacter.health ? 0 : Math.floor(damagePerUnit / targetCharacter.maxHealth);
 
   // Расчет оставшегося урона после целых юнитов
-  const remainingDamage = avgDamagePerUnit % targetCharacter.maxHealth;
+  const remainingDamage = damagePerUnit % targetCharacter.maxHealth;
 
-  return { totalDamage, averageUnitsToLose, remainingDamage };
+  return { totalDamage, unitsToLose, remainingDamage };
 }

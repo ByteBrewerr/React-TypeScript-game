@@ -20,11 +20,6 @@ export default function detailsOnHoverEnemy(target: Cell, attacker: Cell) {
   let minUnitsToLose = minDamage < attackerCharacter.health ? 0 : Math.floor(minDamagePerUnit / targetCharacter.maxHealth);
   let maxUnitsToLose = maxDamage < attackerCharacter.health ? 0 : Math.floor(maxDamagePerUnit / targetCharacter.maxHealth);
 
-  // Коррекция количества потерянных юнитов, если урон превышает здоровье цели
-  if (maxDamage > targetCharacter.health) maxUnitsToLose += 1;
-  if (minDamage > targetCharacter.health) minUnitsToLose += 1;
-
-  // Возвращение объекта с деталями
   return {
     minDamage,
     maxDamage,

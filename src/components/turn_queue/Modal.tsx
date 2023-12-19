@@ -23,12 +23,10 @@ const Modal: FC<ModalProps> = ({ handleModalClose, character }) => {
   // Создание портала для модального окна
   return ReactDom.createPortal(
     <div className="ModalContainer min-w-[300px] w-[30vw] h-[300px] text-white rounded-xl  fixed left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 p-4">
-      {/* Кнопка закрытия модального окна */}
-      <Button className="flex justify-end w-[100%] text-white font-bold" onClick={() => handleModalClose()}>
+      <Button className="flex justify-end ml-auto text-white font-bold" onClick={() => handleModalClose()}>
         X
       </Button>
 
-      {/* Контент модального окна */}
       <div className="flex justify-evenly mx-2">
         <CharacterImage logo={character.logo} name={character.name} level={character.level} />
         <CharacterStats character={character} />

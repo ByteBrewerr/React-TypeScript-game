@@ -1,15 +1,15 @@
 import React from "react";
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
-import { GameMainPage } from "@pages/GameMainPage";
-import { GameSetupPage } from "@pages/GameSetupPage";
+import GameSetup from "@pages/GameSetup";
+import Game from "@pages/Game";
 
 function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<GameSetupPage />} />
-        <Route path="/play" element={<GameMainPage />} />
+        <Route path="/" element={<GameSetup />} />
+        <Route path="/play" element={<Game />} />
       </Routes>
     </>
   );
