@@ -5,6 +5,22 @@ import Board from "@models/Board";
 import Cell from "@models/Cell";
 import Action from "@interfaces/Action";
 import calculateUnitsToLose from "@utils/calculateUnitsToLose";
+import attackSound from "@assets/sounds/attackSound.mp3";
+import deadSound from "@assets/sounds/deadSound.mp3";
+import moveSound from "@assets/sounds/moveSound.mp3";
+import shootSound from "@assets/sounds/shootSound.mp3";
+
+let attackAudio: HTMLAudioElement | undefined;
+let deadAudio: HTMLAudioElement | undefined;
+let shootAudio: HTMLAudioElement | undefined;
+let moveAudio: HTMLAudioElement | undefined;
+
+if (typeof Audio !== "undefined") {
+  attackAudio = new Audio(attackSound);
+  deadAudio = new Audio(deadSound);
+  shootAudio = new Audio(shootSound);
+  moveAudio = new Audio(moveSound);
+}
 
 export default class Character {
   team: Teams;
@@ -24,6 +40,7 @@ export default class Character {
   shooting: boolean;
   isCounterAttackPossible: boolean;
   isPerformingCounterAttack: boolean;
+  attackSound: typeof attackAudio;
 
   constructor(team: Teams, count: number) {
     this.team = team;
@@ -59,6 +76,7 @@ export default class Character {
   public move(target: Cell, from: Cell, board: Board): void {
     if (this.canMove(target, from, board)) {
       board.cells[from.row][from.col].removeCharacter();
+      moveAudio?.play();
       board.cells[target.row][target.col].setCharacter(this);
     }
   }
@@ -140,7 +158,6 @@ export default class Character {
 
     const queue: { cell: Cell; distance: number }[] = [];
     queue.push({ cell: from, distance: 0 });
-
     while (queue.length > 0) {
       const { cell, distance } = queue.shift()!;
 
@@ -192,7 +209,7 @@ export default class Character {
     const copyAttackFrom = board.getThisBoardCell(attackFrom);
 
     const { unitsToLose, remainingDamage } = calculateUnitsToLose(copyTargetCell, copyAttackFrom);
-
+    attackAudio?.play();
     copyTarget.count -= unitsToLose;
     copyTarget.health -= remainingDamage;
 
@@ -201,13 +218,16 @@ export default class Character {
       copyTarget.count -= 1;
       copyTarget.health = Math.abs(copyTarget.maxHealth - overkill);
       if (copyTarget.count <= 0) {
+        deadAudio?.play();
         copyTargetCell.removeCharacter();
       }
     }
 
     if (copyTarget.count <= 0) {
+      deadAudio?.play();
       copyTargetCell.removeCharacter();
     } else if (copyTarget.isCounterAttackPossible) {
+      attackAudio?.play();
       this.performCounterAttack(copyAttackFrom, copyTargetCell, board);
     }
   }
@@ -222,6 +242,7 @@ export default class Character {
     copyTarget.count -= unitsToLose;
     copyTarget.health -= remainingDamage;
     if (copyTarget.count <= 0) {
+      deadAudio?.play();
       target.removeCharacter();
     }
     if (copyTarget.health < 0) {
@@ -231,6 +252,7 @@ export default class Character {
       copyTarget.health = Math.abs(copyTarget.maxHealth - overkill);
 
       if (copyTarget.count <= 0) {
+        deadAudio?.play();
         target.removeCharacter();
       }
     }
@@ -245,10 +267,11 @@ export default class Character {
     const copyShootFrom = board.getThisBoardCell(from);
 
     const { unitsToLose, remainingDamage } = calculateUnitsToLose(copyTargetCell, copyShootFrom);
-
+    shootAudio?.play();
     copyTarget.count -= unitsToLose;
     copyTarget.health -= remainingDamage;
     if (copyTarget.count <= 0) {
+      deadAudio?.play();
       copyTargetCell.removeCharacter();
     }
     if (copyTarget.health < 0) {
@@ -258,6 +281,7 @@ export default class Character {
       copyTarget.health = Math.abs(copyTarget.maxHealth - overkill);
 
       if (copyTarget.count <= 0) {
+        deadAudio?.play();
         copyTargetCell.removeCharacter();
       }
     }
