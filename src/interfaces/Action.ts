@@ -1,7 +1,7 @@
 import Cell from "../models/Cell";
 
 export default interface Action {
-  actionName: string;
+  actionName: "move" | "attack" | "shoot";
   from: Cell;
   to: Cell;
   attacker?: Cell;

@@ -243,8 +243,6 @@ const BoardComponent: FC<BoardProps> = ({ board, setNewBoard, currentTurn, handl
 
       if (canAttackFromHoveredCell) {
         setLastHoveredCell(cell);
-      } else if (cell.character?.team !== Teams.Computer) {
-        setLastHoveredCell(null);
       }
     },
     [selectedCell, hoveredEnemyDamage],
