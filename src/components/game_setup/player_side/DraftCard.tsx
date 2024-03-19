@@ -63,9 +63,14 @@ const DraftCard: FC<DraftCardProps> = ({
     </div>
 
     {/* Кнопка для подтверждения выбора */}
-    <Button className="text-white w-[8vw] min-w-[60px]" onClick={() => handleNextPick()} disabled={currentPick !== index}>
-      <p style={{ fontSize: "clamp(8px, .8vw, 18px)" }}>CONFIRM</p>
-    </Button>
+    {currentPick == index && (
+      <>
+        <Button className="text-white w-[8vw] min-w-[60px]" onClick={() => handleNextPick()} disabled={currentPick !== index}>
+          <p style={{ fontSize: "clamp(8px, .8vw, 18px)" }}>CONFIRM</p>
+        </Button>
+        <label className="text-white">Выберите количество юнитов с помощью ползунка</label>
+      </>
+    )}
   </div>
 );
 
