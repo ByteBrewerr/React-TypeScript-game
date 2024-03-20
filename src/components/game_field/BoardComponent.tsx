@@ -81,7 +81,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setNewBoard, currentTurn, handl
   useEffect(() => {
     let timer: NodeJS.Timeout | undefined;
     if (road.length >= 2) {
-      timer = setTimeout(processRoad, 500);
+      timer = setTimeout(processRoad, 300);
     }
     return () => {
       clearTimeout(timer);

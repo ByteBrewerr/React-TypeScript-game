@@ -14,7 +14,6 @@ const RoadLine: FC<RoadProps> = ({ road }) => {
   if (!road.length) {
     return null;
   }
-
   return (
     <div>
       {road.map((_, i) => {
